@@ -27,7 +27,6 @@
   import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
   import { ChevronDown, Search } from "lucide-react"
   import { initialFiltersState, locationSchema, ageSchema, rangeSchema, filtersSchema, followersRangedSchema, followingsRangedSchema } from "@/models/schema-ui";
-import FollowersFilterUI from "./followers-filter";
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
@@ -96,14 +95,62 @@ import FollowersFilterUI from "./followers-filter";
                 <section className="flex space-x-1.5">
                 <div id="followers">
                   <Popover>
-                    <form onSubmit={handleSubmitFollowers(onSubmitFollowers)}>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="flex space-x-2">Followers <ChevronDown /></Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <FollowersFilterUI />
+                        <div className="grid gap-4">
+                          <div className="space-y-2">
+                            <h4 className="font-medium leading-none">Follower Range</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Set the interval for follower counts.
+                            </p>
+                          </div>
+                          <div className="grid gap-5">
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="minFollowers">Minimum</Label>
+                              <Input
+                                id="minFollowers"
+                                placeholder="minimum value (0)"
+                                className="col-span-2 h-8"
+                                {...registerFollowers('followers.from')}
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 items-center gap-4">
+                              <Label htmlFor="maxFollowers">Maximum</Label>
+                              <Input
+                                id="maxFollowers"
+                                placeholder="maximum value (?)"
+                                className="col-span-2 h-8"
+                                {...registerFollowers('followers.to')}
+                              />
+                            </div>
+                            <Slider defaultValue={[33]} max={100} step={1} />
+                            <RadioGroup defaultValue="" className="mt-3 text-slate-700 font-light">
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="option-one" id="option-one" />
+                                <Label htmlFor="option-one">Nano-Influencers (1k - 25k)</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="option-two" id="option-two" />
+                                <Label htmlFor="option-two">Micro-Influencers (25k - 100k)</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="option-two" id="option-two" />
+                                <Label htmlFor="option-two">Macro-Influencers (100k - 1M)</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="option-two" id="option-two" />
+                                <Label htmlFor="option-two">Celebrities (1M+)</Label>
+                              </div>
+                            </RadioGroup>
+                          </div>
+                          <div className="flex justify-between mt-5">
+                            <Button type="button" variant="outline" onClick={handleResetFollowers}>Clear</Button>
+                            <Button type="submit">Apply</Button>
+                          </div>
+                        </div>
                       </PopoverContent>
-                    </form>
                   </Popover>
                 </div>
                   <div id="followings">
