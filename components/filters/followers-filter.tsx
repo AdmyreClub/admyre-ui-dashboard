@@ -39,7 +39,45 @@ const FollowerFilter = () => {
   });
 
 
+
   const { min, max } = watch();
+
+  function linearToInfluencerScale(value: number, max: number) {
+  let scaledValue;
+  if (value <= max * 0.25) {
+    // Nano-Influencers
+    scaledValue = 1000 + (value / (max * 0.25)) * (25000 - 1000);
+  } else if (value <= max * 0.5) {
+    // Micro-Influencers
+    scaledValue = 25000 + ((value - max * 0.25) / (max * 0.25)) * (100000 - 25000);
+  } else if (value <= max * 0.75) {
+    // Macro-Influencers
+    scaledValue = 100000 + ((value - max * 0.5) / (max * 0.25)) * (1000000 - 100000);
+  } else {
+    // Celebrities
+    scaledValue = 1000000 + ((value - max * 0.75) / (max * 0.25)) * (MAX_SLIDER_COUNT - 1000000);
+  }
+  return Math.round(scaledValue);
+}
+
+function influencerScaleToLinear(value: number, max: number) {
+  let linearValue;
+  if (value <= 25000) {
+    // Nano-Influencers
+    linearValue = (value - 1000) / (25000 - 1000) * (max * 0.25);
+  } else if (value <= 100000) {
+    // Micro-Influencers
+    linearValue = max * 0.25 + ((value - 25000) / (100000 - 25000)) * (max * 0.25);
+  } else if (value <= 1000000) {
+    // Macro-Influencers
+    linearValue = max * 0.5 + ((value - 100000) / (1000000 - 100000)) * (max * 0.25);
+  } else {
+    // Celebrities
+    linearValue = max * 0.75 + ((value - 1000000) / (MAX_SLIDER_COUNT - 1000000)) * (max * 0.25);
+  }
+  return Math.round(linearValue);
+}
+
 
 
   const handleRadioChange = (minValue: number, maxValue: number) => {
@@ -48,9 +86,15 @@ const FollowerFilter = () => {
   };
 
   const onSliderChange = (values: [number, number]) => {
-    setValue('min', values[0]);
-    setValue('max', values[1]);
+    const scaledMin = linearToInfluencerScale(values[0], MAX_SLIDER_COUNT);
+    const scaledMax = linearToInfluencerScale(values[1], MAX_SLIDER_COUNT);
+
+    setValue('min', scaledMin);
+    setValue('max', scaledMax);
   };
+
+
+
 
   const parseNumber = (value: string) => {
     const parsed = parseInt(value, 10);
@@ -87,12 +131,15 @@ const FollowerFilter = () => {
         </div>
 
         <RangeSlider
-        defaultValue={[min || 0, max || MAX_SLIDER_COUNT]} // Set default values
-        onValueChange={onSliderChange} // Update form values on change
-        min={0} // Minimum value
-        max={MAX_SLIDER_COUNT} // Maximum value
-        step={MAX_SLIDER_COUNT/500000} // Step value
-      />
+            value={[
+              influencerScaleToLinear(min || 0, MAX_SLIDER_COUNT),
+              influencerScaleToLinear(max || MAX_SLIDER_COUNT, MAX_SLIDER_COUNT)
+            ]}
+            onValueChange={onSliderChange}
+            min={0}
+            max={MAX_SLIDER_COUNT}
+          />
+
 
         <RadioGroup defaultValue="" className="mt-3 text-slate-700 font-light">
           <div className="flex items-center space-x-2">

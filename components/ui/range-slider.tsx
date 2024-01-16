@@ -1,10 +1,7 @@
-"use client";
-
 import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import cn from 'classnames';
 
-// Assuming you're using TypeScript, this type ensures you pass an array of two numbers for value and default value
 type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> & {
   onValueChange?: (value: [number, number]) => void;
   value?: [number, number];
@@ -15,11 +12,11 @@ const RangeSlider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
 >(({ className, onValueChange, value, defaultValue, ...props }, ref) => {
-
-  // Handler for value change
+  // Internal state for the slider value
   const handleValueChange = (value: [number, number]) => {
     onValueChange?.(value);
   };
+
 
   return (
     <SliderPrimitive.Root
@@ -29,8 +26,7 @@ const RangeSlider = React.forwardRef<
         className
       )}
       onValueChange={handleValueChange}
-      value={value}
-      defaultValue={defaultValue}
+      value={value || defaultValue}
       {...props}
     >
       <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
@@ -44,6 +40,6 @@ const RangeSlider = React.forwardRef<
   );
 });
 
-RangeSlider.displayName = 'Slider';
+RangeSlider.displayName = 'RangeSlider';
 
 export { RangeSlider };
