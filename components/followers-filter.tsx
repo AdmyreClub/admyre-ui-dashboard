@@ -1,7 +1,7 @@
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as React from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,34 +22,42 @@ import { Slider } from "@/components/ui/slider"
 import { ChevronDown } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-const rangeSchema = z.object({
-    min: z.number().nonnegative().nullable(),
-    max: z.number().nonnegative().nullable(),
-});
+const validationSchema = z
+  .object({
+    min: z
+      .string()
+      .transform((val) => (val === '' ? null : Number(val)))
+      .refine((val) => val === null || !isNaN(val), {
+        message: 'Minimum must be a number',
+      })
+      .nullable(),
+    max: z
+      .string()
+      .transform((val) => (val === '' ? null : Number(val)))
+      .refine((val) => val === null || !isNaN(val), {
+        message: 'Maximum must be a number',
+      })
+      .nullable(),
+  });
 
-const followersFormSchema = z.object({
-    followers: rangeSchema,
-});
 
-type FollowersFormType = z.infer<typeof followersFormSchema>;
+type ValidationSchema = z.infer<typeof validationSchema>;
 
-const FollowersFilterUI = () => {
-    const { register, handleSubmit, control, reset, formState: { errors } } = useForm<FollowersFormType>({
-        resolver: zodResolver(followersFormSchema),
-    });
+const Form = () => {
 
-    const onSubmit = (data: FollowersFormType) => {
-        console.log('Followers Filter Data:', data);
-        // Handle form submission here
-    };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ValidationSchema>({
+    resolver: zodResolver(validationSchema),
+  });
 
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button variant="outline" className="flex space-x-2">Followers <ChevronDown /></Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-                <form onSubmit={handleSubmit(onSubmit)}>
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) => console.log(data);
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid gap-4">
                         <h4 className="font-medium leading-none">Follower Range</h4>
                         <p className="text-sm text-muted-foreground">
@@ -62,7 +70,7 @@ const FollowersFilterUI = () => {
                                 id="minFollowers"
                                 placeholder="Minimum value (0)"
                                 className="col-span-2 h-8"
-                                {...register('followers.min')}
+                                {...register('min')}
                             />
                         </div>
 
@@ -72,7 +80,8 @@ const FollowersFilterUI = () => {
                                 id="maxFollowers"
                                 placeholder="Maximum value"
                                 className="col-span-2 h-8"
-                                {...register('followers.max')}
+
+                                {...register('max')}
                             />
                         </div>
 
@@ -88,16 +97,17 @@ const FollowersFilterUI = () => {
                                   <Label htmlFor="option-two">Micro-Influencers (25k - 100k)</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="option-two" id="option-two" />
+                                  <RadioGroupItem value="option-three" id="option-two" />
                                   <Label htmlFor="option-two">Macro-Influencers (100k - 1M)</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="option-two" id="option-two" />
+                                  <RadioGroupItem value="option-four" id="option-two" />
                                   <Label htmlFor="option-two">Celebrities (1M+)</Label>
                                 </div>
                               </RadioGroup>
                         {/* Errors Display */}
-                        {errors.followers && <p className="text-red-500">{errors.followers.message}</p>}
+                        {errors.min && <p className="text-red-500">{errors.min.message}</p>}
+                        {errors.max && <p className="text-red-500">{errors.max.message}</p>}
 
                         <div className="flex justify-between mt-5">
                             <Button variant="outline" onClick={() => reset()}>Clear</Button>
@@ -105,9 +115,7 @@ const FollowersFilterUI = () => {
                         </div>
                     </div>
                 </form>
-            </PopoverContent>
-        </Popover>
-    );
+  );
 };
 
-export default FollowersFilterUI;
+export default Form;

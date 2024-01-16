@@ -128,8 +128,8 @@ const DiscoverPage = () => {
                 title="Creator Discovery"
                 description="Instantly Connect with Influencers from the Largest Database"
                 icon={UserRound}
-                iconColor="text-violet-500"
-                bgColor="bg-violet-500/10"
+                iconColor="text-black-500"
+                bgColor="bg-slate-500/10"
             />
 
             <div className="flex flex-col items-center sm:mx-4">
