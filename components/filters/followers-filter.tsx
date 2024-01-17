@@ -10,10 +10,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const validationSchema = z.object({
   min: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Minimum must be a number',
+    message: 'Minimum Value must be a number',
     }),
     max: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Maximum must be a number',
+    message: 'Maximum Value must be a number',
     }),
 });
 
