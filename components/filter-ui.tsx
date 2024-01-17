@@ -27,13 +27,14 @@
   import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
   import { ChevronDown, Filter, Search } from "lucide-react"
   import { initialFiltersState, locationSchema, ageSchema, rangeSchema, filtersSchema, followersRangedSchema, followingsRangedSchema } from "@/models/schema-ui";
-import Form from "./followers-filter";
+
 import FollowerFilter from './filters/followers-filter'
 import FollowingsFilterUI from "./filters/followings-filter";
 import LocationFilterUI from "./filters/location-filter";
 import LanguageFilterUI from "./filters/language-filter";
 import CategoriesFilterUI from "./filters/categories-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
+import CategoriesFormUI from "./filters/categories-filter";
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
@@ -178,48 +179,7 @@ import EngagementFilterUI from "./filters/engagement-filter";
                         <Button variant="outline" className="flex space-x-2">Categories <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Dimensions</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Set the dimensions for the layer.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="width">Width</Label>
-                              <Input
-                                id="width"
-                                defaultValue="100%"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="maxWidth">Max. width</Label>
-                              <Input
-                                id="maxWidth"
-                                defaultValue="300px"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="height">Height</Label>
-                              <Input
-                                id="height"
-                                defaultValue="25px"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="maxHeight">Max. height</Label>
-                              <Input
-                                id="maxHeight"
-                                defaultValue="none"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        <CategoriesFormUI />
                       </PopoverContent>
                     </Popover>
                   </div>
