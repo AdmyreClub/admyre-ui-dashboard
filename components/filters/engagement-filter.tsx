@@ -1,64 +1,89 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as React from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { Slider } from "@/components/ui/slider";
-
+import { RangeSlider } from "@/components/ui/range-slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SliderThumb } from "@radix-ui/react-slider";
+import { Engagement } from "next/font/google";
 
-const engagementSchema = z.object({
+const validationSchema = z.object({
   min: z
-    .string()
-    .transform((val) => (val === "" ? null : Number(val)))
-    .refine((val) => val === null || !isNaN(val), {
+    .number()
+    .nullable()
+    .refine((val) => val == null || !isNaN(val), {
       message: "Minimum must be a number",
-    })
-    .nullable(),
+    }),
   max: z
-    .string()
-    .transform((val) => (val === "" ? null : Number(val)))
-    .refine((val) => val === null || !isNaN(val), {
+    .number()
+    .nullable()
+    .refine((val) => val == null || !isNaN(val), {
       message: "Maximum must be a number",
-    })
-    .nullable(),
+    }),
 });
 
-type engagementSchema = z.infer<typeof engagementSchema>;
+const MAX_SLIDER_COUNT = 100;
 
-const EngagementFilterUI = () => {
+type ValidationSchema = z.infer<typeof validationSchema>;
+
+const EngagementRateUI = () => {
+  const inputRef = React.useRef();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<engagementSchema>({
-    resolver: zodResolver(engagementSchema),
+    setValue,
+    watch,
+    control,
+  } = useForm<ValidationSchema>({
+    resolver: zodResolver(validationSchema),
+    defaultValues: {
+      min: 0, // Provide a default value for min
+      max: MAX_SLIDER_COUNT, // Provide a default value for max
+    },
   });
 
-  const onSubmit: SubmitHandler<engagementSchema> = (data) => console.log(data);
+  const { min, max } = watch();
+
+  const handleRadioChange = (minValue: number, maxValue: number) => {
+    setValue("min", minValue);
+    setValue("max", maxValue);
+  };
+
+  const onSliderChange = (values: [number, number]) => {
+    setValue("min", values[0]);
+    setValue("max", values[1]);
+  };
+
+  const handleRangeChange = (min: number, max:number) => {
+      
+  };
+
+  const parseNumber = (value: string) => {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? null : parsed;
+  };
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid gap-4">
-        <div className="space-y-2">
-          <h4 className="font-medium leading-none">Engagement Rate</h4>
-          <p className="text-sm text-muted-foreground">
-            Set the interval for engagement rates.
-          </p>
-        </div>
+        <h4 className="font-medium leading-none">Engagement Rate</h4>
+        <p className="text-sm text-muted-foreground">
+          Set the interval for Engagement Rate
+        </p>
 
         <div className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor="minEr">Minimum</Label>
+          <Label htmlFor="minFollowers">Minimum</Label>
           <Input
-            id="minEr"
+            id="minFollowers"
             placeholder="Minimum value (0)"
             className="col-span-2 h-8"
-            {...register("min")}
+            {...register("min", { setValueAs: parseNumber })}
           />
         </div>
 
@@ -68,13 +93,18 @@ const EngagementFilterUI = () => {
             id="maxFollowers"
             placeholder="Maximum value"
             className="col-span-2 h-8"
-            {...register("max")}
+            {...register("max", { setValueAs: parseNumber })}
           />
         </div>
 
-        {/* Errors Display */}
-        {errors.min && <p className="text-red-500">{errors.min.message}</p>}
-        {errors.max && <p className="text-red-500">{errors.max.message}</p>}
+        <RangeSlider
+          defaultValue={[min || 0, max || MAX_SLIDER_COUNT]} // Set default values
+          onValueChange={onSliderChange} // Update form values on change
+          min={0} // Minimum value
+          max={MAX_SLIDER_COUNT} // Maximum value
+          step={MAX_SLIDER_COUNT / 10000} // Step value
+          value={[min,max]}
+        />
 
         <div className="flex justify-between mt-5">
           <Button variant="outline" onClick={() => reset()}>
@@ -87,4 +117,4 @@ const EngagementFilterUI = () => {
   );
 };
 
-export default EngagementFilterUI
+export default EngagementRateUI;
