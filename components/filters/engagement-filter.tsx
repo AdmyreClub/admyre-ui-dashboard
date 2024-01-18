@@ -118,7 +118,11 @@ const EngagementRateUI = ({ onDataFromChild, defaultVal }: ChildProps) => {
         />
 
         <div className="flex justify-between mt-5">
-          <Button variant="outline" onClick={() => reset()}>
+          <Button variant="outline" onClick={() => {
+              setValue("min", 0);
+              setValue("max", 100);
+              onDataFromChild([0,100])
+            }}>
             Clear
           </Button>
           <Button type="submit" onClick={sendDataToParent}>Apply</Button>
