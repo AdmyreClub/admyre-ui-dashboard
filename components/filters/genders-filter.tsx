@@ -37,7 +37,8 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
   };
   const handleUncheck = () => {
     setValue("gender", null); // Set the value to null to uncheck the radio button
-    setSelectedGender(null); // Update the local state
+    setSelectedGender(null);
+    onDataFromChild(null) // Update the local state
   };
 
   const { gender } = watch();
