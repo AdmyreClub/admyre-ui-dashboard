@@ -103,6 +103,13 @@ const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
     setValue("min", minValue);
     setValue("max", maxValue);
   };
+  const handleCustomReset = () => {
+    onDataFromChild([0, MAX_SLIDER_COUNT]);
+    reset({
+      min: 0,
+      max: MAX_SLIDER_COUNT,
+    })
+  };
 
   const onSliderChange = (values: [number, number]) => {
     const scaledMin = linearToInfluencerScale(values[0], MAX_SLIDER_COUNT);
@@ -194,9 +201,7 @@ const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
           <Button
             variant="outline"
             onClick={() => {
-              setValue("min", 0);
-              setValue("max", 100000000);
-              onDataFromChild([0, 100000000]);
+              handleCustomReset();
             }}
           >
             Clear
