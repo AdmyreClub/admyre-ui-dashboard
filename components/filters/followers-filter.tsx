@@ -1,23 +1,29 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as React from 'react';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RangeSlider } from "@/components/ui/range-slider"
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import * as React from "react";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RangeSlider } from "@/components/ui/range-slider";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const validationSchema = z.object({
-  min: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Minimum must be a number',
+  min: z
+    .number()
+    .nullable()
+    .refine((val) => val == null || !isNaN(val), {
+      message: "Minimum must be a number",
     }),
-    max: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Maximum must be a number',
+  max: z
+    .number()
+    .nullable()
+    .refine((val) => val == null || !isNaN(val), {
+      message: "Maximum must be a number",
     }),
 });
 
-const MAX_SLIDER_COUNT = 10000000
+const MAX_SLIDER_COUNT = 10000000;
 
 interface ChildProps {
   onDataFromChild: (data: [number, number]) => void;
@@ -43,52 +49,55 @@ const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
     },
   });
   const { min, max } = watch();
-  
+
   const sendDataToParent = () => {
     // Send data to the parent component using the callback function
     onDataFromChild([min, max]);
   };
 
-
-
-
   function linearToInfluencerScale(value: number, max: number) {
-  let scaledValue;
-  if (value <= max * 0.25) {
-    // Nano-Influencers
-    scaledValue = 1000 + (value / (max * 0.25)) * (25000 - 1000);
-  } else if (value <= max * 0.5) {
-    // Micro-Influencers
-    scaledValue = 25000 + ((value - max * 0.25) / (max * 0.25)) * (100000 - 25000);
-  } else if (value <= max * 0.75) {
-    // Macro-Influencers
-    scaledValue = 100000 + ((value - max * 0.5) / (max * 0.25)) * (1000000 - 100000);
-  } else {
-    // Celebrities
-    scaledValue = 1000000 + ((value - max * 0.75) / (max * 0.25)) * (MAX_SLIDER_COUNT - 1000000);
+    let scaledValue;
+    if (value <= max * 0.25) {
+      // Nano-Influencers
+      scaledValue = 1000 + (value / (max * 0.25)) * (25000 - 1000);
+    } else if (value <= max * 0.5) {
+      // Micro-Influencers
+      scaledValue =
+        25000 + ((value - max * 0.25) / (max * 0.25)) * (100000 - 25000);
+    } else if (value <= max * 0.75) {
+      // Macro-Influencers
+      scaledValue =
+        100000 + ((value - max * 0.5) / (max * 0.25)) * (1000000 - 100000);
+    } else {
+      // Celebrities
+      scaledValue =
+        1000000 +
+        ((value - max * 0.75) / (max * 0.25)) * (MAX_SLIDER_COUNT - 1000000);
+    }
+    return Math.round(scaledValue);
   }
-  return Math.round(scaledValue);
-}
 
-function influencerScaleToLinear(value: number, max: number) {
-  let linearValue;
-  if (value <= 25000) {
-    // Nano-Influencers
-    linearValue = (value - 1000) / (25000 - 1000) * (max * 0.25);
-  } else if (value <= 100000) {
-    // Micro-Influencers
-    linearValue = max * 0.25 + ((value - 25000) / (100000 - 25000)) * (max * 0.25);
-  } else if (value <= 1000000) {
-    // Macro-Influencers
-    linearValue = max * 0.5 + ((value - 100000) / (1000000 - 100000)) * (max * 0.25);
-  } else {
-    // Celebrities
-    linearValue = max * 0.75 + ((value - 1000000) / (MAX_SLIDER_COUNT - 1000000)) * (max * 0.25);
+  function influencerScaleToLinear(value: number, max: number) {
+    let linearValue;
+    if (value <= 25000) {
+      // Nano-Influencers
+      linearValue = ((value - 1000) / (25000 - 1000)) * (max * 0.25);
+    } else if (value <= 100000) {
+      // Micro-Influencers
+      linearValue =
+        max * 0.25 + ((value - 25000) / (100000 - 25000)) * (max * 0.25);
+    } else if (value <= 1000000) {
+      // Macro-Influencers
+      linearValue =
+        max * 0.5 + ((value - 100000) / (1000000 - 100000)) * (max * 0.25);
+    } else {
+      // Celebrities
+      linearValue =
+        max * 0.75 +
+        ((value - 1000000) / (MAX_SLIDER_COUNT - 1000000)) * (max * 0.25);
+    }
+    return Math.round(linearValue);
   }
-  return Math.round(linearValue);
-}
-
-
 
   const handleRadioChange = (minValue: number, maxValue: number) => {
     setValue("min", minValue);
@@ -99,12 +108,9 @@ function influencerScaleToLinear(value: number, max: number) {
     const scaledMin = linearToInfluencerScale(values[0], MAX_SLIDER_COUNT);
     const scaledMax = linearToInfluencerScale(values[1], MAX_SLIDER_COUNT);
 
-    setValue('min', scaledMin);
-    setValue('max', scaledMax);
+    setValue("min", scaledMin);
+    setValue("max", scaledMax);
   };
-
-
-
 
   const parseNumber = (value: string) => {
     const parsed = parseInt(value, 10);
@@ -126,7 +132,7 @@ function influencerScaleToLinear(value: number, max: number) {
             id="minFollowers"
             placeholder="Minimum value (0)"
             className="col-span-2 h-8"
-            {...register('min', { setValueAs: parseNumber })}
+            {...register("min", { setValueAs: parseNumber })}
           />
         </div>
 
@@ -136,20 +142,19 @@ function influencerScaleToLinear(value: number, max: number) {
             id="maxFollowers"
             placeholder="Maximum value"
             className="col-span-2 h-8"
-            {...register('max', { setValueAs: parseNumber })}
+            {...register("max", { setValueAs: parseNumber })}
           />
         </div>
 
         <RangeSlider
-            value={[
-              influencerScaleToLinear(min || 0, MAX_SLIDER_COUNT),
-              influencerScaleToLinear(max || MAX_SLIDER_COUNT, MAX_SLIDER_COUNT)
-            ]}
-            onValueChange={onSliderChange}
-            min={0}
-            max={MAX_SLIDER_COUNT}
-          />
-
+          value={[
+            influencerScaleToLinear(min || 0, MAX_SLIDER_COUNT),
+            influencerScaleToLinear(max || MAX_SLIDER_COUNT, MAX_SLIDER_COUNT),
+          ]}
+          onValueChange={onSliderChange}
+          min={0}
+          max={MAX_SLIDER_COUNT}
+        />
 
         <RadioGroup defaultValue="" className="mt-3 text-slate-700 font-light">
           <div className="flex items-center space-x-2">
@@ -186,8 +191,19 @@ function influencerScaleToLinear(value: number, max: number) {
         {errors.max && <p className="text-red-500">{errors.max.message}</p>}
 
         <div className="flex justify-between mt-5">
-          <Button variant="outline" onClick={() => reset()}>Clear</Button>
-          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setValue("min", 0);
+              setValue("max", 100000000);
+              onDataFromChild([0, 100000000]);
+            }}
+          >
+            Clear
+          </Button>
+          <Button type="submit" onClick={sendDataToParent}>
+            Apply
+          </Button>
         </div>
       </div>
     </form>
