@@ -1,103 +1,113 @@
-import React, { useState } from "react";
-import { useForm, SubmitHandler, Resolver } from "react-hook-form";
+"use client";
+
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const schema = z.object({
-  multiSelect: z
-    .array(z.string())
-    .refine((data) => data.length > 0, {
-      message: "Please select at least one option",
-    }),
+const languages = [
+  "English",
+  "Hindi",
+  "Bengali",
+  "Urdu",
+  "Punjabi",
+  "Gujarati",
+  "Odia",
+  "Kannada",
+  "Malayalam",
+  "Marathi",
+  "Telugu",
+  "Tamil",
+];
+
+const FormSchema = z.object({
+  languages: z.array(z.string()).refine((value) => value.length > 0, {
+    message: "Please select at least one language.",
+  }),
 });
 
-type FormData = z.infer<typeof schema>;
-
-const LanguageFormUI: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema) as Resolver<FormData>,
+export function LanguageFilterUI() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      languages: [""],
+    },
   });
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const options = [
-    "Hindi",
-    "Bengali",
-    "Urdu",
-    "Punjabi",
-    "",
-    "Gujarati",
-    "Odia",
-    "Kannada",
-    "Malayalam",
-    "Marathi",
-    "Telugu",
-    "Tamil",
-    "English"
-  ];
-
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    // Handle form submission
-    console.log(data);
-  };
-
-  const clearForm = () => {
-    reset(); // Reset the form values
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log('Selected Languages:', data.languages);
   };
 
   return (
-    <div className="container mt-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label>Select multiple options:</label>
-
-          <div className={`drawer ${drawerOpen ? "open" : ""}`}>
-            {options.map((option, index) => (
-              <div className="form-check" key={index}>
-                <input
-                  type="checkbox"
-                  {...register("multiSelect", { required: true })}
-                  value={option}
-                  className="custom-checkbox"
-                />
-                <label>{option}</label>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="languages"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Languages</FormLabel>
+                <FormDescription>
+                  Select the languages you are interested in.
+                </FormDescription>
               </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            className="btn"
-            onClick={() => setDrawerOpen(!drawerOpen)}
-          >
-            {drawerOpen ? "Close Drawer" : "Open Drawer"}
-          </button>
-
-
+              <ScrollArea className="h-[280px] rounded-md border p-5">
+                {languages.map((language) => (
+                  <FormField
+                    key={language}
+                    control={form.control}
+                    name="languages"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={language}
+                          className="flex flex-row space-x-3 space-y-0 mt-1 align-middle items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value.includes(language)}
+                              onCheckedChange={(checked) => {
+                                const newValue = checked
+                                  ? [...field.value, language]
+                                  : field.value.filter((c) => c !== language);
+                                field.onChange(newValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {language}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </ScrollArea>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-between mt-5">
+          <Button variant="outline" onClick={() => form.reset()}>Clear</Button>
+          <Button type="submit">Apply</Button>
         </div>
-        <button
-            type="button"
-            className="btn btn-secondary ml-2"
-            onClick={clearForm}
-          >
-            Clear
-          </button>
-
-        <button type="submit" className="btn">
-          Apply
-        </button>
-
-        {errors.multiSelect && (
-          <div className="error-message">{errors.multiSelect.message}</div>
-        )}
       </form>
-    </div>
+    </Form>
   );
-};
+}
 
-export default LanguageFormUI;
+export default LanguageFilterUI;

@@ -52,7 +52,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function CategoriesForm() {
+export function CategoriesFilterUI() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -124,4 +124,4 @@ export function CategoriesForm() {
   );
 }
 
-export default CategoriesForm;
+export default CategoriesFilterUI;

@@ -32,9 +32,8 @@ import FollowerFilter from './filters/followers-filter'
 import FollowingsFilterUI from "./filters/followings-filter";
 import LocationFilterUI from "./filters/location-filter";
 import LanguageFilterUI from "./filters/language-filter";
-import CategoriesFilterUI from "./filters/categories-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
-import CategoriesFormUI from "./filters/categories-filter";
+import CategoriesFilterUI from "./filters/categories-filter";
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
@@ -158,18 +157,7 @@ import CategoriesFormUI from "./filters/categories-filter";
                         <Button variant="outline" className="flex space-x-2">Language <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Select Languages</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Select Content Languages
-                            </p>
-                          </div>
-                        </div>
-                        <div id="CardFooter" className="flex justify-between mt-5">
-                          <Button variant="outline">Clear</Button>
-                          <Button>Apply</Button>
-                        </div>
+                        <LanguageFilterUI />
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -179,7 +167,7 @@ import CategoriesFormUI from "./filters/categories-filter";
                         <Button variant="outline" className="flex space-x-2">Categories <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <CategoriesFormUI />
+                        <CategoriesFilterUI />
                       </PopoverContent>
                     </Popover>
                   </div>
