@@ -10,25 +10,41 @@ const schema = z.object({
   gender: z.enum(["male", "female", "others"]),
 });
 
-const GenderForm: React.FC = () => {
+interface ChildProps {
+  onDataFromChild: (data: string) => void;
+  defaultVal: string;
+}
+
+const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm({
+    defaultValues: {
+     gender: defaultVal
+    },
     resolver: zodResolver(schema),
   });
   const [selectedGender, setSelectedGender] = React.useState(null);
 
-  const onSubmit = (data) => {
+  const onSubmit = (data:string) => {
     console.log(data);
     // Handle form submission logic here
   };
   const handleUncheck = () => {
     setValue("gender", null); // Set the value to null to uncheck the radio button
     setSelectedGender(null); // Update the local state
+  };
+
+  const { gender } = watch();
+  
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(gender);
   };
 
   return (
@@ -55,7 +71,7 @@ const GenderForm: React.FC = () => {
       </div>
       <div className="flex justify-between mt-5">
           <Button variant="outline" onClick={handleUncheck}>Clear</Button>
-          <Button type="submit">Apply</Button>
+          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
         </div>
     </form>
   );
