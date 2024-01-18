@@ -25,11 +25,17 @@ const validationSchema = z.object({
     }),
 });
 
+interface ChildProps {
+  onDataFromChild: (data: [number, number]) => void;
+  defaultVal: [number, number];
+}
+
+
 const MAX_SLIDER_COUNT = 100;
 
 type ValidationSchema = z.infer<typeof validationSchema>;
 
-const EngagementRateUI = () => {
+const EngagementRateUI = ({ onDataFromChild, defaultVal }: ChildProps) => {
   const inputRef = React.useRef();
   const {
     register,
@@ -42,12 +48,17 @@ const EngagementRateUI = () => {
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
     defaultValues: {
-      min: 0, // Provide a default value for min
-      max: MAX_SLIDER_COUNT, // Provide a default value for max
+      min: defaultVal[0], // Provide a default value for min
+      max: defaultVal[1], // Provide a default value for max
     },
   });
 
   const { min, max } = watch();
+
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild([min, max]);
+  };
 
   const handleRadioChange = (minValue: number, maxValue: number) => {
     setValue("min", minValue);
@@ -110,7 +121,7 @@ const EngagementRateUI = () => {
           <Button variant="outline" onClick={() => reset()}>
             Clear
           </Button>
-          <Button type="submit">Apply</Button>
+          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
         </div>
       </div>
     </form>
