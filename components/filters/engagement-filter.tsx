@@ -31,6 +31,8 @@ interface ChildProps {
 }
 
 
+
+
 const MAX_SLIDER_COUNT = 100;
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -54,6 +56,14 @@ const EngagementRateUI = ({ onDataFromChild, defaultVal }: ChildProps) => {
   });
 
   const { min, max } = watch();
+
+  const handleCustomReset = () => {
+    onDataFromChild([0, MAX_SLIDER_COUNT]);
+    reset({
+      min: 0,
+      max: MAX_SLIDER_COUNT,
+    })
+  };
 
   const sendDataToParent = () => {
     // Send data to the parent component using the callback function
@@ -118,11 +128,7 @@ const EngagementRateUI = ({ onDataFromChild, defaultVal }: ChildProps) => {
         />
 
         <div className="flex justify-between mt-5">
-          <Button variant="outline" onClick={() => {
-              setValue("min", 0);
-              setValue("max", 100);
-              onDataFromChild([0,100])
-            }}>
+          <Button variant="outline" onClick={() => handleCustomReset()}>
             Clear
           </Button>
           <Button type="submit" onClick={sendDataToParent}>Apply</Button>
