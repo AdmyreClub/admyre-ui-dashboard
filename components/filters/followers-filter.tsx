@@ -123,7 +123,10 @@ const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
     const parsed = parseInt(value, 10);
     return isNaN(parsed) ? null : parsed;
   };
-  const onSubmit: SubmitHandler<ValidationSchema> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
+    console.log(data);
+    console.log("from within")
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

@@ -71,11 +71,12 @@ import GenderForm from "./filters/genders-filter";
     });
 
     const onSubmitMain = (data: FiltersType) => {
-      console.log("Main data: ",data);
-      console.log("follower data: " , followerData);
-      console.log("engagementRate data: " , engagementRateData);
-      console.log("gender data: " , genderData);
-      console.log("following data: " , followingData);
+      // console.log("Main data: ",data);
+      // console.log("follower data: " , followerData);
+      // console.log("engagementRate data: " , engagementRateData);
+      // console.log("gender data: " , genderData);
+      // console.log("following data: " , followingData);
+      console.log("outsidee")
     };
     const handleResetMain = () => {
       reset();
