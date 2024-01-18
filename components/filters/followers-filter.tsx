@@ -10,18 +10,23 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const validationSchema = z.object({
   min: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Minimum Value must be a number',
+    message: 'Minimum must be a number',
     }),
     max: z.number().nullable().refine((val) => val == null || !isNaN(val), {
-    message: 'Maximum Value must be a number',
+    message: 'Maximum must be a number',
     }),
 });
 
 const MAX_SLIDER_COUNT = 10000000
 
+interface ChildProps {
+  onDataFromChild: (data: [number, number]) => void;
+  defaultVal: [number, number];
+}
+
 type ValidationSchema = z.infer<typeof validationSchema>;
 
-const FollowerFilter = () => {
+const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
   const {
     register,
     handleSubmit,
@@ -33,14 +38,19 @@ const FollowerFilter = () => {
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
     defaultValues: {
-      min: 0, // Provide a default value for min
-      max: MAX_SLIDER_COUNT, // Provide a default value for max
+      min: defaultVal[0], // Provide a default value for min
+      max: defaultVal[1], // Provide a default value for max
     },
   });
-
-
-
   const { min, max } = watch();
+  
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild([min, max]);
+  };
+
+
+
 
   function linearToInfluencerScale(value: number, max: number) {
   let scaledValue;
@@ -177,7 +187,7 @@ function influencerScaleToLinear(value: number, max: number) {
 
         <div className="flex justify-between mt-5">
           <Button variant="outline" onClick={() => reset()}>Clear</Button>
-          <Button type="submit">Apply</Button>
+          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
         </div>
       </div>
     </form>
