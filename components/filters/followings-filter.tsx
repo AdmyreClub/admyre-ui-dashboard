@@ -98,6 +98,13 @@ const FollowingFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
     }
     return Math.round(linearValue);
   }
+  const handleCustomReset = () => {
+    onDataFromChild([0, MAX_SLIDER_COUNT]);
+    reset({
+      min: 0,
+      max: MAX_SLIDER_COUNT,
+    });
+  };
 
   const onSliderChange = (values: [number, number]) => {
     const scaledMin = linearToInfluencerScale(values[0], MAX_SLIDER_COUNT);
@@ -157,11 +164,7 @@ const FollowingFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
         <div className="flex justify-between mt-5">
           <Button
             variant="outline"
-            onClick={() => {
-              setValue("min", 0);
-              setValue("max", 100000000);
-              onDataFromChild([0,100000000])
-            }}
+            onClick={() => handleCustomReset()}
           >
             Clear
           </Button>
