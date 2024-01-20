@@ -1,28 +1,51 @@
-import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { z, ZodError } from 'zod';
+import { Button } from "@/components/ui/button";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { document } from "postcss";
+const schema = z.object({
+  gender: z.enum(["male", "female", "others"]),
+});
 
-const genderSchema = z.enum(['male', 'female', 'other']);
-
-interface FormData {
-  gender: z.infer<typeof genderSchema>;
+interface ChildProps {
+  onDataFromChild: (data: string) => void;
+  defaultVal: string;
 }
 
-const GenderForm: React.FC = () => {
-  const { handleSubmit, control, setError } = useForm<FormData>();
+const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+     gender: defaultVal
+    },
+    resolver: zodResolver(schema),
+  });
+  const [selectedGender, setSelectedGender] = React.useState(null);
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      await genderSchema.parseAsync(data.gender);
-      console.log(data);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        setError('gender', {
-          type: 'manual',
-          message: 'Please select a valid gender.',
-        });
-      }
-    }
+  const onSubmit = (data:string) => {
+    console.log(data);
+    // Handle form submission logic here
+  };
+  const handleUncheck = () => {
+    setValue("gender", null); // Set the value to null to uncheck the radio button
+    setSelectedGender(null);
+    onDataFromChild(null) // Update the local state
+  };
+
+  const { gender } = watch();
+  
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(gender);
   };
 
   return (
@@ -30,47 +53,27 @@ const GenderForm: React.FC = () => {
       <div>
         <label>Gender:</label>
         <div>
-          <Controller
-            name="gender"
-            control={control}
-            
-            rules={{ required: 'Please select a gender' }}
-            render={({ field, fieldState }) => (
-              <>
-                <label>
-                  <input
-                    type="radio"
-                    value="male"
-                    checked={field.value === 'male'}
-                    onChange={() => field.onChange('male')}
-                  />
-                  Male
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="female"
-                    checked={field.value === 'female'}
-                    onChange={() => field.onChange('female')}
-                  />
-                  Female
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="other"
-                    checked={field.value === 'other'}
-                    onChange={() => field.onChange('other')}
-                  />
-                  Other
-                </label>
-                {fieldState.error && <p>{fieldState.error.message}</p>}
-              </>
-            )}
-          />
+          <RadioGroup
+            className="mt-3 text-slate-700 font-light flex"
+            value={selectedGender ?? register("gender").value}
+            onValueChange={(value) => {
+              setValue("gender", value);
+              setSelectedGender(value);
+            }}
+          >
+            <Label>Male</Label>
+            <RadioGroupItem value="male"   {...register("male")} checked={selectedGender === 'male' ? true : false}/>
+            <Label>Female</Label>
+            <RadioGroupItem value="female"  {...register("female")} checked={selectedGender === 'female' ? true : false}/>
+            <Label>Others</Label>
+            <RadioGroupItem value="others"   {...register("others")} checked={selectedGender === 'others' ? true : false}/>
+          </RadioGroup>
         </div>
       </div>
-      <button type="submit">Submit</button>
+      <div className="flex justify-between mt-5">
+          <Button variant="outline" onClick={handleUncheck}>Clear</Button>
+          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
+        </div>
     </form>
   );
 };
