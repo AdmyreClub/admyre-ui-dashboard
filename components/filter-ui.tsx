@@ -126,28 +126,7 @@ import CategoriesFilterUI from "./filters/categories-filter";
                         <Button variant="outline" className="flex space-x-2">Location <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Select a Location</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Select a city, state or country.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            <div className="grid items-center gap-4">
-                              <Input
-                                id="width"
-                                defaultValue=""
-                                placeholder="E.g., Mumbai, Bengaluru"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div id="CardFooter" className="flex justify-between mt-5">
-                          <Button variant="outline">Clear</Button>
-                          <Button>Apply</Button>
-                        </div>
+                        <LocationFilterUI />
                       </PopoverContent>
                     </Popover>
                   </div>
