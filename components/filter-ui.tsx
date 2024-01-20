@@ -33,11 +33,8 @@ import FollowingsFilterUI from "./filters/followings-filter";
 import LocationFilterUI from "./filters/location-filter";
 import LanguageFilterUI from "./filters/language-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
-<<<<<<< HEAD
-import CategoriesFilterUI from "./filters/categories-filter";
-=======
 import GenderForm from "./filters/genders-filter";
->>>>>>> khelan
+
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
