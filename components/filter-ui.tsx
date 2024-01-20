@@ -34,7 +34,7 @@ import LocationFilterUI from "./filters/location-filter";
 import LanguageFilterUI from "./filters/language-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
 import GenderForm from "./filters/genders-filter";
-
+import CategoriesFilterUI from "./filters/categories-filter";
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;

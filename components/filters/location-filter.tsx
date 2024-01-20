@@ -84,13 +84,17 @@ export default function LocationFilterUI() {
   return (
     <div className="space-y-8 p-5">
       <form onSubmit={handleSubmit(onSubmit)}>
+        <h4 className="font-medium leading-none mb-2">Select Locations</h4>
+          <p className="text-sm text-muted-foreground mb-4">
+            Set the locations you are interested in.
+          </p>
         <Input {...register('location')}
                value={query}
                onChange={(e) => setQuery(e.target.value)}
                placeholder="Type to search for locations"
                className="w-full px-4 py-2 border rounded-md" />
 
-        <ScrollArea className="h-[200px] mt-2 rounded-md border p-2">
+        <ScrollArea className="h-[180px] mt-2 rounded-md border p-2">
           {suggestions.map((suggestion, index) => (
             <div key={index} className="cursor-pointer hover:bg-gray-100 px-4 py-2"
                  onClick={() => handleSelectSuggestion(suggestion)}>

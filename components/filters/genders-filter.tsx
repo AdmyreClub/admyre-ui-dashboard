@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { document } from "postcss";
+import { Separator } from "@/components/ui/separator";
 const schema = z.object({
   gender: z.enum(["male", "female", "others"]),
 });
@@ -42,7 +43,7 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
   };
 
   const { gender } = watch();
-  
+
   const sendDataToParent = () => {
     // Send data to the parent component using the callback function
     onDataFromChild(gender);
@@ -62,9 +63,11 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
             }}
           >
             <Label>Male</Label>
-            <RadioGroupItem value="male"   {...register("male")} checked={selectedGender === 'male' ? true : false}/>
+            <RadioGroupItem value="male"   {...register("MALE")} checked={selectedGender === 'male' ? true : false}/>
+            <Separator orientation="vertical"/>
             <Label>Female</Label>
-            <RadioGroupItem value="female"  {...register("female")} checked={selectedGender === 'female' ? true : false}/>
+            <RadioGroupItem value="female"  {...register("FEMALE")} checked={selectedGender === 'female' ? true : false}/>
+            <Separator orientation="vertical"/>
             <Label>Others</Label>
             <RadioGroupItem value="others"   {...register("others")} checked={selectedGender === 'others' ? true : false}/>
           </RadioGroup>
