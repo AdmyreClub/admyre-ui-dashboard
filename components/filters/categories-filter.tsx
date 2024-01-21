@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-
 const categories = [
   "Lifestyle",
   "Gadgets & Tech",
@@ -52,17 +51,32 @@ const FormSchema = z.object({
   }),
 });
 
-export function CategoriesFilterUI() {
+interface ChildProps {
+  onDataFromChild: (data: string[]) => void;
+  defaultVal: string[];
+}
+
+export function CategoriesForm({ onDataFromChild, defaultVal }: ChildProps) {
+  //console.log(defaultVal.includes('Parenting'));
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      categories: ['any'],
+      categories: ["any"],
     },
   });
 
+  var defaultCheckedValues = defaultVal.categories;
+
+  const values = form.watch();
+
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(values);
+  };
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('Form data:', data);
+    console.log("Form data:", data);
   }
 
   return (
@@ -80,48 +94,62 @@ export function CategoriesFilterUI() {
                 </FormDescription>
               </div>
               <ScrollArea className="h-[400px] rounded-md border p-5">
-              {categories.map((category) => (
-                <FormField
-                  key={category}
-                  control={form.control}
-                  name="categories"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={category}
-                        className="flex flex-row space-x-3 space-y-0 mt-1 align-middle items-center"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value.includes(category)}
-                            onCheckedChange={(checked) => {
-                              const newValue = checked
-                                ? [...field.value, category]
-                                : field.value.filter((c) => c !== category);
-                              field.onChange(newValue);
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {category}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                {categories.map((category) => (
+                  <FormField
+                    key={category}
+                    control={form.control}
+                    name="categories"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={category}
+                          className="flex flex-row space-x-3 space-y-0 mt-1 align-middle items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={
+                                field.value.includes(category) ||
+                                defaultCheckedValues?.includes(category)
+                              }
+                              onCheckedChange={(checked) => {
+                                const newValue = checked
+                                  ? [...field.value, category]
+                                  : field.value.filter((c) => c !== category);
+                                field.onChange(newValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {category}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
               </ScrollArea>
               <FormMessage />
             </FormItem>
           )}
         />
-         <div className="flex justify-between mt-5">
-          <Button variant="outline" onClick={() => form.reset()}>Clear</Button>
-          <Button type="submit">Apply</Button>
+        <div className="flex justify-between mt-5">
+          <Button
+            variant="outline"
+            id="clear"
+            onClick={() => {
+              onDataFromChild({categories: ["any"]})
+              form.reset()
+            }}
+          >
+            Clear
+          </Button>
+          <Button type="submit" onClick={sendDataToParent} id="apply">
+            Apply
+          </Button>
         </div>
       </form>
     </Form>
   );
 }
 
-export default CategoriesFilterUI;
+export default CategoriesForm;
