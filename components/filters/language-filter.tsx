@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -35,11 +34,18 @@ const languages = [
 
 const FormSchema = z.object({
   languages: z.array(z.string()).refine((value) => value.length > 0, {
-    message: "Please select at least one language.",
+    message: "You have to select at least one category.",
   }),
 });
 
-export function LanguageFilterUI() {
+interface ChildProps {
+  onDataFromChild: (data: string[]) => void;
+  defaultVal: string[];
+}
+
+export function LanguagesForm({ onDataFromChild, defaultVal }: ChildProps) {
+  //console.log(defaultVal.includes('Parenting'));
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -47,9 +53,18 @@ export function LanguageFilterUI() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log('Selected Languages:', data.languages);
+  var defaultCheckedValues = defaultVal.languages;
+
+  const values = form.watch();
+
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(values);
   };
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log("Form data:", data);
+  }
 
   return (
     <Form {...form}>
@@ -62,34 +77,37 @@ export function LanguageFilterUI() {
               <div className="mb-4">
                 <FormLabel className="text-base">Languages</FormLabel>
                 <FormDescription>
-                  Select the languages you are interested in.
+                  Select the Languages 
                 </FormDescription>
               </div>
-              <ScrollArea className="h-[280px] rounded-md border p-5">
-                {languages.map((language) => (
+              <ScrollArea className="h-[400px] rounded-md border p-5">
+                {languages.map((category) => (
                   <FormField
-                    key={language}
+                    key={category}
                     control={form.control}
                     name="languages"
                     render={({ field }) => {
                       return (
                         <FormItem
-                          key={language}
+                          key={category}
                           className="flex flex-row space-x-3 space-y-0 mt-1 align-middle items-center"
                         >
                           <FormControl>
                             <Checkbox
-                              checked={field.value.includes(language)}
+                              checked={
+                                field.value.includes(category) ||
+                                defaultCheckedValues?.includes(category)
+                              }
                               onCheckedChange={(checked) => {
                                 const newValue = checked
-                                  ? [...field.value, language]
-                                  : field.value.filter((c) => c !== language);
+                                  ? [...field.value, category]
+                                  : field.value.filter((c) => c !== category);
                                 field.onChange(newValue);
                               }}
                             />
                           </FormControl>
                           <FormLabel className="text-sm font-normal">
-                            {language}
+                            {category}
                           </FormLabel>
                         </FormItem>
                       );
@@ -102,12 +120,28 @@ export function LanguageFilterUI() {
           )}
         />
         <div className="flex justify-between mt-5">
-          <Button variant="outline" onClick={() => form.reset()}>Clear</Button>
-          <Button type="submit">Apply</Button>
+          <Button
+            variant="outline"
+            
+            onClick={() => {
+              onDataFromChild({languages: [""]})
+              form.reset()
+            }}
+          >
+            Clear
+          </Button>
+          <Button type="submit" onClick={sendDataToParent}>
+            Apply
+          </Button>
         </div>
       </form>
     </Form>
   );
 }
 
-export default LanguageFilterUI;
+export default LanguagesForm;
+
+
+
+
+
