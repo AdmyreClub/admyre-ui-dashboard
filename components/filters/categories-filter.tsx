@@ -1,115 +1,155 @@
-import React, { useState } from "react";
-import { useForm, SubmitHandler, Resolver } from "react-hook-form";
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const schema = z.object({
-  multiSelect: z
-    .array(z.string())
-    .refine((data) => data.length > 0, {
-      message: "Please select at least one option",
-    }),
+const categories = [
+  "Lifestyle",
+  "Gadgets & Tech",
+  "Beauty",
+  "Fashion",
+  "Travel",
+  "Sports",
+  "Photography",
+  "Books",
+  "Decor",
+  "Parenting",
+  "Health",
+  "Art",
+  "Luxury",
+  "Education",
+  "Fitness",
+  "Automobile",
+  "Self Improvement",
+  "Animal/Pet",
+  "Business",
+  "Food",
+  "Finance",
+  "Make-up",
+  "Entertainment",
+  "Gaming",
+  "Wedding",
+];
+
+const FormSchema = z.object({
+  categories: z.array(z.string()).refine((value) => value.length > 0, {
+    message: "You have to select at least one category.",
+  }),
 });
 
-type FormData = z.infer<typeof schema>;
+interface ChildProps {
+  onDataFromChild: (data: string[]) => void;
+  defaultVal: string[];
+}
 
-const CategoriesFormUI: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema) as Resolver<FormData>,
+export function CategoriesForm({ onDataFromChild, defaultVal }: ChildProps) {
+  //console.log(defaultVal.includes('Parenting'));
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      categories: ["any"],
+    },
   });
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const options = [
-    "Lifestyle",
-    "Gadgets & Tech",
-    "Beauty",
-    "Fashion",
-    "Travel",
-    "Sports",
-    "Photography",
-    "Books",
-    "Decor",
-    "Parenting",
-    "Health",
-    "Art",
-    "Luxury",
-    "Education",
-    "Fitness",
-    "Automobile",
-    "Self Improvement",
-    "Animal/Pet",
-    "Business",
-    "Food",
-    "Finance",
-    "Make-up",
-    "Entertainment",
-    "Gaming",
-    "Wedding",
-  ];
+  var defaultCheckedValues = defaultVal.categories;
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    // Handle form submission
-    console.log(data);
+  const values = form.watch();
+
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(values);
   };
 
-  const clearForm = () => {
-    reset(); // Reset the form values
-  };
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log("Form data:", data);
+  }
 
   return (
-    <div className="container mt-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label>Select multiple options:</label>
-
-          <div className={`drawer ${drawerOpen ? "open" : ""}`}>
-            {options.map((option, index) => (
-              <div className="form-check" key={index}>
-                <input
-                  type="checkbox"
-                  {...register("multiSelect", { required: true })}
-                  value={option}
-                  className="custom-checkbox"
-                />
-                <label>{option}</label>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="categories"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Categories</FormLabel>
+                <FormDescription>
+                  Select the categories you are interested in.
+                </FormDescription>
               </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            className="btn"
-            onClick={() => setDrawerOpen(!drawerOpen)}
-          >
-            {drawerOpen ? "Close Drawer" : "Open Drawer"}
-          </button>
-
-
-        </div>
-        <button
-            type="button"
-            className="btn btn-secondary ml-2"
-            onClick={clearForm}
+              <ScrollArea className="h-[400px] rounded-md border p-5">
+                {categories.map((category) => (
+                  <FormField
+                    key={category}
+                    control={form.control}
+                    name="categories"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={category}
+                          className="flex flex-row space-x-3 space-y-0 mt-1 align-middle items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={
+                                field.value.includes(category) ||
+                                defaultCheckedValues?.includes(category)
+                              }
+                              onCheckedChange={(checked) => {
+                                const newValue = checked
+                                  ? [...field.value, category]
+                                  : field.value.filter((c) => c !== category);
+                                field.onChange(newValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {category}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </ScrollArea>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-between mt-5">
+          <Button
+            variant="outline"
+            id="clear"
+            onClick={() => {
+              onDataFromChild({categories: ["any"]})
+              form.reset()
+            }}
           >
             Clear
-          </button>
-
-        <button type="submit" className="btn">
-          Apply
-        </button>
-
-        {errors.multiSelect && (
-          <div className="error-message">{errors.multiSelect.message}</div>
-        )}
+          </Button>
+          <Button type="submit" onClick={sendDataToParent} id="apply">
+            Apply
+          </Button>
+        </div>
       </form>
-    </div>
+    </Form>
   );
-};
+}
 
-export default CategoriesFormUI;
+export default CategoriesForm;

@@ -27,14 +27,15 @@
   import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
   import { ChevronDown, Filter, Search } from "lucide-react"
   import { initialFiltersState, locationSchema, ageSchema, rangeSchema, filtersSchema, followersRangedSchema, followingsRangedSchema } from "@/models/schema-ui";
-import Form from "./followers-filter";
+
 import FollowerFilter from './filters/followers-filter'
 import FollowingsFilterUI from "./filters/followings-filter";
 import LocationFilterUI from "./filters/location-filter";
 import LanguageFilterUI from "./filters/language-filter";
-import CategoriesFilterUI from "./filters/categories-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
 import GenderForm from "./filters/genders-filter";
+import CategoriesFilterUI from "./filters/categories-filter";
+import { log } from "console";
 
   type FiltersType = z.infer<typeof filtersSchema>;
   type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
@@ -42,11 +43,13 @@ import GenderForm from "./filters/genders-filter";
 
   const FilterUI = () => {
     const [filters, setFilters] = React.useState(initialFiltersState);
-
+    const [categoriesData, setCategoriesData] = React.useState<string[]>([])
     const [followerData, setFollowerData] = React.useState([0, 100000000])
     const [genderData, setGenderData] = React.useState("male")
     const [followingData, setFollowingData] = React.useState([0, 100000000])
     const [engagementRateData, setEngagementRateData] = React.useState([0, 100])
+    const [languagesData, setLanguagesData] = React.useState<string[]>([])
+    const [locationData, setLocationData] = React.useState<string[]>([])
 
     const handleFollowerData = (dataFromChild: [number, number]) => {
       // Do something with the data received from the child component
@@ -65,18 +68,48 @@ import GenderForm from "./filters/genders-filter";
       setFollowingData(dataFromChild);
     };
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FiltersType>({
+    const handleCategoriesData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setCategoriesData(dataFromChild);
+    };
+    const handleLanguagesData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setLanguagesData(dataFromChild);
+    };
+    const handleLocationData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setLocationData(dataFromChild);
+    };
+
+
+
+    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FiltersType>({
       resolver: zodResolver(filtersSchema),
       defaultValues: initialFiltersState
     });
 
+
     const onSubmitMain = (data: FiltersType) => {
-      // console.log("Main data: ",data);
+
+      data.followers.from = followerData[0]
+      data.followers.to = followerData[1]
+      data.categories = categoriesData.categories
+      data.followings.from = followingData[0]
+      data.followings.to = followingData[1]
+      data.location = locationData
+      data.languages = languagesData.languages
+      data.engagementRate = engagementRateData
+      data.gender = genderData
+
+
+      console.log("Main data: ",data);
       // console.log("follower data: " , followerData);
       // console.log("engagementRate data: " , engagementRateData);
       // console.log("gender data: " , genderData);
       // console.log("following data: " , followingData);
-      console.log("outsidee")
+      //console.log("categories data: " , categoriesData);
+      //console.log("languages data: " , languagesData);
+      //console.log("location data: " , locationData);
     };
     const handleResetMain = () => {
       reset();
@@ -96,7 +129,7 @@ import GenderForm from "./filters/genders-filter";
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Search</Label>
                 <div className="flex space-x-1.5">
-                  <Input id="name" placeholder="Search by Name" />
+                  <Input id="name" name="username" placeholder="Search by Name" {...register("username")}/>
                 </div>
               </div>
               <div className="flex flex-col space-y-1.5 w-fit">
@@ -128,28 +161,7 @@ import GenderForm from "./filters/genders-filter";
                         <Button variant="outline" className="flex space-x-2">Location <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Select a Location</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Select a city, state or country.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            <div className="grid items-center gap-4">
-                              <Input
-                                id="width"
-                                defaultValue=""
-                                placeholder="E.g., Mumbai, Bengaluru"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div id="CardFooter" className="flex justify-between mt-5">
-                          <Button variant="outline">Clear</Button>
-                          <Button>Apply</Button>
-                        </div>
+                        <LocationFilterUI onDataFromChild={handleLocationData} defaultVal={locationData}/>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -159,18 +171,7 @@ import GenderForm from "./filters/genders-filter";
                         <Button variant="outline" className="flex space-x-2">Language <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Select Languages</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Select Content Languages
-                            </p>
-                          </div>
-                        </div>
-                        <div id="CardFooter" className="flex justify-between mt-5">
-                          <Button variant="outline">Clear</Button>
-                          <Button>Apply</Button>
-                        </div>
+                        <LanguageFilterUI onDataFromChild={handleLanguagesData} defaultVal={languagesData}/>
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -180,48 +181,7 @@ import GenderForm from "./filters/genders-filter";
                         <Button variant="outline" className="flex space-x-2">Categories <ChevronDown /> </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Dimensions</h4>
-                            <p className="text-sm text-muted-foreground">
-                              Set the dimensions for the layer.
-                            </p>
-                          </div>
-                          <div className="grid gap-2">
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="width">Width</Label>
-                              <Input
-                                id="width"
-                                defaultValue="100%"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="maxWidth">Max. width</Label>
-                              <Input
-                                id="maxWidth"
-                                defaultValue="300px"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="height">Height</Label>
-                              <Input
-                                id="height"
-                                defaultValue="25px"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                            <div className="grid grid-cols-3 items-center gap-4">
-                              <Label htmlFor="maxHeight">Max. height</Label>
-                              <Input
-                                id="maxHeight"
-                                defaultValue="none"
-                                className="col-span-2 h-8"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                      <CategoriesFilterUI onDataFromChild={handleCategoriesData} defaultVal={categoriesData}/>
                       </PopoverContent>
                     </Popover>
                   </div>
