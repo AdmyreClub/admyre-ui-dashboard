@@ -17,7 +17,7 @@ const routes = [
         color: "text-white"
     },
     {
-        label: "Find Influencers",
+        label: "Find Influencers (Try New AI)",
         icon: Database,
         href: "/discover",
         color: "text-white"

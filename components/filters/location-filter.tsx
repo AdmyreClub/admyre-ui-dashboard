@@ -39,12 +39,12 @@ export default function LocationFilterUI({ onDataFromChild, defaultVal }: ChildP
     // Send data to the parent component using the callback function
     onDataFromChild(selectedLocations);
   };
-  
-  
+
+
 
   const { handleSubmit, reset, register, formState: { errors } } = useForm<LocationSchemaType>({
     resolver: zodResolver(locationSchema),
-    
+
   });
 
   useEffect(() => {

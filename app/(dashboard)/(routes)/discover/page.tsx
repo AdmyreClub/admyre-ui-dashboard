@@ -8,6 +8,9 @@ import { UserRound } from "lucide-react";
 import { DataTable } from '@/components/ui/Table/DataTable'; // Assuming DataTable is correctly implemented
 import { columns } from '@/components/ui/Table/columns'; // Assuming columns are defined
 import FilterUI from "@/components/filter-ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AIFilterUI from "@/components/ai.filter-ui";
+import DiscoverListUI from "@/components/list.ui";
 
 type SocialHandleMetric = {
     followers: number;
@@ -122,36 +125,73 @@ const DiscoverPage = () => {
         fetchData();
     }, [page, pageSize]);
 
-    return (
-        <div className="pt-[5rem]">
-            <Heading
-                title="Creator Discovery"
-                description="Instantly Connect with Influencers from the Largest Database"
-                icon={UserRound}
-                iconColor="text-black-500"
-                bgColor="bg-slate-500/10"
-            />
+        const [plans, setPlans] = useState([
+          { id: 1, name: 'Basic Plan', date: 'Jan 20, 2024' },
+          { id: 2, name: 'Premium Plan', date: 'Jan 22, 2024' },
+          // Add more plans as needed
+        ]);
 
-            <div className="flex flex-col items-center sm:mx-4">
-                <div className="w-full max-w-8xl p-4">
-                    <section className='py-12'>
-                        <div className='container'>
-                          <FilterUI />
-                          <DataTable
-                              key={`${page}-${pageSize}`}
-                              totalDocuments={totalDocuments}
-                              columns={columns}
-                              data={data}
-                              page={page}
-                              setPage={setPage}
-                              pageSize={pageSize}
-                              setPageSize={setPageSize}
-                              />
-                        </div>
-                    </section>
-                </div>
-            </div>
+        // Handlers for plan actions
+        const handleNewPlan = () => {
+          // Logic to add a new plan
+        };
+
+        const handleSelectPlan = (planId: number) => {
+          // Logic when a plan is selected
+        };
+
+        const handleDeletePlan = (planId: number) => {
+          // Logic to delete a plan
+        };
+
+
+    return (
+      <div className="pt-[5rem]">
+      <Heading
+        title="Creator Discovery"
+        description="Instantly Connect with Influencers from the Largest Database"
+        icon={UserRound}
+        iconColor="text-black-500"
+        bgColor="bg-slate-500/10"
+      />
+
+      {/* Main content and sidebar wrapper */}
+      <div className="flex flex-col items-center sm:mx-4">
+        <div className="flex w-full max-w-8xl">
+
+          {/* Main content */}
+          <section className="flex-grow py-12 pr-4">
+            <Tabs defaultValue="manual">
+              <TabsList>
+                <TabsTrigger value="manual">Manual</TabsTrigger>
+                <TabsTrigger value="ai-filter">AI Based Filtering</TabsTrigger>
+              </TabsList>
+              <TabsContent value="manual">
+                <FilterUI />
+              </TabsContent>
+              <TabsContent value="ai-filter">
+                <AIFilterUI />
+              </TabsContent>
+            </Tabs>
+
+            <DataTable
+              key={`${page}-${pageSize}`}
+              totalDocuments={totalDocuments}
+              columns={columns}
+              data={data}
+              page={page}
+              setPage={setPage}
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+            />
+          </section>
+
+          {/* List Sidebar */}
+            <DiscoverListUI />
+
         </div>
+      </div>
+    </div>
     );
 };
 
