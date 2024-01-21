@@ -125,7 +125,7 @@ const FollowingFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
       <div className="grid gap-4">
         <h4 className="font-medium leading-none">Following Range</h4>
         <p className="text-sm text-muted-foreground">
-          Set the interval for Following counts.
+          Set the interval for Following counts. 🫡
         </p>
 
         <div className="grid grid-cols-3 items-center gap-4">

@@ -10,14 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Define types for your suggestions and selected locations
+
 type LocationType = {
   cities: string[];
   states: string[];
   countries: string[];
 };
 
-// Define the schema using zod
 const locationSchema = z.object({
   location: z.string().optional(),
 });
@@ -82,11 +81,11 @@ export default function LocationFilterUI() {
   };
 
   return (
-    <div className="space-y-8 p-5">
+    <div className="space-y-8 p-2">
       <form onSubmit={handleSubmit(onSubmit)}>
         <h4 className="font-medium leading-none mb-2">Select Locations</h4>
           <p className="text-sm text-muted-foreground mb-4">
-            Set the locations you are interested in.
+            Set the locations you are interested in. 🔎
           </p>
         <Input {...register('location')}
                value={query}

@@ -52,7 +52,10 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label>Gender:</label>
+        <label className="font-medium leading-none mb-2">Gender</label>
+        <p className="text-sm text-muted-foreground mb-4">
+            Apply Gender Filters 💀
+          </p>
         <div>
           <RadioGroup
             className="mt-3 text-slate-700 font-light flex"

@@ -34,6 +34,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { useState } from "react";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -67,6 +79,15 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
+
+  const handleRowClick = (rowData: TData) => {
+    setSelectedRowData(rowData);
+    setIsSheetOpen(true);
+  };
+
   //console.log("DataTable received new data: ", data);
   //console.log("length: ", tableInstance.getRowModel().rows?.length)
   return (
@@ -90,10 +111,9 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-
             {tableInstance.getRowModel().rows?.length ? (
               tableInstance.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} onClick={() => handleRowClick(row.original)}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -113,6 +133,26 @@ export function DataTable<TData, TValue>({
       </div>
       <DataTablePagination table={tableInstance} setPage={setPage}
         setPageSize={setPageSize}/>
+
+      {/* Sheet component */}
+      {selectedRowData && (
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Row Details</SheetTitle>
+              <SheetDescription>
+                Details about the selected row.
+              </SheetDescription>
+            </SheetHeader>
+            {/* ...content based on selectedRowData... */}
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button onClick={() => setIsSheetOpen(false)}>Close</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      )}
     </>
   );
 }
