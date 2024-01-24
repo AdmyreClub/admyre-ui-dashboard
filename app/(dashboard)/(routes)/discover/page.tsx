@@ -11,6 +11,7 @@ import FilterUI from "@/components/filter-ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AIFilterUI from "@/components/ai.filter-ui";
 import DiscoverListUI from "@/components/list.ui";
+import { useAuth } from "@/app/context/AuthContext";
 
 type SocialHandleMetric = {
     followers: number;
@@ -102,6 +103,9 @@ const DiscoverPage = () => {
     const [pageSize, setPageSize] = useState(10);
     const [filters, setFilters] = useState([]);
     const [totalDocuments, setTotalDocuments] = useState(0);
+
+    const { userId } = useAuth();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -187,7 +191,7 @@ const DiscoverPage = () => {
           </section>
 
           {/* List Sidebar */}
-            <DiscoverListUI />
+            <DiscoverListUI userId={userId}/>
 
         </div>
       </div>

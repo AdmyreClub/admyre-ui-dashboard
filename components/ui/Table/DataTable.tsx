@@ -45,6 +45,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -113,13 +114,27 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {tableInstance.getRowModel().rows?.length ? (
               tableInstance.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} onClick={() => handleRowClick(row.original)}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <ContextMenu key={row.id}>
+                  <ContextMenuTrigger asChild >
+                    <TableRow onClick={() => handleRowClick(row.original)}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="w-64">
+                    {/* ... Context menu items ... */}
+                    <ContextMenuItem>
+                      Action 1
+                    </ContextMenuItem>
+                    <ContextMenuItem>
+                      Action 2
+                    </ContextMenuItem>
+                    {/* ... Other context menu items ... */}
+                  </ContextMenuContent>
+                </ContextMenu>
               ))
             ) : (
               <TableRow>
@@ -137,7 +152,7 @@ export function DataTable<TData, TValue>({
       {/* Sheet component */}
       {selectedRowData && (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent>
+          <SheetContent className="w-[540px]">
             <SheetHeader>
               <SheetTitle>Row Details</SheetTitle>
               <SheetDescription>

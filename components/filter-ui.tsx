@@ -95,9 +95,9 @@ const FilterUI = () => {
 
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Search</Label>
+              <Label htmlFor="name">Give us some hints</Label>
               <div className="flex space-x-1.5">
-                <Input id="name" placeholder="Search by Name" />
+                <Input id="name" placeholder="Narrow down results by keywords, hashtags etc" />
               </div>
             </div>
             <div className="flex flex-col space-y-1.5 w-fit">

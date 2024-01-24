@@ -23,9 +23,9 @@ const routes = [
         color: "text-white"
     },
     {
-        label: "Enrich",
+        label: "Track & Enrich",
         icon: Microscope,
-        href: "/import",
+        href: "/actions",
         color: "text-white"
     },
     {

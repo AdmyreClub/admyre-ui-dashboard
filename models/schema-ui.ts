@@ -1,7 +1,7 @@
 import * as z from "zod"
 
 export const initialFiltersState = {
-    username: '',
+    keywords: [],
     location: {
       country: '',
       state: '',
