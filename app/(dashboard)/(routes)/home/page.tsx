@@ -7,7 +7,7 @@ export default function DashboardPage() {
           <h2 className="text-2xl md:text-4xl font-bold ">
           Instantly Connect with Influencers from the Largest Database
           </h2>
-          <p>Welcome back, {}</p>
+          <p>Welcome back, hddfgdfg</p>
         </div>
       </div>
     </>
