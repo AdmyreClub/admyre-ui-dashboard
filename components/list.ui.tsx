@@ -17,7 +17,7 @@ import { Plus } from "lucide-react";
 import strategyDao from "@/dao/StrategyDao";
 import { Strategy } from "@prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
   DialogContent,
@@ -139,7 +139,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-4 border-inherit shadow-lg rounded-lg">
+      <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
         <Card>
           <link
             rel="stylesheet"
@@ -181,37 +181,40 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
           </CardFooter>
           <CardContent className="flex flex-col align-middle">
             {isLoading ? (
-              <Skeleton className="w-[100px] h-[20px] rounded-full " />
+              <Skeleton className="w-[100px] h-[6px] rounded-full " />
             ) : (
-              strategies.map((strategy) => (
-                <Card
-                  key={strategy.id}
-                  className="cursor-pointer mt-3 ml-[-9px] h-[100px] w-[200px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top border-none shadow-md"
-                  onClick={() => router.push(`/strategies/${strategy.id}`)}
-                >
-                  <Card className="flex border-none shadow-none">
-                    <img
-                      className="w-[20px] h-[20px] rounded-[50%]"
-                      src={strategy.pictureUrl}
-                      alt=""
-                    />
-                    <p className="ml-2 text-[12px] self-center font-semibold">
-                      {strategy.name || `Strategy ${strategy.id}`}
-                    </p>
-                  </Card>
-                  <Card className="flex border-none shadow-none justify-between">
-                    <Card className="flex border-none shadow-none">
-                      <i className="self-center fa-solid fa-list text-gray-400 text-[10px]"></i>
-                      <p className="ml-2 text-gray-400 text-[10px]">
-                        {strategy.listCount} lists
+              <ScrollArea className="w-full">
+                {strategies.map((strategy) => (
+                  <Card
+                    key={strategy.id}
+                    className="cursor-pointer mt-3 h-[100px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top"
+                    onClick={() => router.push(`/strategies/${strategy.id}`)}
+                  >
+                    <div className="flex gap-2 align-middle items-center">
+                      <img
+                        className="w-[40px] h-[40px] rounded-[50%]"
+                        src={strategy.pictureUrl}
+                        alt=""
+                      />
+                      <p className="ml-2 self-center font-semibold">
+                        {strategy.name || `Strategy ${strategy.id}`}
                       </p>
+                    </div>
+                    <Card className="flex border-none shadow-none justify-between">
+                      <Card className="flex border-none shadow-none">
+                        <i className="self-center fa-solid fa-list text-gray-400 text-[10px]"></i>
+                        <p className="ml-2 text-gray-400 text-[10px]">
+                          {strategy.listCount} lists
+                        </p>
+                      </Card>
+                      <Card className="flex border-none shadow-none text-[10px]">{formatDateToMDY(strategy.createdAt)}</Card>
                     </Card>
-                    <Card className="flex border-none shadow-none text-[10px]">{formatDateToMDY(strategy.createdAt)}</Card>
                   </Card>
-                </Card>
-              ))
+                ))}
+              </ScrollArea>
             )}
           </CardContent>
+
         </Card>
       </aside>
 

@@ -19,3 +19,4 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         return new NextResponse(JSON.stringify({ message: 'Internal Server Error for getting all strategies', error }), { status: 500 });
     }
 }
+

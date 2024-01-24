@@ -54,3 +54,12 @@ export async function POST(req: Request, res: NextApiResponse) {
     return new NextResponse(JSON.stringify({ message: 'Internal Server Error', error }), { status: 500 });
   }
 }
+// data.followers.from = followerData[0];
+// data.followers.to = followerData[1];
+// data.categories = categoriesData.categories;
+// data.followings.from = followingData[0];
+// data.followings.to = followingData[1];
+// data.location = locationData;
+// data.languages = languagesData.languages;
+// data.engagementRate = engagementRateData;
+// data.gender = genderData;

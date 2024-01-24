@@ -25,7 +25,7 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronDown, Filter, Search } from "lucide-react";
+import { ChevronDown, Filter, Search, X } from "lucide-react";
 import {
   initialFiltersState,
   locationSchema,
@@ -43,6 +43,7 @@ import LanguageFilterUI from "./filters/language-filter";
 import EngagementFilterUI from "./filters/engagement-filter";
 import GenderForm from "./filters/genders-filter";
 import CategoriesFilterUI from "./filters/categories-filter";
+import axios from "axios";
 
 type FiltersType = z.infer<typeof filtersSchema>;
 type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
@@ -57,6 +58,7 @@ const FilterUI = () => {
   const [engagementRateData, setEngagementRateData] = React.useState([0, 100]);
   const [languagesData, setLanguagesData] = React.useState<string[]>([]);
   const [locationData, setLocationData] = React.useState<string[]>([]);
+  const [keywords, setKeywords] = React.useState<string[]>([]);
 
   const handleFollowerData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
@@ -88,6 +90,22 @@ const FilterUI = () => {
     setLocationData(dataFromChild);
   };
 
+  const handleKeywordInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      const newKeyword = event.currentTarget.value.trim();
+      if (newKeyword && !keywords.includes(newKeyword)) {
+        setKeywords([...keywords, newKeyword]);
+        event.currentTarget.value = ''; // Clear the input field
+      }
+    }
+  };
+
+  const removeKeyword = (keywordToRemove: string) => {
+    const updatedKeywords = keywords.filter(keyword => keyword !== keywordToRemove);
+    setKeywords(updatedKeywords);
+  };
+
   const {
     register,
     handleSubmit,
@@ -98,7 +116,7 @@ const FilterUI = () => {
     defaultValues: initialFiltersState,
   });
 
-  const onSubmitMain = (data: FiltersType) => {
+  const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
     data.categories = categoriesData.categories;
@@ -108,14 +126,36 @@ const FilterUI = () => {
     data.languages = languagesData.languages;
     data.engagementRate = engagementRateData;
     data.gender = genderData;
+    // Assemble filter data
 
-    console.log("Main data: ", data);
-    // console.log("Main data: ",data);
-    // console.log("follower data: " , followerData);
-    // console.log("engagementRate data: " , engagementRateData);
-    // console.log("gender data: " , genderData);
-    // console.log("following data: " , followingData);
-    console.log("outsidee");
+    const assembledData = {
+      followers: {
+        from: followerData[0],
+        to: followerData[1],
+      },
+      categories: categoriesData,
+      followings: {
+        from: followingData[0],
+        to: followingData[1],
+      },
+      location: locationData,
+      languages: languagesData,
+      engagementRate: engagementRateData[1],
+      gender: genderData,
+      keywords: keywords, // Include keywords in the filter
+    };
+
+    try {
+      // Send data to the API
+      const response = await axios.post('/api/search', assembledData);
+
+      // Handle the response
+      console.log("Response from API: ", response.data);
+      // Update state or perform actions based on the response
+    } catch (error) {
+      console.error("Error submitting filters: ", error);
+      // Handle error
+    }
   };
   const handleResetMain = () => {
     reset();
@@ -133,16 +173,27 @@ const FilterUI = () => {
           </CardHeader>
           <CardContent>
             <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Give us some hints</Label>
-                <div className="flex space-x-1.5">
-                  <Input
-                    id="name"
-                    placeholder="Narrow down results by keywords, hashtags etc"
-                    {...register("username")}
-                  />
-                </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="keywords">Give us some hints</Label>
+              <div className="flex space-x-1.5">
+                <Input
+                  id="keywords"
+                  placeholder="Narrow down filter results by typing keywords, hashtags etc (e.g., food, yoga, #ahmedabad)"
+                  onKeyDown={handleKeywordInput}
+                />
               </div>
+            </div>
+
+          <div className="flex flex-wrap gap-2 mt-1">
+            {keywords.map((keyword, index) => (
+              <span key={index} className="flex items-center gap-2 border px-3 py-1 rounded-full">
+                {keyword}
+                <button type="button" onClick={() => removeKeyword(keyword)} className="rounded-full text-sm p-1">
+                  <X size={18} />
+                </button>
+              </span>
+            ))}
+          </div>
               <div className="flex flex-col space-y-1.5 w-fit">
                 <Label htmlFor="framework">Advanced Filters</Label>
                 <section className="flex flex-wrap space-x-1.5 gap-1.5 items-start">
