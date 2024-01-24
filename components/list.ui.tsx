@@ -61,7 +61,8 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
         if (userId) {
             setIsLoading(true);
             try {
-                const response = await fetch(`/api/strategy/get-all?userId=${encodeURIComponent(userId)}`);
+                const response = await fetch('/api/strategy/get-all');
+                console.log("whats the response: ", response)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -76,7 +77,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
     };
 
     fetchStrategies();
-}, [userId]);
+}, []);
 
 
 
@@ -87,17 +88,20 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
     // Construct the strategy data object
     const strategyData = {
-      userId: userId, // Make sure to include the userId in the request body
       name: data.strategyName,
+      pictureUrl: 'https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925',
       description: data.description,
     };
 
     console.log('Strategy Data to Send:', strategyData); // Log the strategy data
 
-    // Uncomment below code to make the POST request when you're ready
-
     try {
-      const response = await axios.post('/api/strategy/post-new', strategyData);
+      const response = await axios.post('/api/strategy/new', {
+        name: data.strategyName,
+        pictureUrl: 'https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925',
+        description: data.description,
+      });
+
 
       console.log('New Strategy Response:', response.data); // Log the response data
 
@@ -105,17 +109,17 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
       setIsDialogOpen(false);
       methods.reset();
 
-      // Redirect based on the user's choice for adding influencers
-      if (data.addInfluencersBy === 'search') {
-        await router.push('/discover');
-      } else if (data.addInfluencersBy === 'manual') {
-        await router.push('/actions/import');
-      }
+      // if (data.addInfluencersBy === 'search') {
+      //   await router.push('/discover');
+      // } else if (data.addInfluencersBy === 'manual') {
+      //   await router.push('/actions/import');
+      // }
 
       // Reload the current page
-      window.location.reload();
+      //window.location.reload();
     } catch (error) {
       console.error('Error creating strategy');
+      console.error(error)
     }
 
   };

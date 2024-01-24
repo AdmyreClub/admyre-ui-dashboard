@@ -47,7 +47,7 @@ import {
 import { useState } from "react";
 import { Card } from "../card";
 import Chart from "./charts/followingChart";
-import influencers from "@/lib/detailedData";
+
 import Dashboard from "./charts/chartColumn";
 import AudienceLocations from "./charts/locationChart";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
   const [sheetUserName, setSheetUserName] = useState<string>("");
-  const currentUser = influencers[0];
+
 
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);

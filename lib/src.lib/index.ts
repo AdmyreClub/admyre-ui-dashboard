@@ -1,6 +1,6 @@
 //tracking api to be made from:
 
-// insttrack, social blade, own, qoruz, gcc, instajet.io, modash, heepsy, hypeauditor
+
 
 // primary aim is to create two paths: one for tracking posts & profiles and another for importing profiles both one by one and in bulk
 
