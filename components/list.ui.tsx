@@ -109,11 +109,11 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
       setIsDialogOpen(false);
       methods.reset();
 
-      if (data.addInfluencersBy === 'search') {
-        await router.push('/discover');
-      } else if (data.addInfluencersBy === 'manual') {
-        await router.push('/actions/import');
-      }
+      // if (data.addInfluencersBy === 'search') {
+      //   await router.push('/discover');
+      // } else if (data.addInfluencersBy === 'manual') {
+      //   await router.push('/actions/import');
+      // }
 
       // Reload the current page
       //window.location.reload();

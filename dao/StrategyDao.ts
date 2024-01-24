@@ -84,13 +84,32 @@ class StrategyDao implements IStrategyDao {
     });
   }
 
-  async getAllStrategies(userId: string): Promise<Strategy[]> {
-    return this.prisma.strategy.findMany({
+  async getAllStrategies(userId: string): Promise<(Strategy & { listCount: number })[]> {
+    const strategies = await this.prisma.strategy.findMany({
       where: {
         userId,
       },
     });
+
+    const strategiesWithListCount = await Promise.all(
+      strategies.map(async (strategy) => {
+        const listCount = await this.prisma.list.count({
+          where: {
+            strategyId: strategy.id,
+          },
+        });
+
+        return {
+          ...strategy,
+          listCount,
+        };
+      }),
+    );
+
+    return strategiesWithListCount;
   }
+
+
 
   async getAllLists(strategyId: string): Promise<List[]> {
     return this.prisma.list.findMany({
