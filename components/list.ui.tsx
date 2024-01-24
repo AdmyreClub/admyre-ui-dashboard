@@ -109,11 +109,11 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
       setIsDialogOpen(false);
       methods.reset();
 
-      // if (data.addInfluencersBy === 'search') {
-      //   await router.push('/discover');
-      // } else if (data.addInfluencersBy === 'manual') {
-      //   await router.push('/actions/import');
-      // }
+      if (data.addInfluencersBy === 'search') {
+        await router.push('/discover');
+      } else if (data.addInfluencersBy === 'manual') {
+        await router.push('/actions/import');
+      }
 
       // Reload the current page
       //window.location.reload();
@@ -131,24 +131,14 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
         <Card>
           <CardHeader>
             <CardTitle>All Strategies</CardTitle>
-            <CardDescription>Select a strategy to manage lists and influencers. 👇🏻</CardDescription>
+            <CardDescription className='text-md'>Select a strategy to manage lists and influencers. 👇🏻</CardDescription>
           </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <Skeleton className="w-[100px] h-[20px] rounded-full" />
-            ) : (
-              strategies.map(strategy => (
-                <div key={strategy.id} className="cursor-pointer" onClick={() => router.push(`/strategies/${strategy.id}`)}>
-                  {strategy.name || `Strategy ${strategy.id}`}
-                </div>
-              ))
-            )}
-          </CardContent>
-          <CardFooter>
+          {/* unconventional but i needed to place footer above the content */}
+          <CardFooter className='justify-center'>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className='mr-1' /> New Strategy 🤓
+              <Button className='p-6 text-md align-middle' onClick={() => setIsDialogOpen(true)}>
+                <Plus className='mr-3' /> New Strategy 🤓
               </Button>
             </DialogTrigger>
 
@@ -163,6 +153,18 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
           </Dialog>
           </CardFooter>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="w-[100px] h-[20px] rounded-full" />
+            ) : (
+              strategies.map(strategy => (
+                <div key={strategy.id} className="cursor-pointer" onClick={() => router.push(`/strategies/${strategy.id}`)}>
+                  {strategy.name || `Strategy ${strategy.id}`}
+                </div>
+              ))
+            )}
+          </CardContent>
+
         </Card>
       </aside>
 
