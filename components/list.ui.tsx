@@ -1,13 +1,20 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { Plus } from 'lucide-react';
-import strategyDao from '@/dao/StrategyDao';
+import { Plus } from "lucide-react";
+import strategyDao from "@/dao/StrategyDao";
 import { Strategy } from "@prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -18,14 +25,13 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import * as z from "zod";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import NewStrategyUI from './form.list.ui';
-
+import NewStrategyUI from "./form.list.ui";
 
 // interface StrategyFormData {
 //   name: string;
@@ -34,7 +40,7 @@ import NewStrategyUI from './form.list.ui';
 
 const strategySchema = z.object({
   strategyName: z.string().min(1, "Please enter the strategy name"),
-  addInfluencersBy: z.enum(['search', 'manual']),
+  addInfluencersBy: z.enum(["search", "manual"]),
   description: z.string().optional(),
 });
 
@@ -55,57 +61,55 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
     resolver: zodResolver(strategySchema),
   });
 
-
   useEffect(() => {
     const fetchStrategies = async () => {
-        if (userId) {
-            setIsLoading(true);
-            try {
-                const response = await fetch('/api/strategy/get-all');
-                console.log("whats the response: ", response)
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const fetchedStrategies = await response.json();
-                setStrategies(fetchedStrategies);
-            } catch (error) {
-                console.error('Error fetching strategies:', error);
-            } finally {
-                setIsLoading(false);
-            }
+      if (userId) {
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/strategy/get-all");
+          console.log("whats the response: ", response);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const fetchedStrategies = await response.json();
+          setStrategies(fetchedStrategies);
+        } catch (error) {
+          console.error("Error fetching strategies:", error);
+        } finally {
+          setIsLoading(false);
         }
+      }
     };
 
     fetchStrategies();
-}, []);
+  }, []);
 
-
-
-  const handleStrategySubmit =async (data: StrategyFormData) => {
-    console.log('Strategy Data:', data);
+  const handleStrategySubmit = async (data: StrategyFormData) => {
+    console.log("Strategy Data:", data);
     setIsDialogOpen(false);
-    console.log('Form Data Submitted:', data); // First, log data to the console
+    console.log("Form Data Submitted:", data); // First, log data to the console
 
     // Construct the strategy data object
     const strategyData = {
       name: data.strategyName,
-      pictureUrl: 'https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925',
+      pictureUrl:
+        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
       description: data.description,
     };
 
-    console.log('Strategy Data to Send:', strategyData); // Log the strategy data
+    console.log("Strategy Data to Send:", strategyData); // Log the strategy data
 
     try {
-      const response = await axios.post('/api/strategy/new', {
+      const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
-        pictureUrl: 'https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925',
+        pictureUrl:
+          "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
         description: data.description,
       });
 
+      console.log("New Strategy Response:", response.data); // Log the response data
 
-      console.log('New Strategy Response:', response.data); // Log the response data
-
-      setStrategies(current => [...current, response.data]);
+      setStrategies((current) => [...current, response.data]);
       setIsDialogOpen(false);
       methods.reset();
 
@@ -118,58 +122,99 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
       // Reload the current page
       //window.location.reload();
     } catch (error) {
-      console.error('Error creating strategy');
-      console.error(error)
+      console.error("Error creating strategy");
+      console.error(error);
     }
-
   };
 
+  function formatDateToMDY(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
+  }
 
   return (
     <>
       <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-4 border-inherit shadow-lg rounded-lg">
         <Card>
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+            integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+          />
           <CardHeader>
             <CardTitle>All Strategies</CardTitle>
-            <CardDescription className='text-md'>Select a strategy to manage lists and influencers. 👇🏻</CardDescription>
+            <CardDescription className="text-md">
+              Select a strategy to manage lists and influencers. 👇🏻
+            </CardDescription>
           </CardHeader>
           {/* unconventional but i needed to place footer above the content */}
-          <CardFooter className='justify-center'>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className='p-6 text-md align-middle' onClick={() => setIsDialogOpen(true)}>
-                <Plus className='mr-3' /> New Strategy 🤓
-              </Button>
-            </DialogTrigger>
+          <CardFooter className="justify-center">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  className="p-6 text-md align-middle"
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  <Plus className="mr-3" /> New Strategy 🤓
+                </Button>
+              </DialogTrigger>
 
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create Strategy</DialogTitle>
-              </DialogHeader>
-              <FormProvider {...methods}>
-            <NewStrategyUI onSubmit={handleStrategySubmit} setIsDialogOpen={setIsDialogOpen} />
-          </FormProvider>
-            </DialogContent>
-
-          </Dialog>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Strategy</DialogTitle>
+                </DialogHeader>
+                <FormProvider {...methods}>
+                  <NewStrategyUI
+                    onSubmit={handleStrategySubmit}
+                    setIsDialogOpen={setIsDialogOpen}
+                  />
+                </FormProvider>
+              </DialogContent>
+            </Dialog>
           </CardFooter>
-          <CardContent>
+          <CardContent className="flex flex-col align-middle">
             {isLoading ? (
-              <Skeleton className="w-[100px] h-[20px] rounded-full" />
+              <Skeleton className="w-[100px] h-[20px] rounded-full " />
             ) : (
-              strategies.map(strategy => (
-                <div key={strategy.id} className="cursor-pointer" onClick={() => router.push(`/strategies/${strategy.id}`)}>
-                  {strategy.name || `Strategy ${strategy.id}`}
-                </div>
+              strategies.map((strategy) => (
+                <Card
+                  key={strategy.id}
+                  className="cursor-pointer mt-3 ml-[-9px] h-[100px] w-[200px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top border-none shadow-md"
+                  onClick={() => router.push(`/strategies/${strategy.id}`)}
+                >
+                  <Card className="flex border-none shadow-none">
+                    <img
+                      className="w-[20px] h-[20px] rounded-[50%]"
+                      src={strategy.pictureUrl}
+                      alt=""
+                    />
+                    <p className="ml-2 text-[12px] self-center font-semibold">
+                      {strategy.name || `Strategy ${strategy.id}`}
+                    </p>
+                  </Card>
+                  <Card className="flex border-none shadow-none justify-between">
+                    <Card className="flex border-none shadow-none">
+                      <i className="self-center fa-solid fa-list text-gray-400 text-[10px]"></i>
+                      <p className="ml-2 text-gray-400 text-[10px]">
+                        {strategy.listCount} lists
+                      </p>
+                    </Card>
+                    <Card className="flex border-none shadow-none text-[10px]">{formatDateToMDY(strategy.createdAt)}</Card>
+                  </Card>
+                </Card>
               ))
             )}
           </CardContent>
-
         </Card>
       </aside>
 
       {/* Strategy Creation Dialog */}
-
     </>
   );
 };
