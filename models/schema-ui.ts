@@ -42,7 +42,7 @@ export const initialFiltersState = {
   });
 
   export const filtersSchema = z.object({
-    username: z.string().nullable(),
+    keywords: z.array(z.string()).nullable(), // Updated to be an array of strings
     location: locationSchema,
     age: ageSchema,
     categories: z.array(z.string()).nullable(),
@@ -52,6 +52,7 @@ export const initialFiltersState = {
     gender: z.string().nullable(),
     languages: z.array(z.string()).nullable(),
   });
+
 
   export const followersRangedSchema = z.object({
     followers: rangeSchema,

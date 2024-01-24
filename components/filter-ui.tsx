@@ -126,7 +126,7 @@ const FilterUI = () => {
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Give us some hints</Label>
               <div className="flex space-x-1.5">
-                <Input id="name" placeholder="Narrow down results by keywords, hashtags etc" {...register("username")}/>
+                <Input id="name" placeholder="Narrow down results by keywords, hashtags etc (e.g., Beauty, Food, #Ahmedabad)" {...register("keywords")}/>
               </div>
             </div>
             <div className="flex flex-col space-y-1.5 w-fit">
