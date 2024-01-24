@@ -7,17 +7,33 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Influencer Search',
-  description: 'Data driven marketing for the modern world',
-}
+  title: "Influencer Search",
+  description: "Data driven marketing for the modern world",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          footerActionLink: {
+            backgroundColor: "white",
+            color: "black",
+          },
+          formButtonPrimary: "bg-black hover:bg-black text-sm normal-case",
+          card:"shadow-none "
+
+
+        },
+        variables: {
+          colorText: "black",
+        },
+      }}
+    >
       <html lang="en">
         <body className={inter.className}>
         <ThemeProvider
@@ -31,5 +47,5 @@ export default function RootLayout({
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }

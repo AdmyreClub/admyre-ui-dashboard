@@ -42,35 +42,64 @@ type followingsRangedSchemaType = z.infer<typeof followingsRangedSchema>;
 
 const FilterUI = () => {
   const [filters, setFilters] = React.useState(initialFiltersState);
+    const [categoriesData, setCategoriesData] = React.useState<string[]>([])
+    const [followerData, setFollowerData] = React.useState([0, 100000000])
+    const [genderData, setGenderData] = React.useState("male")
+    const [followingData, setFollowingData] = React.useState([0, 100000000])
+    const [engagementRateData, setEngagementRateData] = React.useState([0, 100])
+    const [languagesData, setLanguagesData] = React.useState<string[]>([])
+    const [locationData, setLocationData] = React.useState<string[]>([])
 
-  const [followerData, setFollowerData] = React.useState([0, 100000000])
-  const [genderData, setGenderData] = React.useState("male")
-  const [followingData, setFollowingData] = React.useState([0, 100000000])
-  const [engagementRateData, setEngagementRateData] = React.useState([0, 100])
+    const handleFollowerData = (dataFromChild: [number, number]) => {
+      // Do something with the data received from the child component
+      setFollowerData(dataFromChild);
+    };
+    const handleEngagementRateData = (dataFromChild: [number, number]) => {
+      // Do something with the data received from the child component
+      setEngagementRateData(dataFromChild);
+    };
+    const handleGenderData = (dataFromChild: string) => {
+      // Do something with the data received from the child component
+      setGenderData(dataFromChild);
+    };
+    const handleFollowingData = (dataFromChild: [number, number]) => {
+      // Do something with the data received from the child component
+      setFollowingData(dataFromChild);
+    };
 
-  const handleFollowerData = (dataFromChild: [number, number]) => {
-    // Do something with the data received from the child component
-    setFollowerData(dataFromChild);
-  };
-  const handleEngagementRateData = (dataFromChild: [number, number]) => {
-    // Do something with the data received from the child component
-    setEngagementRateData(dataFromChild);
-  };
-  const handleGenderData = (dataFromChild: string) => {
-    // Do something with the data received from the child component
-    setGenderData(dataFromChild);
-  };
-  const handleFollowingData = (dataFromChild: [number, number]) => {
-    // Do something with the data received from the child component
-    setFollowingData(dataFromChild);
-  };
+    const handleCategoriesData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setCategoriesData(dataFromChild);
+    };
+    const handleLanguagesData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setLanguagesData(dataFromChild);
+    };
+    const handleLocationData = (dataFromChild: string[]) => {
+      // Do something with the data received from the child component
+      setLocationData(dataFromChild);
+    };
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FiltersType>({
     resolver: zodResolver(filtersSchema),
     defaultValues: initialFiltersState
   });
 
+
   const onSubmitMain = (data: FiltersType) => {
+
+    data.followers.from = followerData[0]
+    data.followers.to = followerData[1]
+    data.categories = categoriesData.categories
+    data.followings.from = followingData[0]
+    data.followings.to = followingData[1]
+    data.location = locationData
+    data.languages = languagesData.languages
+    data.engagementRate = engagementRateData
+    data.gender = genderData
+
+
+    console.log("Main data: ",data);
     // console.log("Main data: ",data);
     // console.log("follower data: " , followerData);
     // console.log("engagementRate data: " , engagementRateData);
@@ -97,7 +126,7 @@ const FilterUI = () => {
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Give us some hints</Label>
               <div className="flex space-x-1.5">
-                <Input id="name" placeholder="Narrow down results by keywords, hashtags etc" />
+                <Input id="name" placeholder="Narrow down results by keywords, hashtags etc" {...register("username")}/>
               </div>
             </div>
             <div className="flex flex-col space-y-1.5 w-fit">
@@ -129,7 +158,7 @@ const FilterUI = () => {
                       <Button variant="outline" className="flex space-x-2">Location <ChevronDown /> </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80">
-                      <LocationFilterUI />
+                    <LocationFilterUI onDataFromChild={handleLocationData} defaultVal={locationData}/>
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -139,7 +168,7 @@ const FilterUI = () => {
                       <Button variant="outline" className="flex space-x-2">Language <ChevronDown /> </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80">
-                      <LanguageFilterUI />
+                    <LanguageFilterUI onDataFromChild={handleLanguagesData} defaultVal={languagesData}/>
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -149,7 +178,7 @@ const FilterUI = () => {
                       <Button variant="outline" className="flex space-x-2">Categories <ChevronDown /> </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80">
-                      <CategoriesFilterUI />
+                    <CategoriesFilterUI onDataFromChild={handleCategoriesData} defaultVal={categoriesData}/>
                     </PopoverContent>
                   </Popover>
                 </div>

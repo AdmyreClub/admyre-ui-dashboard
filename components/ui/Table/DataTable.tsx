@@ -45,7 +45,24 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { Card } from "../card";
+import Chart from "./charts/followingChart";
+import influencers from "@/lib/detailedData";
+import Dashboard from "./charts/chartColumn";
+import AudienceLocations from "./charts/locationChart";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+const mockData = [
+  { date: "2024-01-01", followers: 1000 },
+  { date: "2024-01-03", followers: 1050 },
+  { date: "2024-01-06", followers: 1100 },
+  { date: "2024-01-10", followers: 1125 },
+  { date: "2024-01-15", followers: 1150 },
+  { date: "2024-01-18", followers: 1200 },
+  { date: "2024-01-21", followers: 1250 },
+  { date: "2024-01-25", followers: 1300 },
+  { date: "2024-01-28", followers: 1350 },
+  { date: "2024-01-31", followers: 1400 },
+];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -64,7 +81,7 @@ export function DataTable<TData, TValue>({
   setPage,
   pageSize,
   setPageSize,
-  totalDocuments
+  totalDocuments,
 }: DataTableProps<TData, TValue>) {
   const tableInstance = useReactTable({
     data,
@@ -83,11 +100,33 @@ export function DataTable<TData, TValue>({
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
+  const [sheetUserName, setSheetUserName] = useState<string>("");
+  const currentUser = influencers[0];
 
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
     setIsSheetOpen(true);
+    setSheetUserName(rowData);
+    console.log(rowData);
   };
+
+  function formatLargeNumber(number: number) {
+    const billion = 1000000000;
+    const million = 1000000;
+    const thousand = 1000;
+
+    if (number >= billion) {
+      return (Math.round((number / billion) * 100) / 100).toFixed(0) + "B";
+    } else if (number >= million) {
+      return (Math.round((number / million) * 100) / 100).toFixed(0) + "M";
+    } else if (number >= thousand) {
+      return (Math.round((number / thousand) * 100) / 100).toFixed(0) + "K";
+    } else if (number >= 100) {
+      return Math.round(number).toString();
+    } else {
+      return number.toFixed(2); // Format numbers less than 100 with two decimal places
+    }
+  }
 
   //console.log("DataTable received new data: ", data);
   //console.log("length: ", tableInstance.getRowModel().rows?.length)
@@ -138,7 +177,10 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -146,24 +188,183 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={tableInstance} setPage={setPage}
-        setPageSize={setPageSize}/>
+      <DataTablePagination
+        table={tableInstance}
+        setPage={setPage}
+        setPageSize={setPageSize}
+      />
 
       {/* Sheet component */}
       {selectedRowData && (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent className="w-[540px]">
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+            integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+          />
+          <SheetContent className="w-[540px] overflow-y-scroll overflow-x-hidden no-scrollbar">
             <SheetHeader>
-              <SheetTitle>Row Details</SheetTitle>
-              <SheetDescription>
-                Details about the selected row.
+              <SheetTitle className="text-right ">
+                <Card className="border-none shadow-none mt-4 font-light text-gray-400 font-semibold text-[14px]">
+                  {sheetUserName.city ? `@ ${sheetUserName.city}` : ``}
+                </Card>
+              </SheetTitle>
+
+              <SheetDescription className="text-center align-middle flex-col justify-center ">
+                {/* main info*/}
+                <Card className="flex justify-around w-[520px] ml-[-15px] border-none shadow-none">
+                  <div>
+                    <Card className="align-center justify-left flex mb-3 mt-3 border-none shadow-none">
+                      <Card className="w-[150px] h-[150px] rounded-[50%] align-left overflow-hidden">
+                        <img src={sheetUserName.profileImage.url} alt="" />
+                      </Card>
+                    </Card>
+                    <Card className=" text-left border-none shadow-none ">
+                      <Card className="flex justify-center border-none shadow-none ">
+                        <p className="text-[18px] font-bold ">
+                          {sheetUserName.name}
+                        </p>
+                      </Card>
+                    </Card>
+                    <div className="flex justify-center mt-2">
+                      <Card className="w-[30px] h-[30px] text-center align-middle mr-3 pt-1 border-none shadow-md">
+                        <i className=" fa-brands fa-whatsapp "></i>
+                      </Card>
+                      <Card className="w-[30px] h-[30px] text-center align-middle  pt-1 border-none shadow-md">
+                        <i class="fa-solid fa-envelope"></i>
+                      </Card>
+                    </div>
+                  </div>
+                  {/* social icons */}
+                  <div className="align-center justify-left flex mb-3 mt-7 ml-2 mr-10 h-[180px] w-[300px]">
+                    <Card className="flex flex-col shadow-none  border-none ">
+                      <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
+                        <i className="text-red-600 fa-brands fa-youtube self-center "></i>
+                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                      </Card>
+                      <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
+                        <i className="text-blue-500 self-center fa-brands fa-twitter"></i>
+                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                      </Card>
+                      <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
+                        <i className="text-blue-700 self-center fa-brands fa-facebook"></i>
+                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                      </Card>
+                      <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
+                        <i className="text-black self-center fa-brands fa-tiktok"></i>
+                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                      </Card>
+
+                      <Card className="flex-col text-justify p-2 border-none shadow-none">
+                        <Card className="border-none shadow-none font-light ml-[-5px] text-gray-400 font-semibold text-[14px]">
+                          Bio :
+                        </Card>
+                        <p>{sheetUserName.bio}</p>
+                      </Card>
+                    </Card>
+                  </div>
+                </Card>
+                {/* user info */}
+                <Card className="align-center justify-center flex mb-3 mt-6 border-none shadow-none">
+                  <Card className="flex-col border-none shadow-none align-center justify-center ml-6">
+                    <Card className="flex justify-around border-none shadow-none mt-5 mr-[10px]">
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-users mt-2"></i>
+                        <p className="text-[18px] mt-2">
+                          {" "}
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.followers
+                          )}
+                        </p>{" "}
+                        <p className="text-[10px] text-gray-400">FOLLOWERS</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-user mt-2"></i>
+                        <p className="text-[18px] mt-2">
+                          {" "}
+                          {sheetUserName.socialHandles[0].metrics.following}
+                        </p>{" "}
+                        <p className="text-[10px] text-gray-400">FOLLOWING</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-infinity"></i>
+                        <p className="text-[18px] mt-2">{`${Math.round(
+                          sheetUserName.socialHandles[0].metrics.avgEngagement *
+                            10
+                        )} %`}</p>{" "}
+                        <p className="text-[10px] text-gray-400">ENGAGEMENT</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-heart"></i>
+                        <p className="text-[18px] mt-2">
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.avgLikes
+                          )}
+                        </p>
+                        <p className="text-[10px] text-gray-400">LIKES</p>
+                      </Card>
+                    </Card>
+                    <Card className="flex justify-around border-none shadow-none mt-5 mr-[10px]">
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-heart"></i>
+                        <p className="text-[18px] mt-2">
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.numOfPosts
+                          )}
+                        </p>
+                        <p className="text-[10px] text-gray-400">POSTS</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-comment"></i>
+                        <p className="text-[18px] mt-2">
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.avgComments
+                          )}
+                        </p>
+                        <p className="text-[10px] text-gray-400">COMMENTS</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-eye"></i>
+                        <p className="text-[18px] mt-2">
+                          {" "}
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.avgVideoViews
+                          )}
+                        </p>{" "}
+                        <p className="text-[10px] text-gray-400">VIEWS</p>
+                      </Card>
+                      <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
+                        <i className="fa-solid fa-eye"></i>
+                        <p className="text-[18px] mt-2">
+                          {" "}
+                          {formatLargeNumber(
+                            sheetUserName.socialHandles[0].metrics.avgVideoViews
+                          )}
+                        </p>{" "}
+                        <p className="text-[10px] text-gray-400">COMMENTS</p>
+                      </Card>
+                    </Card>
+                  </Card>
+                </Card>
+                <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
+                  <Chart label={"Follower"} />
+                </Card>
+                <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
+                  <Chart label={"Following"} />
+                </Card>
+                <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5 pr-6">
+                  <Dashboard />
+                </Card>
+                <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5 pr-6">
+                  <AudienceLocations />
+                </Card>
               </SheetDescription>
             </SheetHeader>
             {/* ...content based on selectedRowData... */}
             <SheetFooter>
-              <SheetClose asChild>
-                <Button onClick={() => setIsSheetOpen(false)}>Close</Button>
-              </SheetClose>
+              <SheetClose asChild></SheetClose>
             </SheetFooter>
           </SheetContent>
         </Sheet>
@@ -182,7 +383,6 @@ export function DataTablePagination<TData>({
   table,
   setPage,
   setPageSize,
-
 }: DataTablePaginationProps<TData>) {
   const { pageIndex, pageSize } = table.getState().pagination;
   const pageCount = table.getPageCount();

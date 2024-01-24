@@ -10,27 +10,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-
+// Define types for your suggestions and selected locations
 type LocationType = {
   cities: string[];
   states: string[];
   countries: string[];
 };
 
+// Define the schema using zod
 const locationSchema = z.object({
   location: z.string().optional(),
 });
 
+interface ChildProps {
+  onDataFromChild: (data: string[]) => void;
+  defaultVal: string[];
+}
+
 type LocationSchemaType = z.infer<typeof locationSchema>;
 
-export default function LocationFilterUI() {
+export default function LocationFilterUI({ onDataFromChild, defaultVal }: ChildProps) {
   const [locations, setLocations] = useState<LocationType>({ cities: [], states: [], countries: [] });
   const [query, setQuery] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
+  const sendDataToParent = () => {
+    // Send data to the parent component using the callback function
+    onDataFromChild(selectedLocations);
+  };
+  
+  
+
   const { handleSubmit, reset, register, formState: { errors } } = useForm<LocationSchemaType>({
     resolver: zodResolver(locationSchema),
+    
   });
 
   useEffect(() => {
@@ -43,7 +57,7 @@ export default function LocationFilterUI() {
       setLocations({ cities: uniqueCities, states: uniqueStates, countries: uniqueCountries });
     })
     .catch(error => console.error('Failed to fetch locations:', error));
-
+    setSelectedLocations([...defaultVal])
   }, []);
 
   useEffect(() => {
@@ -81,11 +95,11 @@ export default function LocationFilterUI() {
   };
 
   return (
-    <div className="space-y-8 p-2">
+    <div className="space-y-8 p-5">
       <form onSubmit={handleSubmit(onSubmit)}>
         <h4 className="font-medium leading-none mb-2">Select Locations</h4>
           <p className="text-sm text-muted-foreground mb-4">
-            Set the locations you are interested in. 🔎
+            Set the locations you are interested in.
           </p>
         <Input {...register('location')}
                value={query}
@@ -94,7 +108,8 @@ export default function LocationFilterUI() {
                className="w-full px-4 py-2 border rounded-md" />
 
         <ScrollArea className="h-[180px] mt-2 rounded-md border p-2">
-          {suggestions.map((suggestion, index) => (
+          {
+          suggestions.map((suggestion, index) => (
             <div key={index} className="cursor-pointer hover:bg-gray-100 px-4 py-2"
                  onClick={() => handleSelectSuggestion(suggestion)}>
               {suggestion}
@@ -119,9 +134,10 @@ export default function LocationFilterUI() {
         <Button variant="outline" onClick={() => {
           reset(); // Resets form fields to default values
           setSelectedLocations([]); // Clears the selected locations
+          onDataFromChild([])
         }}>Clear</Button>
 
-          <Button type="submit">Apply</Button>
+          <Button type="submit" onClick={sendDataToParent}>Apply</Button>
         </div>
       </form>
     </div>
