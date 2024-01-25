@@ -33,6 +33,7 @@ import * as z from "zod";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import NewStrategyUI from "./form.list.ui";
+import { SkeletonDemo } from "./SkeletonDemo";
 
 // interface StrategyFormData {
 //   name: string;
@@ -181,7 +182,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
           </CardFooter>
           <CardContent className="flex flex-col align-middle">
             {isLoading ? (
-              <Skeleton className="w-[100px] h-[6px] rounded-full " />
+             <SkeletonDemo />
             ) : (
               <ScrollArea className="w-full">
                 {strategies.map((strategy) => (
