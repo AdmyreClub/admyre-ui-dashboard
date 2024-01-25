@@ -190,7 +190,7 @@ export function DataTable<TData, TValue>({
     } else if (number >= 100) {
       return Math.round(number).toString();
     } else {
-      return number.toFixed(2); // Format numbers less than 100 with two decimal places
+      return number.toFixed(0); // Format numbers less than 100 with two decimal places
     }
   }
 
@@ -304,9 +304,9 @@ export function DataTable<TData, TValue>({
                           <i className=" fa-brands fa-whatsapp text-black self-center mt-2"></i>
                         </Link>
                       </Button>
-                      <Button className="w-[30px] h-[30px] bg-white hover:bg-white text-center align-middle mr-3 pt-1 border-none shadow-md" disabled={sheetUserName.whatsappNumber? false : true}>
+                      <Button className="w-[30px] h-[30px] bg-white hover:bg-white text-center align-middle mr-3 pt-1 border-none shadow-md" disabled={sheetUserName.email? false : true}>
                         <Link
-                          href={`https://wa.me/${sheetUserName.whatsappNumber}`} target="#"
+                          href={`mailto:${sheetUserName.email}`} target="#"
                         >
                           <i className=" fa-solid fa-envelope text-black self-center mt-2"></i>
                         </Link>
@@ -359,9 +359,9 @@ export function DataTable<TData, TValue>({
                         <i className="fa-solid fa-users mt-2"></i>
                         <p className="text-[18px] mt-2">
                           {" "}
-                          {formatLargeNumber(
+                          {sheetUserName.socialHandles[0].metrics.followers? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.followers
-                          )}
+                          ): <><p className="text-[10px] text-gray-200">Data unavailable</p></>}
                         </p>{" "}
                         <p className="text-[10px] text-gray-400">FOLLOWERS</p>
                       </Card>
@@ -384,9 +384,9 @@ export function DataTable<TData, TValue>({
                       <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
                         <i className="fa-solid fa-heart"></i>
                         <p className="text-[18px] mt-2">
-                          {formatLargeNumber(
+                          {sheetUserName.socialHandles[0].metrics.avgLikes ? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.avgLikes
-                          )}
+                          ) : <><p className="text-[10px] text-gray-200">data unavailable</p></>}
                         </p>
                         <p className="text-[10px] text-gray-400">LIKES</p>
                       </Card>
@@ -395,18 +395,18 @@ export function DataTable<TData, TValue>({
                       <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
                         <i className="fa-solid fa-heart"></i>
                         <p className="text-[18px] mt-2">
-                          {formatLargeNumber(
+                          {sheetUserName.socialHandles[0].metrics.numOfPosts ? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.numOfPosts
-                          )}
+                          ): <><p className="text-[10px] text-gray-200">data unavailable</p></>}
                         </p>
                         <p className="text-[10px] text-gray-400">POSTS</p>
                       </Card>
                       <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
                         <i className="fa-solid fa-comment"></i>
                         <p className="text-[18px] mt-2">
-                          {formatLargeNumber(
+                          {sheetUserName.socialHandles[0].metrics.avgComments? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.avgComments
-                          )}
+                          ) : <><p className="text-[10px] text-gray-200">data unavailable</p></>}
                         </p>
                         <p className="text-[10px] text-gray-400">COMMENTS</p>
                       </Card>
@@ -414,19 +414,19 @@ export function DataTable<TData, TValue>({
                         <i className="fa-solid fa-eye"></i>
                         <p className="text-[18px] mt-2">
                           {" "}
-                          {formatLargeNumber(
+                          {sheetUserName.socialHandles[0].metrics.avgVideoViews ? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.avgVideoViews
-                          )}
+                          ): <><p className="text-[10px] text-gray-200">data unavailable</p></>}
                         </p>{" "}
                         <p className="text-[10px] text-gray-400">VIEWS</p>
                       </Card>
                       <Card className=" w-[120px] h-[80px] mr-3 items-stretch align-middle flex-col shadow-md border-none rounded-[3px]">
                         <i className="fa-solid fa-eye"></i>
                         <p className="text-[18px] mt-2">
-                          {" "}
-                          {formatLargeNumber(
+                        {" "}
+                          {sheetUserName.socialHandles[0].metrics.avgVideoViews ? formatLargeNumber(
                             sheetUserName.socialHandles[0].metrics.avgVideoViews
-                          )}
+                          ): <><p className="text-[10px] text-gray-200">data unavailable</p></>}
                         </p>{" "}
                         <p className="text-[10px] text-gray-400">COMMENTS</p>
                       </Card>

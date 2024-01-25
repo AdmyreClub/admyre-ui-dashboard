@@ -64,7 +64,7 @@ const Dashboard: React.FC = () => {
       <div className="flex-col ml-[-10] mr-7 ">
         <div className="flex justify-center">
           <h1 className="w-[100px] text-[12px] justify-center ml-[100px] p-1 bg-black rounded-md text-white">
-            Following
+           Likes over a period of time
           </h1>
         </div>
         <div style={{ width: "250px"}}>
