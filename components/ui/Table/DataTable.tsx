@@ -50,7 +50,12 @@ import Chart from "./charts/followingChart";
 
 import Dashboard from "./charts/chartColumn";
 import AudienceLocations from "./charts/locationChart";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import MoreDataDao from "@/dao/MoreDataDao";
 const mockData = [
   { date: "2024-01-01", followers: 1000 },
@@ -103,15 +108,71 @@ export function DataTable<TData, TValue>({
   const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
   const [sheetUserName, setSheetUserName] = useState<string>("");
 
- 
+  const getMoreData = async (username: string) => {
+    const moreDataDao = new MoreDataDao(username);
+    const followerCount = moreDataDao.getFollowerCount();
+    const followingCount = moreDataDao.getFollowingCount();
+    const engagementCount = moreDataDao.getEngagementRate();
+    const followerGrowthRate = moreDataDao.getFollowerGrowthRate();
+    const audienceGenderData = moreDataDao.getAudienceGenderData();
+    const audienceTopLocations = moreDataDao.getAudienceTopLocations();
+    const followingcount = moreDataDao.getFollowingCount();
+    const bioData = moreDataDao.getBio();
+    const numberOfAvgLikesData = moreDataDao.getNumberOfAvgLikes();
+    const numberOfPostsData = moreDataDao.getNumberOfPosts();
+    const numberOfAvgCommentsData = moreDataDao.getNumberOfAvgComments();
+    const commentsToLikeRatioData = moreDataDao.getCommentsToLikeRatio();
+    const externalUrlsData = moreDataDao.getExternalUrls();
+    const profileLocationData = moreDataDao.getProfileLocation();
+    try {
+      const [data1, data2] = await Promise.all([followerCount, followingCount]);
+  
+      console.log('Data 1:', data1);
+      console.log('Data 2:', data2);
+    } catch (error) {
+      console.error('Error fetching data please:', error);
+    }
+    
+  };
 
-  
-  
-  
+  /* 
+  const [
+      followerCount,
+      followingCount,
+      engagementCount,
+      followerGrowthRate,
+      audienceGenderData,
+      audienceTopLocations,
+      followingcount,
+      bioData,
+      numberOfAvgLikesData,
+      numberOfPostsData,
+      numberOfAvgCommentsData,
+      commentsToLikeRatioData,
+      externalUrlsData,
+      profileLocationData,
+    ] = await Promise.all([
+      followerCount,
+      followingCount,
+      engagementCount,
+      followerGrowthRate,
+      audienceGenderData,
+      audienceTopLocations,
+      followingcount,
+      bioData,
+      numberOfAvgLikesData,
+      numberOfPostsData,
+      numberOfAvgCommentsData,
+      commentsToLikeRatioData,
+      externalUrlsData,
+      profileLocationData,
+    ]);*/
+
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
     setIsSheetOpen(true);
     setSheetUserName(rowData);
+    getMoreData(rowData.name);
     console.log(rowData);
   };
 
@@ -159,23 +220,22 @@ export function DataTable<TData, TValue>({
             {tableInstance.getRowModel().rows?.length ? (
               tableInstance.getRowModel().rows.map((row) => (
                 <ContextMenu key={row.id}>
-                  <ContextMenuTrigger asChild >
+                  <ContextMenuTrigger asChild>
                     <TableRow onClick={() => handleRowClick(row.original)}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>
                   </ContextMenuTrigger>
                   <ContextMenuContent className="w-64">
                     {/* ... Context menu items ... */}
-                    <ContextMenuItem>
-                      Action 1
-                    </ContextMenuItem>
-                    <ContextMenuItem>
-                      Action 2
-                    </ContextMenuItem>
+                    <ContextMenuItem>Action 1</ContextMenuItem>
+                    <ContextMenuItem>Action 2</ContextMenuItem>
                     {/* ... Other context menu items ... */}
                   </ContextMenuContent>
                 </ContextMenu>
@@ -247,19 +307,27 @@ export function DataTable<TData, TValue>({
                     <Card className="flex flex-col shadow-none  border-none ">
                       <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
                         <i className="text-red-600 fa-brands fa-youtube self-center "></i>
-                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                        <p className="self-center ml-2 text-gray-400">
+                          The data is currently unavailable
+                        </p>
                       </Card>
                       <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
                         <i className="text-blue-500 self-center fa-brands fa-twitter"></i>
-                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                        <p className="self-center ml-2 text-gray-400">
+                          The data is currently unavailable
+                        </p>
                       </Card>
                       <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
                         <i className="text-blue-700 self-center fa-brands fa-facebook"></i>
-                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                        <p className="self-center ml-2 text-gray-400">
+                          The data is currently unavailable
+                        </p>
                       </Card>
                       <Card className="bg-white hover:bg-white flex w-[300px] justify-left p-2  border-none shadow-none">
                         <i className="text-black self-center fa-brands fa-tiktok"></i>
-                        <p className="self-center ml-2 text-gray-400">The data is currently unavailable</p>
+                        <p className="self-center ml-2 text-gray-400">
+                          The data is currently unavailable
+                        </p>
                       </Card>
 
                       <Card className="flex-col text-justify p-2 border-none shadow-none">

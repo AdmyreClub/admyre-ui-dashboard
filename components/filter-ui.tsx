@@ -123,10 +123,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     defaultValues: initialFiltersState,
   });
 
-
-
-  
-   const onSubmitMain = async (data: FiltersType) => {
+  const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
     data.categories = categoriesData.categories;
@@ -176,7 +173,6 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     }
   };
 
-
   const handleResetMain = async () => {
     reset();
   };
@@ -199,9 +195,26 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       }, // Now structured as an object
       gender: genderData,
       keywords: keywords,
-    };  
-    onDataFromChild(assembledData)
+    };
+    onDataFromChild(assembledData);
   };
+  function formatLargeNumber(number: number) {
+    const billion = 1000000000;
+    const million = 1000000;
+    const thousand = 1000;
+
+    if (number >= billion) {
+      return (Math.round((number / billion) * 100) / 100).toFixed(0) + "B";
+    } else if (number >= million) {
+      return (Math.round((number / million) * 100) / 100).toFixed(0) + "M";
+    } else if (number >= thousand) {
+      return (Math.round((number / thousand) * 100) / 100).toFixed(0) + "K";
+    } else if (number >= 100) {
+      return Math.round(number).toString();
+    } else {
+      return number.toFixed(0); // Format numbers less than 100 with two decimal places
+    }
+  }
 
   return (
     <>
@@ -376,6 +389,29 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
               </div>
             </div>
           </CardContent>
+          <Card className="flex flex-col w-[300px] ml-6 text-[16px] text-gray-400 shadow-md border-none p-2 mb-3">
+            <p>
+              Followers From {formatLargeNumber(followerData[0])} to {formatLargeNumber(followerData[1])}
+            </p>
+            <p>
+              Following From {formatLargeNumber(followingData[0])} to {formatLargeNumber(followingData[1])}
+            </p>
+            <p className="flex  ">
+              Locations include : {locationData?.map((location)  => {
+                return <><p className="ml-1">{location},</p></>
+              })}
+            </p>
+            <p className="flex  ">
+              Languages include : {languagesData?.map((language)  => {
+                return <><p className="ml-1">{language},</p></>
+              })}
+            </p>
+            <p className="flex  ">
+              Categories include : {categoriesData?.map((category)  => {
+                return <><p className="ml-1">{category},</p></>
+              })}
+            </p>
+          </Card>
           <CardFooter className="flex justify-between">
             <Button
               variant="outline"
