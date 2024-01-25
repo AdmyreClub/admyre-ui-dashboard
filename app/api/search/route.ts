@@ -4,62 +4,94 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 interface Filters {
-  username?: string;
-  location?: {
-    country?: string;
-    state?: string;
-    city?: string;
-  };
+  keywords?: string[];
+  location?: string[];
   age?: {
-    from?: number;
-    to?: number;
+    from?: number | null;
+    to?: number | null;
   };
   categories?: string[];
   followers?: {
-    from?: number;
-    to?: number;
+    from: number;
+    to: number;
   };
   followings?: {
-    from?: number;
-    to?: number;
+    from: number;
+    to: number;
   };
-  engagementRate?: number;
+  engagementRate?: {
+    from: number;
+    to: number;
+  }; // Now an object with from and to
   gender?: string;
   languages?: string[];
 }
 
-export async function POST(req: Request, res: NextApiResponse) {
+
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { userId } = auth();
 
     if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return NextResponse.rewrite(new URL('/401', req.url));
     }
-    const body = req.body instanceof ReadableStream ? await req.json() : req.body;
-    console.log('here is the request: ', body);
-    const { filters, page = 0, pageSize = 10 } = body;
+    console.log("this is the next request", req);
+    const body = await req.json();
+    console.log('Received request: ', body);
+
+    // Ensure filters are properly structured
+    const filters: Filters = {
+      ...body.filters
+    };
+
+    const page = body.page || 0;
+    const pageSize = body.pageSize || 10;
+
+    const requestData = {
+      filters,
+      page,
+      pageSize
+    };
 
     const options = {
       method: 'POST',
       url: 'https://ap-south-1.aws.data.mongodb-api.com/app/application-0-gfxln/endpoint/search',
       headers: { 'Content-Type': 'application/json' },
-      data: { filters, page, pageSize }
+      data: requestData
     };
 
     const response = await axios.request(options);
-    //console.log(response.data);
-    return NextResponse.json(response.data);
+    return new NextResponse(JSON.stringify(response.data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
-    console.error(error);
-    return new NextResponse(JSON.stringify({ message: 'Internal Server Error', error }), { status: 500 });
+    console.error('Error in POST function:', error);
+
+    if (axios.isAxiosError(error) && error.response) {
+      return new NextResponse(JSON.stringify({
+        message: 'Error with Axios request',
+        error: error.message,
+        details: error.response.data,
+        status: error.response.status,
+      }), {
+        status: error.response.status,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    return new NextResponse(JSON.stringify({
+      message: 'Internal Server Error',
+      error: error || error.toString(),
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
-// data.followers.from = followerData[0];
-// data.followers.to = followerData[1];
-// data.categories = categoriesData.categories;
-// data.followings.from = followingData[0];
-// data.followings.to = followingData[1];
-// data.location = locationData;
-// data.languages = languagesData.languages;
-// data.engagementRate = engagementRateData;
-// data.gender = genderData;

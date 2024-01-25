@@ -34,18 +34,10 @@ export default function LocationFilterUI({ onDataFromChild, defaultVal }: ChildP
   const [query, setQuery] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [selectedStates, setSelectedStates] = useState<string[]>([]);
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-
 
   const sendDataToParent = () => {
-    // Combine the location types into a single object or array
-    onDataFromChild({
-      cities: selectedCities,
-      states: selectedStates,
-      countries: selectedCountries
-    });
+    // Send data to the parent component using the callback function
+    onDataFromChild(selectedLocations);
   };
 
 
@@ -90,25 +82,12 @@ export default function LocationFilterUI({ onDataFromChild, defaultVal }: ChildP
 
 
   const handleSelectSuggestion = (suggestion: string): void => {
-    // Determine if the suggestion is a city, state, or country
-    if (locations.cities.includes(suggestion)) {
-      setSelectedCities(prev => !prev.includes(suggestion) ? [...prev, suggestion] : prev);
-    } else if (locations.states.includes(suggestion)) {
-      setSelectedStates(prev => !prev.includes(suggestion) ? [...prev, suggestion] : prev);
-    } else if (locations.countries.includes(suggestion)) {
-      setSelectedCountries(prev => !prev.includes(suggestion) ? [...prev, suggestion] : prev);
-    }
+    setSelectedLocations(prev => !prev.includes(suggestion) ? [...prev, suggestion] : prev);
     setQuery('');
   };
 
-  const handleRemoveLocation = (location: string, type: 'city' | 'state' | 'country'): void => {
-    if (type === 'city') {
-      setSelectedCities(prev => prev.filter(l => l !== location));
-    } else if (type === 'state') {
-      setSelectedStates(prev => prev.filter(l => l !== location));
-    } else if (type === 'country') {
-      setSelectedCountries(prev => prev.filter(l => l !== location));
-    }
+  const handleRemoveLocation = (location: string): void => {
+    setSelectedLocations(prev => prev.filter(l => l !== location));
   };
 
   const onSubmit: SubmitHandler<LocationSchemaType> = (data) => {

@@ -124,8 +124,11 @@ const FilterUI = () => {
     data.followings.to = followingData[1];
     data.location = locationData;
     data.languages = languagesData.languages;
-    data.engagementRate = engagementRateData;
+    data.engagementRate.from = engagementRateData[0];
+    data.engagementRate.to = engagementRateData[1];
     data.gender = genderData;
+    const categories = categoriesData ?? [];
+    const languages = languagesData ?? [];
     // Assemble filter data
 
     const assembledData = {
@@ -133,19 +136,23 @@ const FilterUI = () => {
         from: followerData[0],
         to: followerData[1],
       },
-      categories: categoriesData,
+      categories: categoriesData || [],
+      languages: languagesData || [],
       followings: {
         from: followingData[0],
         to: followingData[1],
       },
       location: locationData,
-      languages: languagesData,
-      engagementRate: engagementRateData[1],
+      engagementRate: {
+        from: engagementRateData[0],
+        to: engagementRateData[1]
+      }, // Now structured as an object
       gender: genderData,
-      keywords: keywords, // Include keywords in the filter
+      keywords: keywords,
     };
 
     try {
+      console.log("data: ", assembledData)
       // Send data to the API
       const response = await axios.post('/api/search', assembledData);
 
@@ -156,7 +163,10 @@ const FilterUI = () => {
       console.error("Error submitting filters: ", error);
       // Handle error
     }
+
+
   };
+
   const handleResetMain = () => {
     reset();
   };

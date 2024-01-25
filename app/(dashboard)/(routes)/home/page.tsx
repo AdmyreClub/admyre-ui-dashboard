@@ -21,7 +21,7 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { Input } from "postcss";
+import { Input } from "@/components/ui/input";
 import { Strategy } from "@prisma/client";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -134,13 +134,13 @@ export default function DashboardPage() {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
+        crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
       />
       <div>
         <div className="mb-8 space-y-4 pt-[4.5rem] ">
           <h1 className="text-center mt-6 text-[28px] mb-0 font-bold">
-            Search from the largest database
+            Search from the largest database 1 Million+ Vetted creators
           </h1>
           <p
             className="text-center text-[18px] font-normal "
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             </Button>
             <Link href={"/discover"}>
               <Card className="rounded-r-3xl rounded-l-none h-12 text-center align-middle justify-center flex w-[460px]">
-                <p className="self-center">Discover influencers</p>
+                <Input className="self-center rounded-r-3xl rounded-l-none h-12 text-center align-middle justify-center flex w-[460px]" placeholder="Discover influencers"/>
               </Card>
             </Link>
           </Card>
@@ -184,7 +184,7 @@ export default function DashboardPage() {
             </CardFooter>
             <CardContent className="flex flex-row align-middle mt-[-30px]">
               <Card onClick={() => setIsDialogOpen(true)} className="cursor-pointer mt-3 text-[40px] ml-3 h-[200px] flex w-[200px] pl-3 pr-3  shadow-md align-middle justify-center" style={{border:"black solid 1px"}}>
-               <p className="self-center">+</p> 
+               <p className="self-center">+</p>
               </Card>
               {isLoading ? (
                 <Skeleton className="w-[100px] h-[20px] rounded-full " />

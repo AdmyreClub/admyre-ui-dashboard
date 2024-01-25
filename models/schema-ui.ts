@@ -48,7 +48,7 @@ export const initialFiltersState = {
     categories: z.array(z.string()).nullable(),
     followers: rangeSchema,
     followings: rangeSchema,
-    engagementRate: z.number().nonnegative().nullable(),
+    engagementRate: rangeSchema,
     gender: z.string().nullable(),
     languages: z.array(z.string()).nullable(),
   });
