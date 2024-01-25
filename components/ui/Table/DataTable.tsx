@@ -57,6 +57,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import MoreDataDao from "@/dao/MoreDataDao";
+import Link from "next/link";
 const mockData = [
   { date: "2024-01-01", followers: 1000 },
   { date: "2024-01-03", followers: 1050 },
@@ -126,13 +127,12 @@ export function DataTable<TData, TValue>({
     const profileLocationData = moreDataDao.getProfileLocation();
     try {
       const [data1, data2] = await Promise.all([followerCount, followingCount]);
-  
-      console.log('Data 1:', data1);
-      console.log('Data 2:', data2);
+
+      console.log("Data 1:", data1);
+      console.log("Data 2:", data2);
     } catch (error) {
-      console.error('Error fetching data please:', error);
+      console.error("Error fetching data please:", error);
     }
-    
   };
 
   /* 
@@ -273,6 +273,9 @@ export function DataTable<TData, TValue>({
             <SheetHeader>
               <SheetTitle className="text-right ">
                 <Card className="border-none shadow-none mt-4 font-light text-gray-400 font-semibold text-[14px]">
+                  <Link href={sheetUserName.socialHandles[0].url} target="#">
+                    <i class="fa-solid fa-arrow-up-right-from-square mr-3"></i>
+                  </Link>
                   {sheetUserName.city ? `@ ${sheetUserName.city}` : ``}
                 </Card>
               </SheetTitle>
@@ -294,12 +297,21 @@ export function DataTable<TData, TValue>({
                       </Card>
                     </Card>
                     <div className="flex justify-center mt-2">
-                      <Card className="w-[30px] h-[30px] text-center align-middle mr-3 pt-1 border-none shadow-md">
-                        <i className=" fa-brands fa-whatsapp "></i>
-                      </Card>
-                      <Card className="w-[30px] h-[30px] text-center align-middle  pt-1 border-none shadow-md">
-                        <i class="fa-solid fa-envelope"></i>
-                      </Card>
+                      <Button className="w-[30px] h-[30px] bg-white hover:bg-white text-center align-middle mr-3 pt-1 border-none shadow-md" disabled={sheetUserName.whatsappNumber? false : true}>
+                        <Link
+                          href={`https://wa.me/${sheetUserName.whatsappNumber}`} target="#"
+                        >
+                          <i className=" fa-brands fa-whatsapp text-black self-center mt-2"></i>
+                        </Link>
+                      </Button>
+                      <Button className="w-[30px] h-[30px] bg-white hover:bg-white text-center align-middle mr-3 pt-1 border-none shadow-md" disabled={sheetUserName.whatsappNumber? false : true}>
+                        <Link
+                          href={`https://wa.me/${sheetUserName.whatsappNumber}`} target="#"
+                        >
+                          <i className=" fa-solid fa-envelope text-black self-center mt-2"></i>
+                        </Link>
+                      </Button>
+                      
                     </div>
                   </div>
                   {/* social icons */}

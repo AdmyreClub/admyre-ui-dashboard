@@ -40,16 +40,17 @@ const Sidebar = () => {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#000000] text-white">
-      <div className="px-3 py-2 flex-1">
-        <Link href={`/home`} className="flex items-center pl-3 mb-14">
-          <div className="flex align-text-bottom ">
+      <div className="px-3 py-2 flex-1 justify-center ">
+        <Link href={`/home`} className="flex items-center pl-3 mb-14 justify-center">
+          <div className="flex  justify-center mr-6">
             <svg
-              width="32"
+              width="25"
               fill="none"
               id="Layer_1"
               data-name="Layer 1"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 89.76 97.56"
+              className="self-center mt-2"
             >
               <ellipse
                 cx="16.97"
@@ -64,11 +65,14 @@ const Sidebar = () => {
               ></path>
             </svg>
             <div className="flex flex-col">
-              <span className="font-mont text-[36px] font-[900] text-slate-300 ml-3">
+              <span className="font-mont text-[30px] font-[900] text-slate-300 ml-3">
                 Admyre
               </span>
-              <span className="font-mont text-[12px] font-[600] text-slate-300 ml-[120px] mt-[-16px]">
+              <span className="font-mont text-[12px] font-[600] text-slate-300 ml-[105px] mt-[-14px]">
                 .club
+              </span>
+              <span className="font-mont text-[8px] font-[600] text-slate-100 bg-purple-800 px-[5px] py-[1px] rounded-sm ml-[130px] mt-[-50px]">
+                BETA
               </span>
             </div>
           </div>
