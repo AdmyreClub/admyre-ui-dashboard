@@ -66,13 +66,13 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
             }}
           >
             <Label>Male</Label>
-            <RadioGroupItem value="MALE"   {...register("MALE")} checked={selectedGender === 'male' ? true : false}/>
+            <RadioGroupItem value="male"   {...register("MALE")} checked={selectedGender === 'male' ? true : false}/>
             <Separator orientation="vertical"/>
             <Label>Female</Label>
-            <RadioGroupItem value="FEMALE"  {...register("FEMALE")} checked={selectedGender === 'female' ? true : false}/>
+            <RadioGroupItem value="female"  {...register("FEMALE")} checked={selectedGender === 'female' ? true : false}/>
             <Separator orientation="vertical"/>
             <Label>Others</Label>
-            <RadioGroupItem value=""   {...register("")} checked={selectedGender === 'others' ? true : false}/>
+            <RadioGroupItem value="others"   {...register("others")} checked={selectedGender === 'others' ? true : false}/>
           </RadioGroup>
         </div>
       </div>

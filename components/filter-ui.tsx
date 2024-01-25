@@ -49,7 +49,11 @@ type FiltersType = z.infer<typeof filtersSchema>;
 type followersRangedSchemaType = z.infer<typeof followersRangedSchema>;
 type followingsRangedSchemaType = z.infer<typeof followingsRangedSchema>;
 
-const FilterUI = () => {
+interface ChildProps {
+  onDataFromChild: (data: object) => void;
+}
+
+const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const [filters, setFilters] = React.useState(initialFiltersState);
   const [categoriesData, setCategoriesData] = React.useState<string[]>([]);
   const [followerData, setFollowerData] = React.useState([0, 100000000]);
@@ -91,18 +95,20 @@ const FilterUI = () => {
   };
 
   const handleKeywordInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       const newKeyword = event.currentTarget.value.trim();
       if (newKeyword && !keywords.includes(newKeyword)) {
         setKeywords([...keywords, newKeyword]);
-        event.currentTarget.value = ''; // Clear the input field
+        event.currentTarget.value = ""; // Clear the input field
       }
     }
   };
 
   const removeKeyword = (keywordToRemove: string) => {
-    const updatedKeywords = keywords.filter(keyword => keyword !== keywordToRemove);
+    const updatedKeywords = keywords.filter(
+      (keyword) => keyword !== keywordToRemove
+    );
     setKeywords(updatedKeywords);
   };
 
@@ -110,13 +116,17 @@ const FilterUI = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FiltersType>({
     resolver: zodResolver(filtersSchema),
     defaultValues: initialFiltersState,
   });
 
-  const onSubmitMain = async (data: FiltersType) => {
+
+
+  
+   const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
     data.categories = categoriesData.categories;
@@ -130,6 +140,7 @@ const FilterUI = () => {
     const categories = categoriesData ?? [];
     const languages = languagesData ?? [];
     // Assemble filter data
+    console.log("from outside");
 
     const assembledData = {
       followers: {
@@ -145,16 +156,16 @@ const FilterUI = () => {
       location: locationData,
       engagementRate: {
         from: engagementRateData[0],
-        to: engagementRateData[1]
+        to: engagementRateData[1],
       }, // Now structured as an object
       gender: genderData,
       keywords: keywords,
     };
 
     try {
-      console.log("data: ", assembledData)
+      console.log("data: ", assembledData);
       // Send data to the API
-      const response = await axios.post('/api/search', assembledData);
+      const response = await axios.post("/api/search", assembledData);
 
       // Handle the response
       console.log("Response from API: ", response.data);
@@ -163,12 +174,37 @@ const FilterUI = () => {
       console.error("Error submitting filters: ", error);
       // Handle error
     }
-
-
   };
 
-  const handleResetMain = () => {
+
+  const handleResetMain = async () => {
     reset();
+  };
+  const handleSubmitMain = async () => {
+    const assembledData = {
+      followers: {
+        from: followerData[0],
+        to: followerData[1],
+      },
+      categories: categoriesData || [],
+      languages: languagesData || [],
+      followings: {
+        from: followingData[0],
+        to: followingData[1],
+      },
+      location: locationData,
+      engagementRate: {
+        from: engagementRateData[0],
+        to: engagementRateData[1],
+      }, // Now structured as an object
+      gender: genderData,
+      keywords: keywords,
+    };
+    
+    onDataFromChild(assembledData)
+
+
+    
   };
 
   return (
@@ -183,27 +219,34 @@ const FilterUI = () => {
           </CardHeader>
           <CardContent>
             <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="keywords">Give us some hints</Label>
-              <div className="flex space-x-1.5">
-                <Input
-                  id="keywords"
-                  placeholder="Narrow down filter results by typing keywords, hashtags etc (e.g., food, yoga, #ahmedabad)"
-                  onKeyDown={handleKeywordInput}
-                />
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="keywords">Give us some hints</Label>
+                <div className="flex space-x-1.5">
+                  <Input
+                    id="keywords"
+                    placeholder="Narrow down filter results by typing keywords, hashtags etc (e.g., food, yoga, #ahmedabad)"
+                    onKeyDown={handleKeywordInput}
+                  />
+                </div>
               </div>
-            </div>
 
-          <div className="flex flex-wrap gap-2 mt-1">
-            {keywords.map((keyword, index) => (
-              <span key={index} className="flex items-center gap-2 border px-3 py-1 rounded-full">
-                {keyword}
-                <button type="button" onClick={() => removeKeyword(keyword)} className="rounded-full text-sm p-1">
-                  <X size={18} />
-                </button>
-              </span>
-            ))}
-          </div>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {keywords.map((keyword, index) => (
+                  <span
+                    key={index}
+                    className="flex items-center gap-2 border px-3 py-1 rounded-full"
+                  >
+                    {keyword}
+                    <button
+                      type="button"
+                      onClick={() => removeKeyword(keyword)}
+                      className="rounded-full text-sm p-1"
+                    >
+                      <X size={18} />
+                    </button>
+                  </span>
+                ))}
+              </div>
               <div className="flex flex-col space-y-1.5 w-fit">
                 <Label htmlFor="framework">Advanced Filters</Label>
                 <section className="flex flex-wrap space-x-1.5 gap-1.5 items-start">
@@ -353,7 +396,9 @@ const FilterUI = () => {
             >
               Clear
             </Button>
-            <Button type="submit">Apply</Button>
+            <Button type="submit" onClick={handleSubmitMain}>
+              Apply
+            </Button>
           </CardFooter>
         </form>
       </Card>
