@@ -39,6 +39,7 @@ class MoreDataDao implements IMoreDataDao{
     private qoruzBaseUrl: string = 'https://data.qoruz.com/api/profiles.info';
     private data: any;
     private qoruzData: any;
+    private altData: any;
 
     private async fetchData(username: string): Promise<AxiosResponse<any>> {
         const options = {
@@ -49,7 +50,6 @@ class MoreDataDao implements IMoreDataDao{
                 'authority': 'instrack.app',
                 'accept': 'application/json, text/plain, */*',
                 'accept-language': 'en-US,en;q=0.9',
-                'referer': 'https://instrack.app/instagram/ilovejamnagar',
                 'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
                 'sec-ch-ua-mobile': '?0',
                 'sec-ch-ua-platform': '"macOS"',
@@ -69,7 +69,7 @@ class MoreDataDao implements IMoreDataDao{
     private async fetchQoruzData(username: string): Promise<AxiosResponse<any>> {
         const options = {
             method: 'GET',
-            url: 'https://data.qoruz.com/api/profiles.info',
+            url: `${this.qoruzBaseUrl}${username}`,
             params: { handle: username },
             headers: {
                 'Accept': 'application/json',
@@ -81,6 +81,29 @@ class MoreDataDao implements IMoreDataDao{
                 'Sec-Fetch-Dest': 'empty',
                 'Sec-Fetch-Mode': 'cors',
                 'Sec-Fetch-Site': 'same-site',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"'
+            }
+        };
+
+        return axios.request(options);
+    }
+
+    private async fetchAlternativeData(username: string): Promise<AxiosResponse<any>> {
+        const options = {
+            method: 'GET',
+            url: 'https://fkwdo6tceerhxqtv5fhokkoxmi0lgpva.lambda-url.eu-central-1.on.aws/',
+            params: { operation: 'get-profile', username: `@${username}`, channel: 'INSTAGRAM' },
+            headers: {
+                Accept: '*/*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                Connection: 'keep-alive',
+                Origin: 'https://www.modash.io',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'cross-site',
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
                 'sec-ch-ua-mobile': '?0',
@@ -106,14 +129,24 @@ class MoreDataDao implements IMoreDataDao{
             console.error('Error fetching Qoruz data:', error);
             this.qoruzData = null;
         });
-    }
 
+        this.fetchAlternativeData(username).then(response => {
+            this.altData = response.data;
+        }).catch(error => {
+            console.error('Error fetching alternative data:', error);
+            this.altData = null;
+        });
+    }
     public async getFollowerCount(): Promise<number> {
         return this.data?.followers_count;
     }
 
     public async getFollowingCount(): Promise<number> {
         return this.data?.follows_count;
+    }
+
+    public async getFollowerGrowthRate(username: string): Promise<number>{
+        return this.data?.growth_stats.followers_quarterly_growth_rate;
     }
 
     public async getBio(): Promise<string> {
@@ -145,8 +178,14 @@ class MoreDataDao implements IMoreDataDao{
     }
 
     public async getProfileLocation(): Promise<string> {
-        return this.qoruzData?.profile?.location || '';
+        if (this.qoruzData?.profile?.location) {
+            return this.qoruzData.profile.location;
+        } else if (this.altData?.profile?.location_raw?.name) {
+            return this.altData.profile.location_raw.name;
+        }
+        return "Location not available";
     }
+
 
     public async getExternalUrls(): Promise<ProfileExternalUrls> {
         const urls: ProfileExternalUrls = {};
@@ -171,4 +210,38 @@ class MoreDataDao implements IMoreDataDao{
         return urls;
     }
 
+    public async getAudienceGenderData(): Promise<AudienceGenderData> {
+        if (this.altData?.profile?.genderSplit) {
+            const male = this.altData.profile.genderSplit.find(g => g.label === 'male')?.value || 0;
+            const female = this.altData.profile.genderSplit.find(g => g.label === 'female')?.value || 0;
+            return {
+                malePercentage: male * 100, // Converting to percentage
+                femalePercentage: female * 100 // Converting to percentage
+            };
+        }
+        return { malePercentage: 0, femalePercentage: 0 };
+    }
+
+    public async getAudienceTopLocations(): Promise<AudienceLocationData> {
+        const locationData: AudienceLocationData = { cities: [], countries: [] };
+
+        if (this.altData?.profile?.audienceCities) {
+            this.altData.profile.audienceCities.forEach(city => {
+                locationData.cities.push({ location: city.name, percentage: city.weight * 100 });
+            });
+        }
+
+        if (this.altData?.profile?.audienceCountries) {
+            this.altData.profile.audienceCountries.forEach(country => {
+                locationData.countries.push({ location: country.name, percentage: country.weight * 100 });
+            });
+        }
+
+        return locationData;
+    }
+
+
 }
+
+
+export default MoreDataDao;
