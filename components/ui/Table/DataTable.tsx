@@ -103,10 +103,7 @@ export function DataTable<TData, TValue>({
   const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
   const [sheetUserName, setSheetUserName] = useState<string>("");
 
-  const getFollowerData(username: string) {
-    const moreDataDao = new MoreDataDao(username);
-
-  }
+ 
 
   
   
