@@ -106,7 +106,7 @@ const DiscoverPage = () => {
 
   const handleFilterData = (dataFromChild: object) => {
     setFilterData(dataFromChild);
-    console.log("data recieved");
+    console.log("data recieved", dataFromChild);
   };
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const DiscoverPage = () => {
     };
 
     fetchData();
-  }, [page, pageSize]);
+  }, [page, pageSize, filterData]);
 
   const [plans, setPlans] = useState([
     { id: 1, name: "Basic Plan", date: "Jan 20, 2024" },

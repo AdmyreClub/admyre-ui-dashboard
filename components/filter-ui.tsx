@@ -123,7 +123,10 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     defaultValues: initialFiltersState,
   });
 
-  const onSubmitMain = async (data: FiltersType) => {
+
+
+  
+   const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
     data.categories = categoriesData.categories;
@@ -159,18 +162,6 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       keywords: keywords,
     };
 
-    try {
-      console.log("data: ", assembledData);
-      // Send data to the API
-      const response = await axios.post("/api/search", assembledData);
-
-      // Handle the response
-      console.log("Response from API: ", response.data);
-      // Update state or perform actions based on the response
-    } catch (error) {
-      console.error("Error submitting filters: ", error);
-      // Handle error
-    }
   };
 
   const handleResetMain = async () => {
@@ -195,8 +186,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       }, // Now structured as an object
       gender: genderData,
       keywords: keywords,
-    };
-    onDataFromChild(assembledData);
+    };  
+    onDataFromChild(assembledData)
   };
   function formatLargeNumber(number: number) {
     const billion = 1000000000;
