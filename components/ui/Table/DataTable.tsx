@@ -437,7 +437,7 @@ export function DataTable<TData, TValue>({
                   <Chart label={"Follower"} />
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
-                  <Chart label={"Following"} />
+                  <Chart label={"Following"} /> 
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5 pr-6">
                   <Dashboard />
