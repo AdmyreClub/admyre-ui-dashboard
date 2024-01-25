@@ -123,10 +123,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     defaultValues: initialFiltersState,
   });
 
-
-
-
-   const onSubmitMain = async (data: FiltersType) => {
+  const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
     data.categories = categoriesData.categories;
@@ -161,9 +158,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       gender: genderData,
       keywords: keywords,
     };
-
   };
-
 
   const handleResetMain = async () => {
     reset();
@@ -188,19 +183,32 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       gender: genderData,
       keywords: keywords,
     };
-
-    onDataFromChild(assembledData)
-    console.log("giving it to parent")
-
-
+    onDataFromChild(assembledData);
   };
+  function formatLargeNumber(number: number) {
+    const billion = 1000000000;
+    const million = 1000000;
+    const thousand = 1000;
+
+    if (number >= billion) {
+      return (Math.round((number / billion) * 100) / 100).toFixed(0) + "B";
+    } else if (number >= million) {
+      return (Math.round((number / million) * 100) / 100).toFixed(0) + "M";
+    } else if (number >= thousand) {
+      return (Math.round((number / thousand) * 100) / 100).toFixed(0) + "K";
+    } else if (number >= 100) {
+      return Math.round(number).toString();
+    } else {
+      return number.toFixed(0); // Format numbers less than 100 with two decimal places
+    }
+  }
 
   return (
     <>
       <Card className="w-full mb-8">
         <form onSubmit={handleSubmit(onSubmitMain)}>
           <CardHeader>
-            <CardTitle>Discover Creators</CardTitle>
+            <CardTitle>Discov er Creators</CardTitle>
             <CardDescription>
               Find influencers that match your campaign needs.
             </CardDescription>
@@ -368,14 +376,15 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
               </div>
             </div>
           </CardContent>
+
           <CardFooter className="flex justify-between">
             <Button
               variant="outline"
               onClick={() => {
                 setCategoriesData([]);
-                setEngagementRateData([0, 0]);
-                setFollowerData([0, 0]);
-                setFollowingData([0, 0]);
+                setEngagementRateData([0, 100]);
+                setFollowerData([0, 100000000]);
+                setFollowingData([0, 100000000]);
                 setLanguagesData([]);
                 setLocationData([]);
                 setGenderData("");
@@ -384,6 +393,34 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
             >
               Clear
             </Button>
+            <Card className="flex ml-6 text-[10px] text-gray-400 shadow-md border-none p-2 mb-3">
+              {followerData[0] === 0 && followerData[1] === 100000000 ? (
+                <></>
+              ) : (
+                <p className="mr-[10px] ">
+                  Followers {formatLargeNumber(followerData[0])}-
+                  {formatLargeNumber(followerData[1])}
+                </p>
+              )}
+              {followingData[0] === 0 && followingData[1] === 100000000 ? (
+                <></>
+              ) : (
+                <p className="mr-[10px] ">
+                  Following {formatLargeNumber(followingData[0])}-
+                  {formatLargeNumber(followingData[1])}
+                </p>
+              )}
+              {engagementRateData[0] === 0 && engagementRateData[1] === 100 ? (
+                <></>
+              ) : (
+                <p className="mr-[10px] ">
+                  Engagement Rate {formatLargeNumber(engagementRateData[0])}-
+                  {formatLargeNumber(engagementRateData[1])}
+                </p>
+              )}
+              
+              
+            </Card>
             <Button type="submit" onClick={handleSubmitMain}>
               Apply
             </Button>
