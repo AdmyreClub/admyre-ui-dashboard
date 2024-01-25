@@ -50,7 +50,7 @@ const Sidebar = () => {
                     /> */}
                 </div>
                 <h1 className={cn("text-xxl font-bold", montserrat.className)}>
-                    influencersearch.club
+                    <img src={'@/public/logo.svg'} />
                 </h1>
             </Link>
             <div className="space-y-1">

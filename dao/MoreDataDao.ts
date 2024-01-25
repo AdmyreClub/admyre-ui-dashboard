@@ -145,7 +145,7 @@ class MoreDataDao implements IMoreDataDao{
         return this.data?.follows_count;
     }
 
-    public async getFollowerGrowthRate(username: string): Promise<number>{
+    public async getFollowerGrowthRate(): Promise<number>{
         return this.data?.growth_stats.followers_quarterly_growth_rate;
     }
 
