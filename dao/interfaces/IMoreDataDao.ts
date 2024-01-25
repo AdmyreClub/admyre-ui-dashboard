@@ -32,8 +32,8 @@ interface AudienceLocationData {
     countries: LocationPercentage[];
 }
 
-interface IMoreDataDao {
-    getFollowerCount(username: string): Promise<number>;
+interface IMoregetFollowerCountDataDao {
+    (username: string): Promise<number>;
     getFollowingCount(username: string): Promise<number>;
 
     getBio(username: string): Promise<string>;

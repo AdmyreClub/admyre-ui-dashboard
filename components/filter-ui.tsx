@@ -199,12 +199,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       }, // Now structured as an object
       gender: genderData,
       keywords: keywords,
-    };
-    
+    };  
     onDataFromChild(assembledData)
-
-
-    
   };
 
   return (
