@@ -33,21 +33,21 @@ interface AudienceLocationData {
 }
 
 interface IMoreDataDao {
-    getFollowerCount(username: string): Promise<number>;
-    getFollowingCount(username: string): Promise<number>;
+    getFollowerCount(): Promise<number>;
+    getFollowingCount(): Promise<number>;
 
-    getBio(username: string): Promise<string>;
-    getEngagementRate(username: string): Promise<number>;
+    getBio(): Promise<string>;
+    getEngagementRate(): Promise<number>;
 
-    getNumberOfAvgLikes(username: string): Promise<number>;
-    getNumberOfPosts(username: string): Promise<number>;
-    getNumberOfAvgComments(username: string): Promise<number>;
-    getFollowerGrowthRate(username: string): Promise<number>;
-    getCommentsToLikeRatio(username: string): Promise<number>;
-    getProfileHistoricalData(username: string): Promise<ProfileHistoricalData[]>;
+    getNumberOfAvgLikes(): Promise<number>;
+    getNumberOfPosts(): Promise<number>;
+    getNumberOfAvgComments(): Promise<number>;
+    getFollowerGrowthRate(): Promise<number>;
+    getCommentsToLikeRatio(): Promise<number>;
+    getProfileHistoricalData(): Promise<ProfileHistoricalData[]>;
 
-    getExternalUrls(username: string): Promise<ProfileExternalUrls>;
-    getAudienceGenderData(username: string): Promise<AudienceGenderData>;
-    getAudienceTopLocations(username: string): Promise<AudienceLocationData>;
-    getProfileLocation(username: string): Promise<String>;
+    getExternalUrls(): Promise<ProfileExternalUrls>;
+    getAudienceGenderData(): Promise<AudienceGenderData>;
+    getAudienceTopLocations(): Promise<AudienceLocationData>;
+    getProfileLocation(): Promise<String>;
 }
