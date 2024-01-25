@@ -125,7 +125,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
 
 
 
-  
+
    const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
@@ -162,18 +162,6 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       keywords: keywords,
     };
 
-    try {
-      console.log("data: ", assembledData);
-      // Send data to the API
-      const response = await axios.post("/api/search", assembledData);
-
-      // Handle the response
-      console.log("Response from API: ", response.data);
-      // Update state or perform actions based on the response
-    } catch (error) {
-      console.error("Error submitting filters: ", error);
-      // Handle error
-    }
   };
 
 
@@ -200,11 +188,11 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       gender: genderData,
       keywords: keywords,
     };
-    
+
     onDataFromChild(assembledData)
+    console.log("giving it to parent")
 
 
-    
   };
 
   return (
