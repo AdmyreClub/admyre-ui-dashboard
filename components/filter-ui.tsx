@@ -208,7 +208,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
       <Card className="w-full mb-8">
         <form onSubmit={handleSubmit(onSubmitMain)}>
           <CardHeader>
-            <CardTitle>Discov er Creators</CardTitle>
+            <CardTitle>Discover Creators</CardTitle>
             <CardDescription>
               Find influencers that match your campaign needs.
             </CardDescription>

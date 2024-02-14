@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useUser } from "@clerk/nextjs";
-import { Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowRightFromLine, Plus } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Strategy } from "@prisma/client";
@@ -29,8 +29,10 @@ import { useAuth } from "@/app/context/AuthContext";
 import * as z from "zod";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTable } from "react-table";
+import { useTable, useGlobalFilter, usePagination } from "react-table";
 import classNames from "classnames";
+import GlobalFilter from "./GlobalFilter";
+import { Select } from "@radix-ui/react-select";
 const strategySchema = z.object({
   strategyName: z.string().min(1, "Please enter the strategy name"),
   addInfluencersBy: z.enum(["search", "manual"]),
@@ -171,8 +173,30 @@ export default function StrategyUI() {
   );
 
   // Create an instance of the useTable hook
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: strategies });
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setGlobalFilter,
+    page,
+    nextPage,
+    previousPage,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    state,
+    gotoPage,
+    pageCount,
+    setPageSize,
+  } = useTable(
+    { columns, data: strategies, enableRowActions: true },
+    useGlobalFilter,
+    usePagination
+  );
+
+  const { globalFilter, pageIndex, pageSize } = state;
 
   return (
     <>
@@ -213,6 +237,7 @@ export default function StrategyUI() {
                   New Strategy
                 </Button>
               </Card>
+              <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
               <table
                 {...getTableProps()}
                 style={{ borderCollapse: "collapse", width: "100%" }}
@@ -236,7 +261,7 @@ export default function StrategyUI() {
                   ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {rows.map((row) => {
+                  {page.map((row) => {
                     prepareRow(row);
                     return (
                       <tr {...row.getRowProps()} key={row.id}>
@@ -254,6 +279,65 @@ export default function StrategyUI() {
                   })}
                 </tbody>
               </table>
+              <div className="flex justify-center p-3">
+                <Button
+                  
+                  onClick={() => gotoPage(0)}
+                  disabled={!canPreviousPage}
+                >
+                  <ArrowLeft/>
+                </Button>{" "}
+                <Button
+                  onClick={() => previousPage()}
+                  disabled={!canPreviousPage}
+                  className="ml-3"
+                >
+                  Previous
+                </Button>{" "}
+                <Button className="mx-3" onClick={() => nextPage()} disabled={!canNextPage}>
+                  Next
+                </Button>{" "}
+                <Button
+                  onClick={() => gotoPage(pageCount - 1)}
+                  disabled={!canNextPage}
+                  className="mr-3"
+                >
+                  <ArrowRight/>
+                </Button>{" "}
+                <span className="self-center">
+                  Page{" "}
+                  <strong>
+                    {pageIndex + 1} of {pageOptions.length}
+                  </strong>{" "}
+                </span>
+                <span className="ml-3 mr-3">
+                  | Go to page:{" "}
+                  <Input
+                    type="number"
+                    defaultValue={pageIndex + 1}
+                    min={1}
+                    className="w-[300px] inline"
+                    max={pageCount}
+                    onChange={(e) => {
+                      const pageNumber = e.target.value
+                        ? Number(e.target.value) - 1
+                        : 0;
+                      gotoPage(pageNumber);
+                    }}
+                    style={{ width: "60px" }}
+                  />
+                </span>{" "}
+                <select
+                  value={pageSize}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                >
+                  {[5, 10, 15].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </CardContent>
           </Card>
         </div>
