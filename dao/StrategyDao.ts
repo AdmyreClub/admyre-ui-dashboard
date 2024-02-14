@@ -89,6 +89,9 @@ class StrategyDao implements IStrategyDao {
       where: {
         userId,
       },
+      orderBy: {
+        createdAt: 'desc'
+      },
     });
 
     const strategiesWithListCount = await Promise.all(
@@ -109,15 +112,14 @@ class StrategyDao implements IStrategyDao {
     return strategiesWithListCount;
   }
 
-
-
   async getAllLists(strategyId: string): Promise<List[]> {
     return this.prisma.list.findMany({
       where: {
         strategyId,
-      },
+      }
     });
   }
+
 }
 
 const strategyDao = new StrategyDao();

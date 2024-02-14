@@ -144,7 +144,6 @@ export default function StrategyUI() {
   const columns: Column<Strategy>[] = React.useMemo(
     () => [
       {
-        
         accessor: "pictureUrl",
         Cell: ({ value }) => (
           <img
