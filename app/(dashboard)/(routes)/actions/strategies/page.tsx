@@ -237,7 +237,7 @@ export default function StrategyUI() {
                   New Strategy
                 </Button>
               </Card>
-              <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+              <GlobalFilter placeholder={"Search Lists"} filter={globalFilter} setFilter={setGlobalFilter} />
               {strategies.length > 0 ?
                 <div className="">
                   <table

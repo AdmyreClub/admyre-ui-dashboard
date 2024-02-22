@@ -2,12 +2,13 @@ import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 import { useAsyncDebounce } from 'react-table';
 
-interface GlobalFilterProps {w
+interface GlobalFilterProps {
   filter: string;
   setFilter: (value: string | undefined) => void;
+  placeholder: string;
 }
 
-const GlobalFilter: React.FC<GlobalFilterProps> = ({ filter, setFilter }) => {
+const GlobalFilter: React.FC<GlobalFilterProps> = ({ filter, setFilter, placeholder }) => {
   const [value, setValue] = useState<string | undefined>(filter);
 
   const onChange = (value: string) => {
@@ -19,7 +20,7 @@ const GlobalFilter: React.FC<GlobalFilterProps> = ({ filter, setFilter }) => {
       
       <Input
       className='w-[200px] '
-      placeholder='Search strategies'
+      placeholder={placeholder}
         value={value || ''}
         onChange={(e) => {
           setValue(e.target.value);
