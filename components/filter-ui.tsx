@@ -63,7 +63,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const [languagesData, setLanguagesData] = React.useState<string[]>([]);
   const [locationData, setLocationData] = React.useState<string[]>([]);
   const [keywords, setKeywords] = React.useState<string[]>([]);
-
+  
+  
   const handleFollowerData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setFollowerData(dataFromChild);
@@ -84,6 +85,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const handleCategoriesData = (dataFromChild: string[]) => {
     // Do something with the data received from the child component
     setCategoriesData(dataFromChild);
+    console.log(dataFromChild);
   };
   const handleLanguagesData = (dataFromChild: string[]) => {
     // Do something with the data received from the child component
@@ -418,8 +420,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   {formatLargeNumber(engagementRateData[1])}
                 </p>
               )}
-              
-              
+             
             </Card>
             <Button type="submit" onClick={handleSubmitMain}>
               Apply

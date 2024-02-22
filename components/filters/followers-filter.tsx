@@ -172,28 +172,28 @@ const FollowerFilter = ({ onDataFromChild, defaultVal }: ChildProps) => {
               value="nano"
               onClick={() => handleRadioChange(1000, 25000)}
             />
-            <Label>Nano-Influencers (1k - 25k)</Label>
+            <Label className="dark:text-white">Nano-Influencers (1k - 25k)</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               value="micro"
               onClick={() => handleRadioChange(25000, 100000)}
             />
-            <Label>Micro-Influencers (25k - 100k)</Label>
+            <Label className="dark:text-white">Micro-Influencers (25k - 100k)</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               value="macro"
               onClick={() => handleRadioChange(100000, 1000000)}
             />
-            <Label>Macro-Influencers (100k - 1M)</Label>
+            <Label className="dark:text-white">Macro-Influencers (100k - 1M)</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               value="celebrity"
               onClick={() => handleRadioChange(1000000, MAX_SLIDER_COUNT)}
             />
-            <Label>Celebrities (1M+)</Label>
+            <Label className="dark:text-white">Celebrities (1M+)</Label>
           </div>
         </RadioGroup>
 

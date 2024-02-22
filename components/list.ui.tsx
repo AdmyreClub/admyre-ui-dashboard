@@ -140,8 +140,8 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
   return (
     <>
-      <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
-        <Card>
+      <div className=" lg:flex sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
+        <Card className="sm:hidden lg:block">
           <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -160,7 +160,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className="p-6 text-md align-middle"
+                  className="p-6 text-md  lg:flex align-middle"
                   onClick={() => setIsDialogOpen(true)}
                 >
                   <Plus className="mr-3" /> New Strategy 🤓
@@ -217,7 +217,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
           </CardContent>
 
         </Card>
-      </aside>
+      </div>
 
       {/* Strategy Creation Dialog */}
     </>

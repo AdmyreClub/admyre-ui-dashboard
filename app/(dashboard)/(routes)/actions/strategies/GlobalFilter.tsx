@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
 import { useAsyncDebounce } from 'react-table';
 
-interface GlobalFilterProps {
+interface GlobalFilterProps {w
   filter: string;
   setFilter: (value: string | undefined) => void;
 }
