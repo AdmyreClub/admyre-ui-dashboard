@@ -210,7 +210,7 @@ const page = () => {
               </div>
             ))}
 
-            <Button onClick={addToArray} className="mt-2 self-start">
+            <Button onClick={addToArray} disabled={inputValue === "" } className="mt-2 self-start">
               Add
             </Button>
             
