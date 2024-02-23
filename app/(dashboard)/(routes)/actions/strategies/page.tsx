@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useUser } from "@clerk/nextjs";
-import { ArrowLeft, ArrowRight, ArrowRightFromLine, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowRightFromLine, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Strategy } from "@prisma/client";
@@ -57,6 +57,7 @@ export default function StrategyUI() {
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen2, setIsDialogOpen2] = useState(false);
 
   // const { register, handleSubmit, reset, formState: { errors } } = useForm<StrategyFormData>({
   //   resolver: zodResolver(strategySchema),
@@ -157,7 +158,29 @@ export default function StrategyUI() {
       },
       {
         Header: "Name",
-        accessor: "name", // property name in your strategy object
+        accessor: "name",
+        Cell: ({ value }: any) => (
+          <>
+            <Dialog>
+              <DialogTrigger>
+                <Button className="w-[13vw]">{value}</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add influencers...</DialogTitle>
+                </DialogHeader>
+                <Card className="p-3 flex flex-col justify-around w-full">
+                  <Link href={".././discover"}>
+                    <Button className="w-[16vw]"><Search className="mr-3"/> influencers from database</Button>
+                  </Link>
+                  <Link className="mt-3" href={`./strategies/${value}/import`}>
+                    <Button className="w-[16vw]"><Plus className="mr-3"/> Add influencers manually</Button>
+                  </Link>
+                </Card>
+              </DialogContent>
+            </Dialog>
+          </>
+        ), // property name in your strategy object
       },
       {
         Header: "List Count",
@@ -237,8 +260,12 @@ export default function StrategyUI() {
                   New Strategy
                 </Button>
               </Card>
-              <GlobalFilter placeholder={"Search Lists"} filter={globalFilter} setFilter={setGlobalFilter} />
-              {strategies.length > 0 ?
+              <GlobalFilter
+                placeholder={"Search Lists"}
+                filter={globalFilter}
+                setFilter={setGlobalFilter}
+              />
+              {strategies.length > 0 ? (
                 <div className="">
                   <table
                     {...getTableProps()}
@@ -344,7 +371,9 @@ export default function StrategyUI() {
                     </select>
                   </div>
                 </div>
-              : <></>}
+              ) : (
+                <></>
+              )}
             </CardContent>
           </Card>
         </div>

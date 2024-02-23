@@ -70,6 +70,7 @@ const page = () => {
   const [countStatus, setCountStatus] = useState<boolean>(
     listCount === 0 ? false : true
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [inputValue, setInputValue] = useState<string>("");
   const [duplicateArray, setDuplicateArray] = useState<string[]>([]);
@@ -210,7 +211,7 @@ const page = () => {
               </div>
             ))}
 
-            <Button onClick={addToArray} className="mt-2 self-start">
+            <Button onClick={addToArray} disabled={inputValue === "" } className="mt-2 self-start">
               Add
             </Button>
             
