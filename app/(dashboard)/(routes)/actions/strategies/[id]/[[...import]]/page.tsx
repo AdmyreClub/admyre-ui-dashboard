@@ -70,6 +70,7 @@ const page = () => {
   const [countStatus, setCountStatus] = useState<boolean>(
     listCount === 0 ? false : true
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [inputValue, setInputValue] = useState<string>("");
   const [duplicateArray, setDuplicateArray] = useState<string[]>([]);
