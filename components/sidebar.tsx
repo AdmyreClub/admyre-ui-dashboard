@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Database, Hash, Home, LayoutDashboard, Microscope, User } from "lucide-react";
+import { BadgeHelp, Brain, Codepen, Database, Hash, Home, LayoutDashboard, Microscope, Receipt, User } from "lucide-react";
 import { Montserrat } from "next/font/google";
 import { SignOutButton, UserButton } from '@clerk/nextjs';
 import Image from "next/image";
@@ -21,7 +21,7 @@ const routes = [
     color: "text-white",
   },
   {
-    label: "Find Influencers (prompt AI)",
+    label: "Find Influencers",
     icon: Database,
     href: "/discover",
     color: "text-white",
@@ -44,6 +44,30 @@ const routes = [
     href: "/campaigns",
     color: "text-white",
   },
+  {
+    label: "Brainstorm",
+    icon: Brain,
+    href: "/brainstorm",
+    color: "text-white",
+  },
+  {
+    label: "Social Intelligence",
+    icon: Codepen,
+    href: "/admyre",
+    color: "text-white",
+  },
+  {
+    label: "Plan and Billing",
+    icon: Receipt,
+    href: "/plans",
+    color: "text-white",
+  },
+  {
+    label: "Help Centre",
+    icon: BadgeHelp,
+    href: "/faq",
+    color: "text-white",
+  }
 ];
 
 const Sidebar = () => {
@@ -95,7 +119,7 @@ const Sidebar = () => {
                 key={route.href}
                 className={cn(
                   "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                  pathname === route.href
+                  pathname.startsWith(route.href)
                     ? "text-white bg-white/10"
                     : "text-zinc-400"
                 )}

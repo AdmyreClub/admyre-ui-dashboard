@@ -1,19 +1,36 @@
 import ActionSelectionUI from '@/components/action.selection.ui'
 import Heading from '@/components/heading'
-import { HardDriveDownload } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { CalendarClock } from 'lucide-react'
 import React from 'react'
 
 const ActionTrackUI = () => {
   return (
     <>
         <div className='pt-[5rem]'>
-        <Heading
-                title="Data Track"
-                description="Tracking shirororro QUESARR"
-                icon={HardDriveDownload}
-                iconColor="text-black-500"
-                bgColor="bg-slate-500/10"
-            />
+          <Heading
+            title="Post & Profile Tracker"
+            description="Monitor campaign performance and analyze competitors with real time tracking of posts and profiles"
+            icon={CalendarClock}
+            iconColor="text-primary-500" // Adjust the color class as needed
+            bgColor="bg-slate-500/10" // Adjust the background color class as needed
+          />
+
+          <div className='flex flex-col items-center sm:mx-4 w-full max-w-8xl'>
+          <Tabs defaultValue="posts">
+              <TabsList>
+                <TabsTrigger value="posts">Track Posts</TabsTrigger>
+                <TabsTrigger value="profiles">Track Profiles</TabsTrigger>
+              </TabsList>
+              <TabsContent value="posts">
+                <p>hahaha</p>
+              </TabsContent>
+              <TabsContent value="profiles">
+                <p> gotchuu</p>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
     </>
   )

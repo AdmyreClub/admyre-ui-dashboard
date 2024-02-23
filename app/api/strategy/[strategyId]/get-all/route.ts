@@ -2,29 +2,28 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import strategyDao from '@/dao/StrategyDao';
 import { auth } from '@clerk/nextjs';
-import { NextResponse } from 'next/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // Ensure that the user is authenticated
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
     const { userId } = auth();
+
     if (!userId) {
-        return new NextResponse(JSON.stringify({ message: 'user id not'}), { status: 400 });
+        res.status(400).json({ message: 'User ID not provided' });
+        return;
     }
 
-    // Extract strategyId from the URL
     const { strategyId } = req.query;
 
-    // Ensure that strategyId is provided
     if (!strategyId || Array.isArray(strategyId)) {
-        return new NextResponse(JSON.stringify({ message: 'Invalid strategy ID'}), { status: 400 });
+        res.status(400).json({ message: 'Invalid strategy ID' });
+        return;
     }
 
     try {
-        // Fetch all lists associated with the strategyId
-        const lists = await strategyDao.getAllLists(strategyId);
+        const lists = await strategyDao.getAllLists(strategyId as string);
         res.status(200).json(lists);
     } catch (error) {
         console.error('Error fetching lists for strategy:', error);
-        return new NextResponse(JSON.stringify({ message: 'Internal Server Error for getting all strategies', error }), { status: 500 });
+        res.status(500).json({ message: 'Internal Server Error for getting all lists', error });
     }
 }
+

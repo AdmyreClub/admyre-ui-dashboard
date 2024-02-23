@@ -237,107 +237,114 @@ export default function StrategyUI() {
                   New Strategy
                 </Button>
               </Card>
-              <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-              <table
-                {...getTableProps()}
-                style={{ borderCollapse: "collapse", width: "100%" }}
-              >
-                <thead>
-                  {headerGroups.map((headerGroup) => (
-                    <tr
-                      {...headerGroup.getHeaderGroupProps()}
-                      key={headerGroup.id}
-                    >
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          {...column.getHeaderProps()}
-                          className="border-b-2"
-                          key={column.id}
+              <GlobalFilter placeholder={"Search Lists"} filter={globalFilter} setFilter={setGlobalFilter} />
+              {strategies.length > 0 ?
+                <div className="">
+                  <table
+                    {...getTableProps()}
+                    style={{ borderCollapse: "collapse", width: "100%" }}
+                  >
+                    <thead>
+                      {headerGroups.map((headerGroup) => (
+                        <tr
+                          {...headerGroup.getHeaderGroupProps()}
+                          key={headerGroup.id}
                         >
-                          {column.render("Header")}
-                        </th>
+                          {headerGroup.headers.map((column) => (
+                            <th
+                              {...column.getHeaderProps()}
+                              className="border-b-2"
+                              key={column.id}
+                            >
+                              {column.render("Header")}
+                            </th>
+                          ))}
+                        </tr>
                       ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                  {page.map((row) => {
-                    prepareRow(row);
-                    return (
-                      <tr {...row.getRowProps()} key={row.id}>
-                        {row.cells.map((cell) => (
-                          <td
-                            {...cell.getCellProps()}
-                            className="text-center border-b-2 p-2"
-                            key={cell.id}
-                          >
-                            {cell.render("Cell")}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <div className="flex justify-center p-3">
-                <Button
-                  
-                  onClick={() => gotoPage(0)}
-                  disabled={!canPreviousPage}
-                >
-                  <ArrowLeft/>
-                </Button>{" "}
-                <Button
-                  onClick={() => previousPage()}
-                  disabled={!canPreviousPage}
-                  className="ml-3"
-                >
-                  Previous
-                </Button>{" "}
-                <Button className="mx-3" onClick={() => nextPage()} disabled={!canNextPage}>
-                  Next
-                </Button>{" "}
-                <Button
-                  onClick={() => gotoPage(pageCount - 1)}
-                  disabled={!canNextPage}
-                  className="mr-3"
-                >
-                  <ArrowRight/>
-                </Button>{" "}
-                <span className="self-center">
-                  Page{" "}
-                  <strong>
-                    {pageIndex + 1} of {pageOptions.length}
-                  </strong>{" "}
-                </span>
-                <span className="ml-3 mr-3">
-                  | Go to page:{" "}
-                  <Input
-                    type="number"
-                    defaultValue={pageIndex + 1}
-                    min={1}
-                    className="w-[300px] inline"
-                    max={pageCount}
-                    onChange={(e) => {
-                      const pageNumber = e.target.value
-                        ? Number(e.target.value) - 1
-                        : 0;
-                      gotoPage(pageNumber);
-                    }}
-                    style={{ width: "60px" }}
-                  />
-                </span>{" "}
-                <select
-                  value={pageSize}
-                  onChange={(e) => setPageSize(Number(e.target.value))}
-                >
-                  {[5, 10, 15].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                      {page.map((row) => {
+                        prepareRow(row);
+                        return (
+                          <tr {...row.getRowProps()} key={row.id}>
+                            {row.cells.map((cell) => (
+                              <td
+                                {...cell.getCellProps()}
+                                className="text-center border-b-2 p-2"
+                                key={cell.id}
+                              >
+                                {cell.render("Cell")}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <div className="flex justify-center p-3">
+                    <Button
+                      onClick={() => gotoPage(0)}
+                      disabled={!canPreviousPage}
+                    >
+                      <ArrowLeft />
+                    </Button>{" "}
+                    <Button
+                      onClick={() => previousPage()}
+                      disabled={!canPreviousPage}
+                      className="ml-3"
+                    >
+                      Previous
+                    </Button>{" "}
+                    <Button
+                      className="mx-3"
+                      onClick={() => nextPage()}
+                      disabled={!canNextPage}
+                    >
+                      Next
+                    </Button>{" "}
+                    <Button
+                      onClick={() => gotoPage(pageCount - 1)}
+                      disabled={!canNextPage}
+                      className="mr-3"
+                    >
+                      <ArrowRight />
+                    </Button>{" "}
+                    <span className="self-center">
+                      Page{" "}
+                      <strong>
+                        {pageIndex + 1} of {pageOptions.length}
+                      </strong>{" "}
+                    </span>
+                    <span className="ml-3 mr-3">
+                      | Go to page:{" "}
+                      <Input
+                        type="number"
+                        defaultValue={pageIndex + 1}
+                        min={1}
+                        className="w-[300px] inline"
+                        max={pageCount}
+                        onChange={(e) => {
+                          const pageNumber = e.target.value
+                            ? Number(e.target.value) - 1
+                            : 0;
+                          gotoPage(pageNumber);
+                        }}
+                        style={{ width: "60px" }}
+                      />
+                    </span>{" "}
+                    <select
+                      value={pageSize}
+                      onChange={(e) => setPageSize(Number(e.target.value))}
+                    >
+                      {[5, 10, 15].map((pageSize) => (
+                        <option key={pageSize} value={pageSize}>
+                          Show {pageSize}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              : <></>}
             </CardContent>
           </Card>
         </div>

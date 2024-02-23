@@ -214,12 +214,36 @@ function formatDateToMDY(date: Date): string {
     return (
       <>
         <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
+
         {viewMode === 'strategies' && <RenderStrategies strategies={strategies} onStrategyClick={handleStrategyClick} isLoading={isLoading} />}
         {viewMode === 'lists' && <RenderLists lists={lists} onListClick={handleListClick} isLoading={isLoading} />}
         {viewMode === 'influencers' && <RenderInfluencers influencers={influencers} isLoading={isLoading} />}
+        {/* Add the Create Strategy button and Dialog here */}
+        {viewMode === 'strategies' && (
+          <>
+          <div className="p-4">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setIsDialogOpen(true)} className="flex items-center">
+                <Plus className="mr-2" /> New Strategy
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Strategy</DialogTitle>
+              </DialogHeader>
+              <FormProvider {...methods}>
+                <NewStrategyUI onSubmit={handleStrategySubmit} setIsDialogOpen={setIsDialogOpen} />
+              </FormProvider>
+            </DialogContent>
+          </Dialog>
+          </div>
+          </>
+        )}
         </aside>
 
         {/* Strategy Creation Dialog */}
+
       </>
     );
   };
