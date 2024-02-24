@@ -34,12 +34,12 @@ const NewListUI: React.FC<NewStrategyUIProps> = ({
     <form
       onSubmit={() => {
         console.log("submit clicked");
-        
+
         handleSubmit(onSubmit);
       }}
       className="space-y-6"
     >
-      <Input placeholder="Name of the List" {...register("listName")} />
+      <Input placeholder="Name of the List" {...register("")} />
 
       <DialogFooter>
         <Button

@@ -19,54 +19,63 @@ const routes = [
     icon: Home,
     href: "/home",
     color: "text-white",
+    external: false,
   },
   {
     label: "Find Influencers",
     icon: Database,
     href: "/discover",
     color: "text-white",
+    external: false,
   },
   {
     label: "Strategies",
     icon: LayoutDashboard,
     href: "/strategies",
     color: "text-white",
+    external: false,
   },
   {
     label: "Track & Enrich",
     icon: Microscope,
     href: "/actions",
     color: "text-white",
+    external: false,
   },
   {
     label: "Campaigns",
     icon: Hash,
     href: "/campaigns",
     color: "text-white",
+    external: false,
   },
   {
     label: "Brainstorm",
     icon: Brain,
     href: "/brainstorm",
     color: "text-white",
+    external: false,
   },
   {
     label: "Social Intelligence",
     icon: Codepen,
-    href: "/admyre",
+    href: "https://630114cb80a012681fb7cfbf--extraordinary-mochi-8ffd1c.netlify.app/",
     color: "text-white",
+    external: true,
   },
   {
     label: "Plan and Billing",
     icon: Receipt,
     href: "/plans",
     color: "text-white",
+    external: false,
   },
   {
     label: "Help Centre",
     icon: BadgeHelp,
     href: "/faq",
     color: "text-white",
+    external: false,
   }
 ];
 
@@ -113,15 +122,32 @@ const Sidebar = () => {
             </div>
           </Link>
           <div className="space-y-1">
-            {routes.map((route) => (
+          {routes.map((route) => (
+            route.external ? (
+              // If the route is external, render an anchor tag instead of using Link
+              <a
+                href={route.href}
+                key={route.href}
+                target="_blank" // Open in new tab
+                rel="noopener noreferrer" // Security measure for opening links in a new tab
+                className={cn(
+                  "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                  pathname.startsWith(route.href) ? "text-white bg-white/10" : "text-zinc-400"
+                )}
+              >
+                <div className="flex items-center">
+                  <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                  {route.label}
+                </div>
+              </a>
+            ) : (
+              // For internal routes, keep using the Link component
               <Link
                 href={route.href}
                 key={route.href}
                 className={cn(
                   "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                  pathname.startsWith(route.href)
-                    ? "text-white bg-white/10"
-                    : "text-zinc-400"
+                  pathname.startsWith(route.href) ? "text-white bg-white/10" : "text-zinc-400"
                 )}
               >
                 <div className="flex items-center">
@@ -129,7 +155,8 @@ const Sidebar = () => {
                   {route.label}
                 </div>
               </Link>
-            ))}
+            )
+          ))}
           </div>
        </div>
         <div className="flex flex-col space-y-4 border p-4 rounded-lg items-center">
