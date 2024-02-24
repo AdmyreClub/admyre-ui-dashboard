@@ -39,7 +39,7 @@ const NewListUI: React.FC<NewStrategyUIProps> = ({
       }}
       className="space-y-6"
     >
-      <Input placeholder="Name of the List" {...register("")} />
+      <Input placeholder="Name of the List" {...register("strategyName")} />
 
       <DialogFooter>
         <Button
