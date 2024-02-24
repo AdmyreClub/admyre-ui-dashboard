@@ -117,6 +117,8 @@ const page = () => {
   }, []);
 
   const handleCreateListSubmit = async (listName: string) => {
+    console.log("hit add");
+    
     if (strategyValue) {
       setIsLoading(true);
       try {

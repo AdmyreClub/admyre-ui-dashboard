@@ -19,13 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useUser } from "@clerk/nextjs";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowRightFromLine,
-  Plus,
-  Search,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowRightFromLine, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Strategy } from "@prisma/client";
@@ -165,7 +159,9 @@ export default function StrategyUI() {
       {
         Header: "Name",
         accessor: "name",
-        Cell: ({ value }: any) => value, // property name in your strategy object
+        Cell: ({ value }: any) => (
+          value
+        ), // property name in your strategy object
       },
       {
         Header: "List Count",
@@ -286,36 +282,26 @@ export default function StrategyUI() {
                                 key={cell.id}
                               >
                                 <>
-                                  <Dialog>
-                                    <DialogTrigger>
-                                      {cell.render("Cell")}
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                      <DialogHeader>
-                                        <DialogTitle>
-                                          Add influencers to {row.original.name}
-                                        </DialogTitle>
-                                      </DialogHeader>
-                                      <Card className="p-3 flex flex-col justify-around w-full">
-                                        <Link href={".././discover"}>
-                                          <Button className="w-[19vw] ">
-                                            <Search className="mr-3" />
-                                            Find influencers from database
-                                          </Button>
-                                        </Link>
-                                        <Link
-                                          className="mt-3"
-                                          href={`./strategies/${row.original.name}/import`}
-                                        >
-                                          <Button className="w-[19vw] ">
-                                            <Plus className="mr-3" /> Add
-                                            influencers manually
-                                          </Button>
-                                        </Link>
-                                      </Card>
-                                    </DialogContent>
-                                  </Dialog>
-                                </>
+            <Dialog>
+              <DialogTrigger>
+              {cell.render("Cell")}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add influencers to {row.original.name}</DialogTitle>
+                </DialogHeader>
+                <Card className="p-3 flex flex-col justify-around w-full">
+                  <Link href={".././discover"}>
+                    <Button className="w-[23vw] "><Search className="mr-3"/>Find influencers from database</Button>
+                  </Link>
+                  <Link className="mt-3" href={`./strategies/${row.original.id}/import`}>
+                    <Button className="w-[23vw] "><Plus className="mr-3"/> Add influencers manually</Button>
+                  </Link>
+                </Card>
+              </DialogContent>
+            </Dialog>
+          </>
+                                
                               </td>
                             ))}
                           </tr>

@@ -170,14 +170,7 @@ export default function StrategyUI() {
       {
         Header: "Name",
         accessor: "name",
-        Cell: ({ value }) => {
-          const strategyId = getIdByName(value);
-          return (
-            <Link href={`./strategies/${strategyId}/lists`}>
-              <Button>{value}</Button>
-            </Link>
-          );
-        }, // property name in your strategy object
+         // property name in your strategy object
       },
       {
         Header: "List Count",
