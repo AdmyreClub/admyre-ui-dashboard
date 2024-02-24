@@ -93,6 +93,7 @@ function formatDateToMDY(date: Date): string {
     const [influencers, setInfluencers] = useState<Influencer[]>([]);
     const [viewMode, setViewMode] = useState<'strategies' | 'lists' | 'influencers'>('strategies');
     const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(null);
+    const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
 
     // const { register, handleSubmit, reset, formState: { errors } } = useForm<StrategyFormData>({
     //   resolver: zodResolver(strategySchema),
@@ -217,6 +218,26 @@ function formatDateToMDY(date: Date): string {
       }
     };
 
+    const handleCreateListSubmit = async (listName: string) => {
+      if (currentStrategyId) {
+        setIsLoading(true);
+        try {
+          const response = await axios.post(`/api/strategy/lists/create?q=${currentStrategyId}`, {
+            name: listName,
+          });
+          console.log("New List Response:", response.data);
+          setLists((current) => [...current, response.data]);
+          setIsNewListDialogOpen(false); // Close the dialog
+        } catch (error) {
+          console.error("Error creating list:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        console.error("No strategy selected for the new list");
+      }
+    };
+
 
     return (
       <>
@@ -247,6 +268,28 @@ function formatDateToMDY(date: Date): string {
           </div>
           </>
         )}
+
+      {viewMode === 'lists' && (
+        <>
+          <Button onClick={() => setIsNewListDialogOpen(true)} className="flex items-center">
+            <Plus className="mr-2" /> New List
+          </Button>
+          <Dialog open={isNewListDialogOpen} onOpenChange={setIsNewListDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setIsNewListDialogOpen(true)}>Create New List</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New List</DialogTitle>
+              </DialogHeader>
+              <FormProvider {...methods}>
+                {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
+                <NewListUI onSubmit={handleCreateListSubmit} setIsDialogOpen={setIsNewListDialogOpen} />
+              </FormProvider>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
         </aside>
 
         {/* Strategy Creation Dialog */}

@@ -10,7 +10,7 @@ interface StrategyDetails {
 
 interface ListDetails {
   name?: string;  // handle default naming
-  profiles: string[];
+  profiles?: string[];
 }
 
 class StrategyDao implements IStrategyDao {
@@ -32,25 +32,25 @@ class StrategyDao implements IStrategyDao {
   }
 
   async createList(strategyId: string, listDetails: ListDetails): Promise<List> {
-    const newList = await this.prisma.list.create({
-      data: {
-        strategyId,
-        name: listDetails.name || '',
-        profiles: listDetails.profiles,
-      },
-    });
-
-    if (!listDetails.name) {
-      await this.prisma.list.update({
-        where: { id: newList.id },
-        data: { name: `List ${newList.id}` },
+    let name = listDetails.name;
+    if (!name) {
+      // Fetch the count of existing lists for the strategy to generate a default name.
+      const count = await this.prisma.list.count({
+        where: { strategyId },
       });
+      name = `Untitled #${count + 1}`; // Default name if none provided
     }
 
-    return this.prisma.list.findUnique({
-      where: { id: newList.id },
-    }) as Promise<List>;
+    return this.prisma.list.create({
+      data: {
+        strategyId,
+        name,
+        profiles: listDetails.profiles || [], // Provide an empty array if profiles are not provided
+      },
+    });
   }
+
+
 
   async addProfilesToList(listId: string, profiles: string[]): Promise<List> {
     const currentList = await this.prisma.list.findUnique({ where: { id: listId } });
@@ -117,6 +117,17 @@ class StrategyDao implements IStrategyDao {
     const allLists = await this.prisma.$queryRaw<List[]>`SELECT * FROM List WHERE strategyId = ${strategyId}`;
     return allLists;
 }
+
+async getListById(listId: string): Promise<List> {
+  const list = await this.prisma.list.findUnique({
+      where: { id: listId },
+  });
+
+  if (!list) throw new Error('List not found');
+
+  return list;
+}
+
 
 }
 
