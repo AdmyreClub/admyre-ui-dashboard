@@ -113,12 +113,10 @@ class StrategyDao implements IStrategyDao {
   }
 
   async getAllLists(strategyId: string): Promise<List[]> {
-    return this.prisma.list.findMany({
-      where: {
-        strategyId,
-      }
-    });
-  }
+    console.log('BRO HERE IS THE strategy id:', strategyId);
+    const allLists = await this.prisma.$queryRaw<List[]>`SELECT * FROM List WHERE strategyId = ${strategyId}`;
+    return allLists;
+}
 
 }
 

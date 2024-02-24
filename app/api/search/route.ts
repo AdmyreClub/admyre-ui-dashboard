@@ -35,7 +35,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (!userId) {
       return NextResponse.rewrite(new URL('/401', req.url));
     }
-    console.log("this is the next request", req);
+    //console.log("this is the next request", req);
     const body = await req.json();
     console.log('Received request: ', body);
 

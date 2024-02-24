@@ -128,19 +128,26 @@ function formatDateToMDY(date: Date): string {
     }, []);
 
     const handleStrategyClick = async (strategyId: string) => {
-  setIsLoading(true);
-  try {
-    // Assume you have an API call to fetch lists for the clicked strategy
-    const response = await axios.get(`/api/strategy/${strategyId}/get-all`);
-    setLists(response.data);
-    setCurrentStrategyId(strategyId);
-    setViewMode('lists');
-  } catch (error) {
-    console.error("Error fetching lists:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+      console.log(`Attempting to fetch lists for strategy ID: ${strategyId}`); // Additional log
+      setIsLoading(true);
+      try {
+        // Note the change in the URL structure here: we use a query parameter `q` instead of a dynamic segment in the path.
+        const response = await axios.get(`/api/strategy/lists?q=${strategyId}`);
+        console.log('Lists fetched:', response.data); // Additional log
+        setLists(response.data);
+        setCurrentStrategyId(strategyId);
+        setViewMode('lists');
+      } catch (error) {
+        console.error("Error fetching lists:", error);
+        if (axios.isAxiosError(error)) {
+          console.error('Error details:', error.response?.data || error.message); // Additional log
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+
 
 
     const handleListClick = async (listId: string) => {

@@ -17,19 +17,25 @@ const ActionTrackUI = () => {
             bgColor="bg-slate-500/10" // Adjust the background color class as needed
           />
 
-          <div className='flex flex-col items-center sm:mx-4 w-full max-w-8xl'>
-          <Tabs defaultValue="posts">
-              <TabsList>
-                <TabsTrigger value="posts">Track Posts</TabsTrigger>
-                <TabsTrigger value="profiles">Track Profiles</TabsTrigger>
-              </TabsList>
-              <TabsContent value="posts">
-                <p>hahaha</p>
-              </TabsContent>
-              <TabsContent value="profiles">
-                <p> gotchuu</p>
-              </TabsContent>
-            </Tabs>
+          <div className="flex w-full max-w-8xl items-center justify-center my-10">
+            <Card className="w-full m-10 justify-center flex p-3">
+              <Tabs defaultValue="posts">
+                  <TabsList>
+                    <TabsTrigger value="posts">Track Posts</TabsTrigger>
+                    <TabsTrigger value="profiles">Track Profiles</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="posts">
+                    <Card>
+                      <p>skfhsdkjfhs</p>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="profiles">
+                  <Card>
+                      <p>sajkhfkjusdfhgksdjfjuks</p>
+                    </Card>
+                  </TabsContent>
+              </Tabs>
+            </Card>
           </div>
         </div>
     </>
