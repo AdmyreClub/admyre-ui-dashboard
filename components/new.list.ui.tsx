@@ -30,16 +30,20 @@ const NewListUI: React.FC<NewStrategyUIProps> = ({
     formState: { errors },
   } = useFormContext<StrategyFormData>();
 
+  // Define the function that should be called when the form is submitted
+  const handleFormSubmit = (data: StrategyFormData) => {
+    onSubmit(data.strategyName); // Pass the strategyName to the onSubmit prop
+    setIsDialogOpen(false); // Optionally close the dialog upon submission
+  };
+
   return (
     <form
-      onSubmit={() => {
-        console.log("submit clicked");
-
-        handleSubmit(onSubmit);
-      }}
+      onSubmit={handleSubmit(handleFormSubmit)} // Correctly use handleSubmit here
       className="space-y-6"
     >
       <Input placeholder="Name of the List" {...register("strategyName")} />
+      {/* Show errors if any */}
+      {errors.strategyName && <p className="text-red-500">{errors.strategyName.message}</p>}
 
       <DialogFooter>
         <Button
@@ -54,5 +58,6 @@ const NewListUI: React.FC<NewStrategyUIProps> = ({
     </form>
   );
 };
+
 
 export default NewListUI;

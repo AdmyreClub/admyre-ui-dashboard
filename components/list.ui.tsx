@@ -293,11 +293,11 @@ type StrategyFormData = z.infer<typeof strategySchema>;
                 <DialogTitle>Create New List</DialogTitle>
               </DialogHeader>
               <FormProvider {...methods}>
-                {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
                 <NewListUI onSubmit={handleCreateListSubmit} setIsDialogOpen={setIsNewListDialogOpen} />
               </FormProvider>
             </DialogContent>
           </Dialog>
+
         </>
       )}
         </aside>
