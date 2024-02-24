@@ -44,6 +44,7 @@ model Strategy {
 
 model List {
   id         String   @id @unique @default(uuid())
+  name       String
   strategyId String
   profiles   Json
   createdAt  DateTime @default(now())
