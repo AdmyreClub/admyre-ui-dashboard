@@ -16,7 +16,7 @@ interface StrategyDetails {
 
   interface ListDetails {
     name?: string;
-    profiles: String[]
+    profiles?: String[]
   }
 
 interface IStrategyDao {
