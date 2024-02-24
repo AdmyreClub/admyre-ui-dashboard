@@ -85,15 +85,19 @@ function formatDateToMDY(date: Date): string {
 
 type StrategyFormData = z.infer<typeof strategySchema>;
 
-  const DiscoverListUI = ({ userId }: { userId: string }) => {
-    const [strategies, setStrategies] = useState<Strategy[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [lists, setLists] = useState<List[]>([]);
-    const [influencers, setInfluencers] = useState<Influencer[]>([]);
-    const [viewMode, setViewMode] = useState<'strategies' | 'lists' | 'influencers'>('strategies');
-    const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(null);
-    const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
+const DiscoverListUI = ({ userId }: { userId: string }) => {
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [lists, setLists] = useState<List[]>([]);
+  const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [viewMode, setViewMode] = useState<
+    "strategies" | "lists" | "influencers"
+  >("strategies");
+  const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(
+    null
+  );
+  const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
 
   // const { register, handleSubmit, reset, formState: { errors } } = useForm<StrategyFormData>({
   //   resolver: zodResolver(strategySchema),
@@ -207,34 +211,36 @@ type StrategyFormData = z.infer<typeof strategySchema>;
       //   await router.push('/actions/import');
       // }
 
-        // Reload the current page
-        //window.location.reload();
-      } catch (error) {
-        console.error("Error creating strategy");
-        console.error(error);
-      }
-    };
+      // Reload the current page
+      //window.location.reload();
+    } catch (error) {
+      console.error("Error creating strategy");
+      console.error(error);
+    }
+  };
 
-    const handleCreateListSubmit = async (listName: string) => {
-      if (currentStrategyId) {
-        setIsLoading(true);
-        try {
-          const response = await axios.post(`/api/strategy/lists/create?q=${currentStrategyId}`, {
+  const handleCreateListSubmit = async (listName: string) => {
+    if (currentStrategyId) {
+      setIsLoading(true);
+      try {
+        const response = await axios.post(
+          `/api/strategy/lists/create?q=${currentStrategyId}`,
+          {
             name: listName,
-          });
-          console.log("New List Response:", response.data);
-          setLists((current) => [...current, response.data]);
-          setIsNewListDialogOpen(false); // Close the dialog
-        } catch (error) {
-          console.error("Error creating list:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        console.error("No strategy selected for the new list");
+          }
+        );
+        console.log("New List Response:", response.data);
+        setLists((current) => [...current, response.data]);
+        setIsNewListDialogOpen(false); // Close the dialog
+      } catch (error) {
+        console.error("Error creating list:", error);
+      } finally {
+        setIsLoading(false);
       }
-    };
-
+    } else {
+      console.error("No strategy selected for the new list");
+    }
+  };
 
   return (
     <>
@@ -259,48 +265,59 @@ type StrategyFormData = z.infer<typeof strategySchema>;
         {/* Add the Create Strategy button and Dialog here */}
         {viewMode === "strategies" && (
           <>
-          <div className="p-4">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)} className="flex items-center">
-                <Plus className="mr-2" /> New Strategy
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Strategy</DialogTitle>
-              </DialogHeader>
-              <FormProvider {...methods}>
-                <NewStrategyUI onSubmit={handleStrategySubmit} setIsDialogOpen={setIsDialogOpen} />
-              </FormProvider>
-            </DialogContent>
-          </Dialog>
-          </div>
+            <div className="p-4">
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => setIsDialogOpen(true)}
+                    className="flex items-center"
+                  >
+                    <Plus className="mr-2" /> New Strategy
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create New Strategy</DialogTitle>
+                  </DialogHeader>
+                  <FormProvider {...methods}>
+                    <NewStrategyUI
+                      onSubmit={handleStrategySubmit}
+                      setIsDialogOpen={setIsDialogOpen}
+                    />
+                  </FormProvider>
+                </DialogContent>
+              </Dialog>
+            </div>
           </>
         )}
 
-      {viewMode === 'lists' && (
-        <>
-          <Button onClick={() => setIsNewListDialogOpen(true)} className="flex items-center">
-            <Plus className="mr-2" /> New List
-          </Button>
-          <Dialog open={isNewListDialogOpen} onOpenChange={setIsNewListDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setIsNewListDialogOpen(true)}>Create New List</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New List</DialogTitle>
-              </DialogHeader>
-              <FormProvider {...methods}>
-                {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
-                <NewListUI onSubmit={handleCreateListSubmit} setIsDialogOpen={setIsNewListDialogOpen} />
-              </FormProvider>
-            </DialogContent>
-          </Dialog>
-        </>
-      )}
-        </aside>
+        {viewMode === "lists" && (
+          <>
+            <Dialog
+              open={isNewListDialogOpen}
+              onOpenChange={setIsNewListDialogOpen}
+            >
+              <DialogTrigger asChild>
+                <Button onClick={() => setIsNewListDialogOpen(true)}>
+                  Create New List
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New List</DialogTitle>
+                </DialogHeader>
+                <FormProvider {...methods}>
+                  {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
+                  <NewListUI
+                    onSubmit={handleCreateListSubmit}
+                    setIsDialogOpen={setIsNewListDialogOpen}
+                  />
+                </FormProvider>
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
+      </aside>
 
       {/* Strategy Creation Dialog */}
     </>
@@ -382,10 +399,6 @@ const RenderLists: React.FC<ListProps> = ({
         <p className="text-muted-foreground text-md">
           Select a List to manage influencers. 👇🏻
         </p>
-        <Button className="mt-6">
-          <Plus className="mr-2" />
-          Add List
-        </Button>
       </CardHeader>
       <CardContent>
         {isLoading ? (
