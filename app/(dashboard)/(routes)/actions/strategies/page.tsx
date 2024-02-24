@@ -167,14 +167,14 @@ export default function StrategyUI() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add influencers...</DialogTitle>
+                  <DialogTitle>Add influencers to {value}</DialogTitle>
                 </DialogHeader>
                 <Card className="p-3 flex flex-col justify-around w-full">
                   <Link href={".././discover"}>
-                    <Button className="w-[16vw]"><Search className="mr-3"/> influencers from database</Button>
+                    <Button className="w-[19vw] text-start"><Search className="mr-3"/>Find influencers from database</Button>
                   </Link>
                   <Link className="mt-3" href={`./strategies/${value}/import`}>
-                    <Button className="w-[16vw]"><Plus className="mr-3"/> Add influencers manually</Button>
+                    <Button className="w-[19vw] text-start"><Plus className="mr-3"/> Add influencers manually</Button>
                   </Link>
                 </Card>
               </DialogContent>

@@ -1,369 +1,402 @@
-  "use client";
+"use client";
 
-  import React, { useEffect, useRef, useState } from "react";
-  import { useRouter } from "next/navigation";
-  import axios from "axios";
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-  import { Button } from "@/components/ui/button";
-  import { Plus } from "lucide-react";
-  import strategyDao from "@/dao/StrategyDao";
-  import { Strategy, List } from "@prisma/client";
-  import { Skeleton } from "@/components/ui/skeleton";
-  import { ScrollArea } from "@/components/ui/scroll-area"
-  import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogTrigger,
-  } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import strategyDao from "@/dao/StrategyDao";
+import { Strategy, List } from "@prisma/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-  import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-  import * as z from "zod";
-  import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
-  import { zodResolver } from "@hookform/resolvers/zod";
-  import NewStrategyUI from "./form.list.ui";
-  import { SkeletonDemo } from "./SkeletonDemo";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import * as z from "zod";
+import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import NewStrategyUI from "./form.list.ui";
+import { SkeletonDemo } from "./SkeletonDemo";
 
-  // interface StrategyFormData {
-  //   name: string;
-  //   description?: string;
-  // }
+// interface StrategyFormData {
+//   name: string;
+//   description?: string;
+// }
 
-  const strategySchema = z.object({
-    strategyName: z.string().min(1, "Please enter the strategy name"),
-    addInfluencersBy: z.enum(["search", "manual"]),
-    description: z.string().optional(),
-  });
+const strategySchema = z.object({
+  strategyName: z.string().min(1, "Please enter the strategy name"),
+  addInfluencersBy: z.enum(["search", "manual"]),
+  description: z.string().optional(),
+});
 
-  type LisType = {
-    id: string,
-    listName: string
-  }
+type LisType = {
+  id: string;
+  listName: string;
+};
 
-  type Influencer = {
-    id: string,
-    username: string
-  }
+type Influencer = {
+  id: string;
+  username: string;
+};
 
-  interface RenderStrategiesProps {
-    strategies: Strategy[];
-    onStrategyClick: (strategyId: string) => void;
-    isLoading: boolean;
-  }
+interface RenderStrategiesProps {
+  strategies: Strategy[];
+  onStrategyClick: (strategyId: string) => void;
+  isLoading: boolean;
+}
 
-  interface ListProps {
-    lists: List[];
-    onListClick: (listId: string) => void;
-    isLoading: boolean;
-  }
+interface ListProps {
+  lists: List[];
+  onListClick: (listId: string) => void;
+  isLoading: boolean;
+}
 
-  interface InfluencerProps {
-    influencers: Influencer[];
-    isLoading: boolean;
-  }
-
+interface InfluencerProps {
+  influencers: Influencer[];
+  isLoading: boolean;
+}
 
 function formatDateToMDY(date: Date): string {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return new Date(date).toLocaleDateString(undefined, options);
-  }
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return new Date(date).toLocaleDateString(undefined, options);
+}
 
-  type StrategyFormData = z.infer<typeof strategySchema>;
+type StrategyFormData = z.infer<typeof strategySchema>;
 
-  const DiscoverListUI = ({ userId }: { userId: string }) => {
-    const [strategies, setStrategies] = useState<Strategy[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [lists, setLists] = useState<List[]>([]);
-    const [influencers, setInfluencers] = useState<Influencer[]>([]);
-    const [viewMode, setViewMode] = useState<'strategies' | 'lists' | 'influencers'>('strategies');
-    const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(null);
+const DiscoverListUI = ({ userId }: { userId: string }) => {
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [lists, setLists] = useState<List[]>([]);
+  const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [viewMode, setViewMode] = useState<
+    "strategies" | "lists" | "influencers"
+  >("strategies");
+  const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(
+    null
+  );
 
-    // const { register, handleSubmit, reset, formState: { errors } } = useForm<StrategyFormData>({
-    //   resolver: zodResolver(strategySchema),
-    // });
+  // const { register, handleSubmit, reset, formState: { errors } } = useForm<StrategyFormData>({
+  //   resolver: zodResolver(strategySchema),
+  // });
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const methods = useForm<StrategyFormData>({
-      resolver: zodResolver(strategySchema),
-    });
+  const methods = useForm<StrategyFormData>({
+    resolver: zodResolver(strategySchema),
+  });
 
-    useEffect(() => {
-      const fetchStrategies = async () => {
-        if (userId) {
-          setIsLoading(true);
-          try {
-            const response = await fetch("/api/strategy/get-all");
-            console.log("whats the response: ", response);
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            const fetchedStrategies = await response.json();
-            setStrategies(fetchedStrategies);
-          } catch (error) {
-            console.error("Error fetching strategies:", error);
-          } finally {
-            setIsLoading(false);
+  useEffect(() => {
+    const fetchStrategies = async () => {
+      if (userId) {
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/strategy/get-all");
+          console.log("whats the response: ", response);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
           }
+          const fetchedStrategies = await response.json();
+          setStrategies(fetchedStrategies);
+        } catch (error) {
+          console.error("Error fetching strategies:", error);
+        } finally {
+          setIsLoading(false);
         }
-      };
-
-      fetchStrategies();
-    }, []);
-
-    const handleStrategyClick = async (strategyId: string) => {
-      console.log(`Attempting to fetch lists for strategy ID: ${strategyId}`); // Additional log
-      setIsLoading(true);
-      try {
-        // Note the change in the URL structure here: we use a query parameter `q` instead of a dynamic segment in the path.
-        const response = await axios.get(`/api/strategy/lists?q=${strategyId}`);
-        console.log('Lists fetched:', response.data); // Additional log
-        setLists(response.data);
-        setCurrentStrategyId(strategyId);
-        setViewMode('lists');
-      } catch (error) {
-        console.error("Error fetching lists:", error);
-        if (axios.isAxiosError(error)) {
-          console.error('Error details:', error.response?.data || error.message); // Additional log
-        }
-      } finally {
-        setIsLoading(false);
       }
     };
 
+    fetchStrategies();
+  }, []);
 
-
-
-    const handleListClick = async (listId: string) => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get(`/api/influencers/by-list/${listId}`);
-        setInfluencers(response.data);
-        setViewMode('influencers');
-      } catch (error) {
-        console.error("Error fetching influencers:", error);
-      } finally {
-        setIsLoading(false);
+  const handleStrategyClick = async (strategyId: string) => {
+    console.log(`Attempting to fetch lists for strategy ID: ${strategyId}`); // Additional log
+    setIsLoading(true);
+    try {
+      // Note the change in the URL structure here: we use a query parameter `q` instead of a dynamic segment in the path.
+      const response = await axios.get(`/api/strategy/lists?q=${strategyId}`);
+      console.log("Lists fetched:", response.data); // Additional log
+      setLists(response.data);
+      setCurrentStrategyId(strategyId);
+      setViewMode("lists");
+    } catch (error) {
+      console.error("Error fetching lists:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Error details:", error.response?.data || error.message); // Additional log
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleListClick = async (listId: string) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`/api/influencers/by-list/${listId}`);
+      setInfluencers(response.data);
+      setViewMode("influencers");
+    } catch (error) {
+      console.error("Error fetching influencers:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNavigation = () => {
+    if (viewMode === "influencers") {
+      setViewMode("lists");
+      setInfluencers([]);
+    } else if (viewMode === "lists") {
+      setViewMode("strategies");
+      setCurrentStrategyId(null);
+      setLists([]);
+    }
+  };
+
+  const handleStrategySubmit = async (data: StrategyFormData) => {
+    console.log("Strategy Data:", data);
+    setIsDialogOpen(false);
+    console.log("Form Data Submitted:", data); // First, log data to the console
+
+    // Construct the strategy data object
+    const strategyData = {
+      name: data.strategyName,
+      pictureUrl:
+        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+      description: data.description,
     };
 
-    const handleNavigation = () => {
-      if (viewMode === 'influencers') {
-        setViewMode('lists');
-        setInfluencers([]);
-      } else if (viewMode === 'lists') {
-        setViewMode('strategies');
-        setCurrentStrategyId(null);
-        setLists([]);
-      }
-    };
+    console.log("Strategy Data to Send:", strategyData); // Log the strategy data
 
-    const handleStrategySubmit = async (data: StrategyFormData) => {
-      console.log("Strategy Data:", data);
-      setIsDialogOpen(false);
-      console.log("Form Data Submitted:", data); // First, log data to the console
-
-      // Construct the strategy data object
-      const strategyData = {
+    try {
+      const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
         pictureUrl:
           "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
         description: data.description,
-      };
+      });
 
-      console.log("Strategy Data to Send:", strategyData); // Log the strategy data
+      console.log("New Strategy Response:", response.data); // Log the response data
 
-      try {
-        const response = await axios.post("/api/strategy/new", {
-          name: data.strategyName,
-          pictureUrl:
-            "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
-          description: data.description,
-        });
+      setStrategies((current) => [...current, response.data]);
+      setIsDialogOpen(false);
+      methods.reset();
 
-        console.log("New Strategy Response:", response.data); // Log the response data
+      // if (data.addInfluencersBy === 'search') {
+      //   await router.push('/discover');
+      // } else if (data.addInfluencersBy === 'manual') {
+      //   await router.push('/actions/import');
+      // }
 
-        setStrategies((current) => [...current, response.data]);
-        setIsDialogOpen(false);
-        methods.reset();
+      // Reload the current page
+      //window.location.reload();
+    } catch (error) {
+      console.error("Error creating strategy");
+      console.error(error);
+    }
+  };
 
-        // if (data.addInfluencersBy === 'search') {
-        //   await router.push('/discover');
-        // } else if (data.addInfluencersBy === 'manual') {
-        //   await router.push('/actions/import');
-        // }
-
-        // Reload the current page
-        //window.location.reload();
-      } catch (error) {
-        console.error("Error creating strategy");
-        console.error(error);
-      }
-    };
-
-
-    return (
-      <>
-        <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
-
-        {viewMode === 'strategies' && <RenderStrategies strategies={strategies} onStrategyClick={handleStrategyClick} isLoading={isLoading} />}
-        {viewMode === 'lists' && <RenderLists lists={lists} onListClick={handleListClick} isLoading={isLoading} />}
-        {viewMode === 'influencers' && <RenderInfluencers influencers={influencers} isLoading={isLoading} />}
+  return (
+    <>
+      <aside className="sticky top-[5rem] h-screen w-[350px] overflow-y-auto p-3 border-inherit shadow-lg rounded-lg">
+        {viewMode === "strategies" && (
+          <RenderStrategies
+            strategies={strategies}
+            onStrategyClick={handleStrategyClick}
+            isLoading={isLoading}
+          />
+        )}
+        {viewMode === "lists" && (
+          <RenderLists
+            lists={lists}
+            onListClick={handleListClick}
+            isLoading={isLoading}
+          />
+        )}
+        {viewMode === "influencers" && (
+          <RenderInfluencers influencers={influencers} isLoading={isLoading} />
+        )}
         {/* Add the Create Strategy button and Dialog here */}
-        {viewMode === 'strategies' && (
+        {viewMode === "strategies" && (
           <>
-          <div className="p-4">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)} className="flex items-center">
-                <Plus className="mr-2" /> New Strategy
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Strategy</DialogTitle>
-              </DialogHeader>
-              <FormProvider {...methods}>
-                <NewStrategyUI onSubmit={handleStrategySubmit} setIsDialogOpen={setIsDialogOpen} />
-              </FormProvider>
-            </DialogContent>
-          </Dialog>
-          </div>
+            <div className="p-4">
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => setIsDialogOpen(true)}
+                    className="flex items-center"
+                  >
+                    <Plus className="mr-2" /> New Strategy
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create New Strategy</DialogTitle>
+                  </DialogHeader>
+                  <FormProvider {...methods}>
+                    <NewStrategyUI
+                      onSubmit={handleStrategySubmit}
+                      setIsDialogOpen={setIsDialogOpen}
+                    />
+                  </FormProvider>
+                </DialogContent>
+              </Dialog>
+            </div>
           </>
         )}
-        </aside>
+      </aside>
 
-        {/* Strategy Creation Dialog */}
+      {/* Strategy Creation Dialog */}
+    </>
+  );
+};
 
-      </>
-    );
-  };
+export default DiscoverListUI;
 
-  export default DiscoverListUI;
-
-  const RenderStrategies: React.FC<RenderStrategiesProps> = ({
-    strategies,
-    onStrategyClick,
-    isLoading,
-  }) => {
-    return (
-      <Card>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-        <CardHeader>
-          <CardTitle>All Strategies</CardTitle>
-          <CardDescription className="text-md">
-            Select a strategy to manage lists and influencers. 👇🏻
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col align-middle">
-          <ScrollArea className="w-full">
-            {isLoading ? (
-              <SkeletonDemo />
-            ) : (
-              strategies.map((strategy) => (
-                <div
-                  key={strategy.id}
-                  className="cursor-pointer mt-3 h-[100px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top"
-                  onClick={() => onStrategyClick(strategy.id)}
-                >
-                  <div className="flex gap-2 align-middle items-center">
-                    <img
-                      className="w-[40px] h-[40px] rounded-[50%]"
-                      src={strategy.pictureUrl || "default-image-path"}
-                      alt={strategy.name}
-                    />
-                    <p className="ml-2 self-center font-semibold">
-                      {strategy.name || `Strategy ${strategy.id}`}
+const RenderStrategies: React.FC<RenderStrategiesProps> = ({
+  strategies,
+  onStrategyClick,
+  isLoading,
+}) => {
+  return (
+    <Card>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
+      />
+      <CardHeader>
+        <CardTitle>All Strategies</CardTitle>
+        <CardDescription className="text-md">
+          Select a strategy to manage lists and influencers. 👇🏻
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col align-middle">
+        <ScrollArea className="w-full">
+          {isLoading ? (
+            <SkeletonDemo />
+          ) : (
+            strategies.map((strategy) => (
+              <div
+                key={strategy.id}
+                className="cursor-pointer mt-3 h-[100px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top"
+                onClick={() => onStrategyClick(strategy.id)}
+              >
+                <div className="flex gap-2 align-middle items-center">
+                  <img
+                    className="w-[40px] h-[40px] rounded-[50%]"
+                    src={strategy.pictureUrl || "default-image-path"}
+                    alt={strategy.name}
+                  />
+                  <p className="ml-2 self-center font-semibold">
+                    {strategy.name || `Strategy ${strategy.id}`}
+                  </p>
+                </div>
+                <div className="flex border-none shadow-none justify-between">
+                  <div className="flex border-none shadow-none">
+                    <i className="self-center fa-solid fa-list text-gray-400 text-[10px]"></i>
+                    <p className="ml-2 text-gray-400 text-[10px]">
+                      {strategy.listCount || 0} lists
                     </p>
                   </div>
-                  <div className="flex border-none shadow-none justify-between">
-                    <div className="flex border-none shadow-none">
-                      <i className="self-center fa-solid fa-list text-gray-400 text-[10px]"></i>
-                      <p className="ml-2 text-gray-400 text-[10px]">
-                        {strategy.listCount || 0} lists
-                      </p>
-                    </div>
-                    <div className="flex border-none shadow-none text-[10px]">
-                      {formatDateToMDY(strategy.createdAt)}
-                    </div>
+                  <div className="flex border-none shadow-none text-[10px]">
+                    {formatDateToMDY(strategy.createdAt)}
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))
+          )}
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+};
+
+const RenderLists: React.FC<ListProps> = ({
+  lists,
+  onListClick,
+  isLoading,
+}) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>All Lists</CardTitle>
+        <p className="text-muted-foreground text-md">
+          Select a List to manage influencers. 👇🏻
+        </p>
+        <Button className="mt-6">
+          <Plus className="mr-2" />
+          Add List
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <SkeletonDemo />
+        ) : (
+          <ScrollArea>
+            {lists.map((list) => (
+              <div
+                key={list.id}
+                onClick={() => onListClick(list.id)}
+                className="cursor-pointer"
+              >
+                {/* List details */}
+                <p>{list.name}</p>
+              </div>
+            ))}
           </ScrollArea>
-        </CardContent>
-      </Card>
-    );
-  };
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
-
-
-  const RenderLists: React.FC<ListProps> = ({ lists, onListClick, isLoading }) => {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Lists</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <SkeletonDemo />
-          ) : (
-            <ScrollArea>
-              {lists.map((list) => (
-                <div key={list.id} onClick={() => onListClick(list.id)} className="cursor-pointer">
-                  {/* List details */}
-                  <p>{list.name}</p>
-                </div>
-              ))}
-            </ScrollArea>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const RenderInfluencers: React.FC<InfluencerProps> = ({ influencers, isLoading }) => {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Influencers</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <SkeletonDemo />
-          ) : (
-            <ScrollArea>
-              {influencers.map((influencer) => (
-                <div key={influencer.id} className="cursor-pointer">
-                  {/* Influencer details */}
-                  <p>{influencer.username}</p>
-                </div>
-              ))}
-            </ScrollArea>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
+const RenderInfluencers: React.FC<InfluencerProps> = ({
+  influencers,
+  isLoading,
+}) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Influencers</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <SkeletonDemo />
+        ) : (
+          <ScrollArea>
+            {influencers.map((influencer) => (
+              <div key={influencer.id} className="cursor-pointer">
+                {/* Influencer details */}
+                <p>{influencer.username}</p>
+              </div>
+            ))}
+          </ScrollArea>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
