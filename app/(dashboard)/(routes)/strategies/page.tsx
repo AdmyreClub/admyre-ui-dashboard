@@ -40,6 +40,7 @@ const strategySchema = z.object({
 });
 type StrategyFormData = z.infer<typeof strategySchema>;
 interface Strategy {
+  name: string;
   id: number;
   url: string;
   listcount: number;
@@ -80,6 +81,7 @@ export default function StrategyUI() {
           }
           const fetchedStrategies = await response.json();
           setStrategies(fetchedStrategies);
+          console.log(fetchedStrategies);
         } catch (error) {
           console.error("Error fetching strategies:", error);
         } finally {
@@ -90,6 +92,16 @@ export default function StrategyUI() {
 
     fetchStrategies();
   }, []);
+
+  function getIdByName(name: string) {
+    for (const itemName in strategies) {
+      if (strategies[itemName].name === name) {
+        return strategies[itemName].id;
+      }
+    }
+    // Return a default value or handle the case when the name is not found
+    return null;
+  }
 
   const handleStrategySubmit = async (data: StrategyFormData) => {
     console.log("Strategy Data:", data);
@@ -157,7 +169,15 @@ export default function StrategyUI() {
       },
       {
         Header: "Name",
-        accessor: "name", // property name in your strategy object
+        accessor: "name",
+        Cell: ({ value }) => {
+          const strategyId = getIdByName(value);
+          return (
+            <Link href={`./strategies/${strategyId}/lists`}>
+              <Button>{value}</Button>
+            </Link>
+          );
+        }, // property name in your strategy object
       },
       {
         Header: "List Count",
@@ -266,13 +286,21 @@ export default function StrategyUI() {
                     return (
                       <tr {...row.getRowProps()} key={row.id}>
                         {row.cells.map((cell) => (
-                          <td
-                            {...cell.getCellProps()}
-                            className="text-center border-b-2 p-2"
-                            key={cell.id}
-                          >
-                            {cell.render("Cell")}
-                          </td>
+                          <>
+                            <td
+                              {...cell.getCellProps()}
+                              className="text-center border-b-2 p-2"
+                              key={cell.id}
+                            >
+                              <Link
+                                href={`./strategies/${row.original.id}/lists`}
+                              >
+                                {cell.render("Cell")}
+                               
+                              </Link>
+                            </td>
+                            
+                          </>
                         ))}
                       </tr>
                     );
@@ -280,12 +308,8 @@ export default function StrategyUI() {
                 </tbody>
               </table>
               <div className="flex justify-center p-3">
-                <Button
-
-                  onClick={() => gotoPage(0)}
-                  disabled={!canPreviousPage}
-                >
-                  <ArrowLeft/>
+                <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                  <ArrowLeft />
                 </Button>{" "}
                 <Button
                   onClick={() => previousPage()}
@@ -294,7 +318,11 @@ export default function StrategyUI() {
                 >
                   Previous
                 </Button>{" "}
-                <Button className="mx-3" onClick={() => nextPage()} disabled={!canNextPage}>
+                <Button
+                  className="mx-3"
+                  onClick={() => nextPage()}
+                  disabled={!canNextPage}
+                >
                   Next
                 </Button>{" "}
                 <Button
@@ -302,7 +330,7 @@ export default function StrategyUI() {
                   disabled={!canNextPage}
                   className="mr-3"
                 >
-                  <ArrowRight/>
+                  <ArrowRight />
                 </Button>{" "}
                 <span className="self-center">
                   Page{" "}
