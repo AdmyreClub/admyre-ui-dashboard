@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { MoveLeftIcon, Plus } from "lucide-react";
 import strategyDao from "@/dao/StrategyDao";
 import { Strategy, List } from "@prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -295,12 +295,15 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
         {viewMode === "lists" && (
           <>
+            <Button variant={"outline"} className="mt-2 mb-2 w-[140px]" onClick={() => setViewMode("strategies")}>
+              <MoveLeftIcon className="mr-2"/> Strategies
+            </Button>
             <Dialog
               open={isNewListDialogOpen}
               onOpenChange={setIsNewListDialogOpen}
             >
               <DialogTrigger asChild>
-                <Button onClick={() => setIsNewListDialogOpen(true)}>
+                <Button className="w-[140px]" onClick={() => setIsNewListDialogOpen(true)}>
                   Create New List
                 </Button>
               </DialogTrigger>
@@ -364,7 +367,7 @@ const RenderStrategies: React.FC<RenderStrategiesProps> = ({
             strategies.map((strategy) => (
               <div
                 key={strategy.id}
-                className="cursor-pointer mt-3 h-[100px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top"
+                className="cursor-pointer shadow-md mr-1 rounded-sm mb-1 mt-3 h-[100px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top"
                 onClick={() => onStrategyClick(strategy.id)}
               >
                 <div className="flex gap-2 align-middle items-center">
@@ -419,7 +422,7 @@ const RenderLists: React.FC<ListProps> = ({
               <div
                 key={list.id}
                 onClick={() => onListClick(list.id)}
-                className="cursor-pointer"
+                className="cursor-pointer mt-2 mb-2 mr-1 ml-1 rounded-sm p-2 shadow-md"
               >
                 {/* List details */}
                 <p>{list.name}</p>
