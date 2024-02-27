@@ -81,32 +81,44 @@ const page = () => {
   const [lists, setLists] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
-  const pathSegments = window.location.pathname.split("/");
-  const strategyIndex = pathSegments.indexOf("strategies");
-
-  if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
-    var strategyValue = pathSegments[strategyIndex + 1];
-  }
+  const [createListValue, setCreateListValue] = useState<string>("");
+  const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(
+    null
+  );
 
   const methods = useForm<StrategyFormData>({
     resolver: zodResolver(strategySchema),
   });
+
   useEffect(() => {
     const fetchLists = async () => {
+      const pathSegments = window.location.pathname.split("/");
+      const strategyIndex = pathSegments.indexOf("strategies");
+      if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
+        var strategyValue = pathSegments[strategyIndex + 1];
+      } else {
+        var strategyValue = "undefineds";
+      }
+      const strategyId = strategyValue;
       if (userId) {
+        console.log(`Attempting to fetch lists for strategy ID: ${strategyId}`); // Additional log
         setIsLoading(true);
         try {
-          const response = await fetch(
-            `/api/strategy/lists/create?q=[${strategyValue}]`
+          // Note the change in the URL structure here: we use a query parameter `q` instead of a dynamic segment in the path.
+          const response = await axios.get(
+            `/api/strategy/lists?q=${strategyId}`
           );
-          console.log("whats the response: ", response);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const fetchedLists = await response.json();
-          setLists(fetchedLists);
+          console.log("Lists fetched:", response.data); // Additional log
+          setLists(response.data);
+          setCurrentStrategyId(strategyId);
         } catch (error) {
           console.error("Error fetching lists:", error);
+          if (axios.isAxiosError(error)) {
+            console.error(
+              "Error details:",
+              error.response?.data || error.message
+            ); // Additional log
+          }
         } finally {
           setIsLoading(false);
         }
@@ -118,12 +130,12 @@ const page = () => {
 
   const handleCreateListSubmit = async (listName: string) => {
     console.log("hit add");
-    
-    if (strategyValue) {
+
+    if (currentStrategyId) {
       setIsLoading(true);
       try {
         const response = await axios.post(
-          `/api/strategy/lists/create?q=${strategyValue}`,
+          `/api/strategy/lists/create?q=${currentStrategyId}`,
           {
             name: listName,
           }
@@ -345,10 +357,18 @@ const page = () => {
                 </DialogHeader>
                 <FormProvider {...methods}>
                   {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
-                  <NewListUI
-                    onSubmit={handleCreateListSubmit}
-                    setIsDialogOpen={setIsNewListDialogOpen}
-                  />
+                  <Card className="flex flex-col">
+                    <Input
+                      onChange={(e) => setCreateListValue(e.target.value)}
+                      value={createListValue}
+                    />
+                    <Button
+                      onClick={() => handleCreateListSubmit(createListValue)}
+                      className="self-start mt-3"
+                    >
+                      Add
+                    </Button>
+                  </Card>
                 </FormProvider>
               </DialogContent>
             </Dialog>

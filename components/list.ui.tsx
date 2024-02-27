@@ -35,6 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import NewStrategyUI from "./form.list.ui";
 import { SkeletonDemo } from "./SkeletonDemo";
 import NewListUI from "./new.list.ui";
+import { Input } from "./ui/input";
 
 // interface StrategyFormData {
 //   name: string;
@@ -91,6 +92,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [lists, setLists] = useState<List[]>([]);
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [createListValue, setCreateListValue] = useState<string>("");
   const [viewMode, setViewMode] = useState<
     "strategies" | "lists" | "influencers"
   >("strategies");
@@ -308,10 +310,18 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                 </DialogHeader>
                 <FormProvider {...methods}>
                   {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
-                  <NewListUI
-                    onSubmit={handleCreateListSubmit}
-                    setIsDialogOpen={setIsNewListDialogOpen}
-                  />
+                  <div className="flex flex-col">
+                    <Input
+                      onChange={(e) => setCreateListValue(e.target.value)}
+                      value={createListValue}
+                    />
+                    <Button
+                      onClick={() => handleCreateListSubmit(createListValue)}
+                      className="self-start mt-3"
+                    >
+                      Add
+                    </Button>
+                  </div>
                 </FormProvider>
               </DialogContent>
             </Dialog>

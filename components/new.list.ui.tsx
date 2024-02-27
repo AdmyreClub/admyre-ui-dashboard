@@ -32,6 +32,8 @@ const NewListUI: React.FC<NewStrategyUIProps> = ({
 
   // Define the function that should be called when the form is submitted
   const handleFormSubmit = (data: StrategyFormData) => {
+    console.log("clicked");
+    
     onSubmit(data.strategyName); // Pass the strategyName to the onSubmit prop
     setIsDialogOpen(false); // Optionally close the dialog upon submission
   };
