@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { MoveLeftIcon, Plus } from "lucide-react";
+import {
+  ArrowRight,
+  DeleteIcon,
+  Edit2,
+  MoveLeftIcon,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import strategyDao from "@/dao/StrategyDao";
 import { Strategy, List } from "@prisma/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,6 +80,10 @@ interface ListProps {
 interface InfluencerProps {
   influencers: Influencer[];
   isLoading: boolean;
+}
+
+interface InputValues {
+  inputValue: string;
 }
 
 function formatDateToMDY(date: Date): string {
@@ -295,15 +306,22 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
 
         {viewMode === "lists" && (
           <>
-            <Button variant={"outline"} className="mt-2 mb-2 w-[140px]" onClick={() => setViewMode("strategies")}>
-              <MoveLeftIcon className="mr-2"/> Strategies
+            <Button
+              variant={"outline"}
+              className="mt-2 mb-2 w-[140px]"
+              onClick={() => setViewMode("strategies")}
+            >
+              <MoveLeftIcon className="mr-2" /> Strategies
             </Button>
             <Dialog
               open={isNewListDialogOpen}
               onOpenChange={setIsNewListDialogOpen}
             >
               <DialogTrigger asChild>
-                <Button className="w-[140px]" onClick={() => setIsNewListDialogOpen(true)}>
+                <Button
+                  className="w-[140px]"
+                  onClick={() => setIsNewListDialogOpen(true)}
+                >
                   Create New List
                 </Button>
               </DialogTrigger>
@@ -405,6 +423,27 @@ const RenderLists: React.FC<ListProps> = ({
   onListClick,
   isLoading,
 }) => {
+  const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
+  const [createListValue, setCreateListValue] = useState<string>("");
+  const [inputs, setInputs] = useState(lists.map(() => ({ inputValue: "" })));
+
+  const handleInputChange = (index: number, field: keyof InputValues, value: string) => {
+    const newInputs = [...inputs];
+    newInputs[index][field] = value;
+    setInputs(newInputs);
+  };
+  const handleEditList = async (listNewName: string, listId: string) => {
+    try {
+      const response = await axios.post(
+        `/api/strategy/lists/update?listId=${listId}&name=${listNewName}`
+      );
+      console.log("New List Response:", response.data);
+
+      setIsNewListDialogOpen(false); // Close the dialog
+    } catch (error) {
+      console.error("Error creating list:", error);
+    }
+  };
   return (
     <Card>
       <CardHeader>
@@ -418,14 +457,37 @@ const RenderLists: React.FC<ListProps> = ({
           <SkeletonDemo />
         ) : (
           <ScrollArea>
-            {lists.map((list) => (
+            {lists.map((list, index) => (
               <div
                 key={list.id}
-                onClick={() => onListClick(list.id)}
-                className="cursor-pointer mt-2 mb-2 mr-1 ml-1 rounded-sm p-2 shadow-md"
+                className=" mt-2 flex flex-col justify-between mb-2 mr-1 ml-1 rounded-sm p-2 shadow-md"
               >
                 {/* List details */}
-                <p>{list.name}</p>
+
+                <div className="">
+                  <Input
+                    type="text"
+                    value={inputs[index].inputValue || list.name}
+                    onChange={(e) =>
+                      handleInputChange(index, "inputValue", e.target.value)
+                    }
+                    placeholder="Input Value"
+                  />
+                  <div className="flex">
+                    <Button
+                      onClick={() =>
+                        handleEditList(inputs[index].inputValue, list.id)
+                      }
+                      className="mt-3"
+                    >
+                      Save
+                    </Button>
+                    <Button  className="self-center ml-1 mt-3">
+                      {" "}
+                      <ArrowRight className="" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
           </ScrollArea>
