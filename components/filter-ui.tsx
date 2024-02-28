@@ -57,14 +57,14 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const [filters, setFilters] = React.useState(initialFiltersState);
   const [categoriesData, setCategoriesData] = React.useState<string[]>([]);
   const [followerData, setFollowerData] = React.useState([0, 100000000]);
-  const [genderData, setGenderData] = React.useState("male");
+  const [genderData, setGenderData] = React.useState("");
   const [followingData, setFollowingData] = React.useState([0, 100000000]);
   const [engagementRateData, setEngagementRateData] = React.useState([0, 100]);
   const [languagesData, setLanguagesData] = React.useState<string[]>([]);
   const [locationData, setLocationData] = React.useState<string[]>([]);
   const [keywords, setKeywords] = React.useState<string[]>([]);
-  
-  
+
+
   const handleFollowerData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setFollowerData(dataFromChild);
@@ -420,7 +420,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   {formatLargeNumber(engagementRateData[1])}
                 </p>
               )}
-             
+
             </Card>
             <Button type="submit" onClick={handleSubmitMain}>
               Apply

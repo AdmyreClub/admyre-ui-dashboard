@@ -34,6 +34,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     // This is wrapped in a try-catch block to handle any potential errors that might occur during the database operation.
     try {
         const lists = await strategyDao.getAllLists(strategyId);
+        console.log('heres all the lists:: ', lists)
         return new NextResponse(JSON.stringify(lists), {
             status: 200,
             headers: {

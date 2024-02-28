@@ -301,7 +301,7 @@ export default function StrategyUI() {
               </DialogContent>
             </Dialog>
           </>
-                                
+
                               </td>
                             ))}
                           </tr>

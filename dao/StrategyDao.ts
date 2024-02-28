@@ -66,23 +66,78 @@ class StrategyDao implements IStrategyDao {
     });
   }
 
+  async removeProfilesFromList(listId: string, profilesToRemove: string[]): Promise<List> {
+    const currentList = await this.prisma.list.findUnique({ where: { id: listId } });
+    if (!currentList) throw new Error('List not found');
+
+    // Assuming profiles is a JSON field that contains an array of profile IDs
+    const existingProfiles = JSON.parse(currentList.profiles as string) as string[];
+    const updatedProfiles = existingProfiles.filter(profile => !profilesToRemove.includes(profile));
+
+    return this.prisma.list.update({
+        where: { id: listId },
+        data: { profiles: JSON.stringify(updatedProfiles) },
+    });
+}
+
+
   async updateListName(listId: string, newName: string): Promise<List> {
+    // Check if newName is provided and not just whitespace
+    if (!newName || newName.trim() === "") {
+      // Fetch the existing lists to find the next available default name
+      const untitledCount = await this.prisma.list.count({
+        where: {
+          name: {
+            startsWith: "Untitled",
+          },
+        },
+      });
+
+      // Generate a default name
+      newName = `Untitled #${untitledCount + 1}`;
+    }
+
+    // Proceed to update the list with either the provided name or the generated default name
     return this.prisma.list.update({
       where: { id: listId },
       data: { name: newName },
     });
   }
 
+
   async updateStrategyDetails(strategyId: string, strategyDetails: StrategyDetails): Promise<Strategy> {
+    // Generate a default name if none is provided, using a simple pattern or querying for the next available index
+    let { name, pictureUrl, description } = strategyDetails;
+
+    // If no name is provided, generate a default one
+    if (!name || name.trim() === "") {
+      // Fetch the count of existing strategies with "Untitled" in their name to generate a unique default name
+      const untitledCount = await this.prisma.strategy.count({
+        where: {
+          name: {
+            startsWith: "Untitled",
+          },
+        },
+      });
+      name = `Untitled #${untitledCount + 1}`;
+    }
+
+    // Provide a default picture URL if none is provided
+    if (!pictureUrl || pictureUrl.trim() === "") {
+      pictureUrl = "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925"; // Replace this with your actual default picture URL
+    }
+
+    // Update the strategy with the provided or default values
     return this.prisma.strategy.update({
       where: { id: strategyId },
       data: {
-        name: strategyDetails.name,
-        pictureUrl: strategyDetails.pictureUrl,
-        description: strategyDetails.description,
+        name,
+        pictureUrl,
+        description,
       },
     });
   }
+
 
   async getAllStrategies(userId: string): Promise<(Strategy & { listCount: number })[]> {
     const strategies = await this.prisma.strategy.findMany({

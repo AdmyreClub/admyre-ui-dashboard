@@ -96,7 +96,7 @@ export const columns: ColumnDef<Profile>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Profile</DropdownMenuItem>
-              <DropdownMenuItem>Save to list</DropdownMenuItem>
+              <DropdownMenuItem>Save Profile</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

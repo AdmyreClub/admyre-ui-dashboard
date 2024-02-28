@@ -1,4 +1,3 @@
-// pages/api/strategy/lists/add-profile.ts
 import { NextRequest, NextResponse } from 'next/server';
 import strategyDao from '@/dao/StrategyDao';
 import { auth } from '@clerk/nextjs';
@@ -21,12 +20,21 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        // Assuming the entire request body is the influencer data and it's an array
-        const requestBody = await req.json();
-        const profilesData = [requestBody]; // Wrap the single influencer data in an array
+        const { action, profiles } = await req.json();
 
-        // Call the DAO to add the influencer to the list
-        const updatedList = await strategyDao.addProfilesToList(listId, profilesData);
+        let updatedList;
+        switch (action) {
+            case 'add':
+                updatedList = await strategyDao.addProfilesToList(listId, profiles);
+                break;
+            case 'delete':
+                updatedList = await strategyDao.removeProfilesFromList(listId, profiles);
+                break;
+            default:
+                return new NextResponse(JSON.stringify({ message: 'Invalid action' }), {
+                    status: 400,
+                });
+        }
 
         return new NextResponse(JSON.stringify(updatedList), {
             status: 200,
@@ -35,20 +43,10 @@ export async function POST(req: NextRequest) {
             },
         });
     } catch (error) {
-        console.error('Error adding profile to list:', error);
+        console.error('Error managing profile in list:', error);
         return new NextResponse(JSON.stringify({ message: 'Internal server error' }), {
             status: 500,
         });
     }
 }
 
-export default function handler(req: NextRequest) {
-    if (req.method === 'POST') {
-        return POST(req);
-    } else {
-        // Handle any other HTTP methods as needed.
-        return new NextResponse(JSON.stringify({ message: 'Method not allowed' }), {
-            status: 405,
-        });
-    }
-}

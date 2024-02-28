@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { auth } from '@clerk/nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 interface Filters {
   keywords?: string[];
@@ -28,7 +28,7 @@ interface Filters {
 }
 
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const { userId } = auth();
 

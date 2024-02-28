@@ -23,6 +23,7 @@ interface IStrategyDao {
     createStrategy(userId: string, strategyDetails: StrategyDetails): Promise<Strategy>;
     createList(strategyId: string, listDetails: ListDetails): Promise<List>;
     addProfilesToList(listId: string, profiles: any[]): Promise<List>;
+    removeProfilesFromList(listId: string, profilesToRemove: string[]): Promise<List>;
     updateListName(listId: string, newName: string) : Promise<List>;
     updateStrategyDetails(userId: string, strategyDetails: StrategyDetails): Promise<Strategy>;
     getAllStrategies(userId: string): Promise<Strategy[]>;
