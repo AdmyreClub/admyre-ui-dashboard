@@ -27,17 +27,6 @@ import {
 } from "@radix-ui/react-icons";
 
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -86,18 +75,6 @@ import { StrategyFormData } from "@/lib/strategy";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as z from "zod";
-const mockData = [
-  { date: "2024-01-01", followers: 1000 },
-  { date: "2024-01-03", followers: 1050 },
-  { date: "2024-01-06", followers: 1100 },
-  { date: "2024-01-10", followers: 1125 },
-  { date: "2024-01-15", followers: 1150 },
-  { date: "2024-01-18", followers: 1200 },
-  { date: "2024-01-21", followers: 1250 },
-  { date: "2024-01-25", followers: 1300 },
-  { date: "2024-01-28", followers: 1350 },
-  { date: "2024-01-31", followers: 1400 },
-];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -208,8 +185,6 @@ export function DataTable<TData, TValue>({
 
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
-    setIsSheetOpen(true);
-    setSheetUserName(rowData);
     getMoreData(rowData.name);
     console.log(rowData);
   };
@@ -287,19 +262,13 @@ export function DataTable<TData, TValue>({
                       ))}
                     </TableRow>
                   </ContextMenuTrigger>
-                  <ContextMenuContent className="w-64">
+                  <ContextMenuContent className="w-[160px]">
                     {/* ... Context menu items ... */}
-                    <ContextMenuItem>
-                      <Drawer>
-                        <DrawerTrigger asChild>
-                          <Button variant="outline">Open Drawer</Button>
-                        </DrawerTrigger>
-                        <DrawerContent>
-                          <div className="mx-auto w-full max-w-sm">
-                            <h1>Hello</h1>
-                          </div>
-                        </DrawerContent>
-                      </Drawer>
+                    <ContextMenuItem className="flex justify-center w-[150px]">
+                      <Button className="w-[140px]" onClick={() => {
+                        setIsSheetOpen(true)
+                        setSheetUserName(row.original)
+                      }}>More Info</Button>
                     </ContextMenuItem>
 
                     {/* ... Other context menu items ... */}
@@ -326,7 +295,7 @@ export function DataTable<TData, TValue>({
       />
 
       {/* Sheet component */}
-      {selectedRowData && (
+      {selectedRowData && sheetUserName && (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <link
             rel="stylesheet"
