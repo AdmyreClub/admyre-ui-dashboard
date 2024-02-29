@@ -69,7 +69,9 @@ let influencers = [
   { name: "List 10", influencerCount: 9 },
 ];
 type Checked = DropdownMenuCheckboxItemProps["checked"];
-
+interface InputValues {
+  inputValue: string;
+}
 const strategySchema = z.object({
   strategyName: z.string().min(1, "Please enter the strategy name"),
   addInfluencersBy: z.enum(["search", "manual"]),
@@ -163,7 +165,65 @@ const page = () => {
     () => [
       {
         Header: "Name",
-        accessor: "name", // property name in your strategy object
+        accessor: "name",
+        Cell: ({ value, cell }) => {
+          console.log(cell.row.original.id);
+          const [inputs, setInputs] = useState(
+            [lists.map(() => { inputValue: "" })]
+          );
+
+          const handleInputChange = (
+            index: number,
+            field: keyof InputValues,
+            value: string
+          ) => {
+            console.log(index, field, value);
+
+            const newInputs = [...inputs];
+            newInputs[index][`${field}`] = value;
+            setInputs(newInputs);
+          };
+
+          const handleEditList = async (
+            listNewName: string,
+            listId: string
+          ) => {
+            try {
+              const response = await axios.post(
+                `/api/strategy/lists/update?listId=${listId}&name=${listNewName}`
+              );
+              console.log("New List Response:", response.data);
+
+              setIsNewListDialogOpen(false); // Close the dialog
+            } catch (error) {
+              console.error("Error creating list:", error);
+            }
+          };
+
+          return (
+            <>
+              <Input
+                type="text"
+                value={inputs[cell.row.id]?.inputValue || value}
+                onChange={(e) =>
+                  handleInputChange(cell.row.id, "inputValue", e.target.value)
+                }
+                placeholder="Input Value"
+              />
+              <Button
+                onClick={() =>
+                  handleEditList(
+                    "khelan",
+                    cell.row.original.id
+                  )
+                }
+                className="mt-3"
+              >
+                Save
+              </Button>
+            </>
+          );
+        }, // property name in your strategy object
       },
       {
         Header: "No. of influencers",

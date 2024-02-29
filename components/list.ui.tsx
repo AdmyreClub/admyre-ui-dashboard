@@ -467,7 +467,7 @@ const RenderLists: React.FC<ListProps> = ({
                 <div className="">
                   <Input
                     type="text"
-                    value={inputs[index].inputValue || list.name}
+                    defaultValue={inputs[index].inputValue || list.name}
                     onChange={(e) =>
                       handleInputChange(index, "inputValue", e.target.value)
                     }
