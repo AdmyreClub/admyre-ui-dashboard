@@ -27,6 +27,17 @@ import {
 } from "@radix-ui/react-icons";
 
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -47,7 +58,15 @@ import {
 import { useState } from "react";
 import { Card } from "../card";
 import Chart from "./charts/followingChart";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Dashboard from "./charts/chartColumn";
 import AudienceLocations from "./charts/locationChart";
 import {
@@ -59,6 +78,14 @@ import {
 import MoreDataDao from "@/dao/MoreDataDao";
 import Link from "next/link";
 import axios from "axios";
+
+import { Plus } from "lucide-react";
+import { FormProvider, useForm } from "react-hook-form";
+import NewStrategyUI from "@/components/form.list.ui";
+import { StrategyFormData } from "@/lib/strategy";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import * as z from "zod";
 const mockData = [
   { date: "2024-01-01", followers: 1000 },
   { date: "2024-01-03", followers: 1050 },
@@ -81,6 +108,12 @@ interface DataTableProps<TData, TValue> {
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
   totalDocuments: number;
 }
+
+const strategySchema = z.object({
+  strategyName: z.string().min(1, "Please enter the strategy name"),
+  addInfluencersBy: z.enum(["search", "manual"]),
+  description: z.string().optional(),
+});
 
 export function DataTable<TData, TValue>({
   columns,
@@ -106,10 +139,14 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const methods = useForm<StrategyFormData>({
+    resolver: zodResolver(strategySchema),
+  });
+
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
   const [sheetUserName, setSheetUserName] = useState<string>("");
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const getMoreData = async (username: string) => {
     const moreDataDao = new MoreDataDao(username);
     const followerCount = moreDataDao.getFollowerCount();
@@ -195,7 +232,7 @@ export function DataTable<TData, TValue>({
     }
   }
   const [datas, setDatas] = useState<string | null>(null);
-  const handleAddList = async (username:string) => {
+  const handleAddList = async (username: string) => {
     try {
       const response = await axios.post(
         "/api/strategy/lists/manage-profiles?q=asdasd",
@@ -211,6 +248,7 @@ export function DataTable<TData, TValue>({
     }
   };
 
+  const handleStrategySubmit = async () => {};
   //console.log("DataTable received new data: ", data);
   //console.log("length: ", tableInstance.getRowModel().rows?.length)
   return (
@@ -252,9 +290,16 @@ export function DataTable<TData, TValue>({
                   <ContextMenuContent className="w-64">
                     {/* ... Context menu items ... */}
                     <ContextMenuItem>
-                      <Button
-                        onClick={() => handleAddList(row.original.name)}
-                      ></Button>
+                      <Drawer>
+                        <DrawerTrigger asChild>
+                          <Button variant="outline">Open Drawer</Button>
+                        </DrawerTrigger>
+                        <DrawerContent>
+                          <div className="mx-auto w-full max-w-sm">
+                            <h1>Hello</h1>
+                          </div>
+                        </DrawerContent>
+                      </Drawer>
                     </ContextMenuItem>
 
                     {/* ... Other context menu items ... */}
