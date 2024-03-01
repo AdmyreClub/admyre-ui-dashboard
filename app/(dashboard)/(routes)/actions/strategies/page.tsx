@@ -222,7 +222,7 @@ export default function StrategyUI() {
             {/* unconventional but i needed to place footer above the content */}
             <CardFooter className="justify-center">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="w-[512px]">
                   <DialogHeader>
                     <DialogTitle>Create Strategy</DialogTitle>
                   </DialogHeader>
@@ -235,7 +235,7 @@ export default function StrategyUI() {
                 </DialogContent>
               </Dialog>
             </CardFooter>
-            <CardContent className=" align-middle mt-[-30px]">
+            <CardContent className="w-[512px] align-middle mt-[-30px]">
               <Card className="flex justify-end border-none shadow-none mb-5">
                 <Button onClick={() => setIsDialogOpen(true)} className="">
                   New Strategy
@@ -286,7 +286,7 @@ export default function StrategyUI() {
               <DialogTrigger>
               {cell.render("Cell")}
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="w-[512px]">
                 <DialogHeader>
                   <DialogTitle>Add influencers to {row.original.name}</DialogTitle>
                 </DialogHeader>

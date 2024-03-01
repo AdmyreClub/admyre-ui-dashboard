@@ -411,7 +411,7 @@ const page = () => {
                   Create New List
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="w-[512px]">
                 <DialogHeader>
                   <DialogTitle>Create New List</DialogTitle>
                 </DialogHeader>

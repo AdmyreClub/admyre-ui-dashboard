@@ -231,7 +231,7 @@ export default function StrategyUI() {
             {/* unconventional but i needed to place footer above the content */}
             <CardFooter className="justify-center">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="w-[512px]">
                   <DialogHeader>
                     <DialogTitle>Create Strategy</DialogTitle>
                   </DialogHeader>

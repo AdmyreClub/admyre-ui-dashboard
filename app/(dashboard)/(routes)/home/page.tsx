@@ -169,7 +169,7 @@ export default function DashboardPage() {
             <CardFooter className="justify-center">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 
-                <DialogContent>
+                <DialogContent className="w-[512px]">
                   <DialogHeader>
                     <DialogTitle>Create Strategy</DialogTitle>
                   </DialogHeader>

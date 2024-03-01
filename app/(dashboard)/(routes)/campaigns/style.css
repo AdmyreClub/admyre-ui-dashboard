@@ -1,0 +1,32 @@
+:root {
+    --size: 50vmin;
+    --white: #fff;
+    --blue: #3051f1;
+    --purple: #c92bb7;
+    --red: #f73344;
+    --orange: #fa8e37;
+    --yellow: #fcdf8f;
+    --yellow_to: #fbd377;
+}
+
+
+
+.youtube:focus {
+
+    outline: black 3px solid;
+}
+
+
+
+.instagram:focus {
+    outline: black 3px solid;
+
+    color: white;
+
+    background: radial-gradient(circle farthest-corner at 28% 100%,
+            var(--yellow) 0%,
+            var(--yellow_to) 10%,
+            var(--orange) 22%,
+            var(--red) 35%,
+            transparent 65%), linear-gradient(145deg, var(--blue) 10%, var(--purple) 70%);
+}

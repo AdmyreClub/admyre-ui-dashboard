@@ -288,7 +288,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                     <Plus className="mr-2" /> New Strategy
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="w-[512px]">
                   <DialogHeader>
                     <DialogTitle>Create New Strategy</DialogTitle>
                   </DialogHeader>
@@ -325,7 +325,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                   Create New List
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="w-[512px]">
                 <DialogHeader>
                   <DialogTitle>Create New List</DialogTitle>
                 </DialogHeader>
