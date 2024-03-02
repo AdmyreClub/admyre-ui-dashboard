@@ -11,12 +11,21 @@
 
 
 
-.youtube:focus {
 
+
+
+.instagram:focus {
     outline: black 3px solid;
+
+    color: white;
+
+    background: radial-gradient(circle farthest-corner at 28% 100%,
+            var(--yellow) 0%,
+            var(--yellow_to) 10%,
+            var(--orange) 22%,
+            var(--red) 35%,
+            transparent 65%), linear-gradient(145deg, var(--blue) 10%, var(--purple) 70%);
 }
-
-
 
 .focusedIn {
     outline: black 3px solid;
@@ -30,10 +39,36 @@
             var(--red) 35%,
             transparent 65%), linear-gradient(145deg, var(--blue) 10%, var(--purple) 70%);
 }
-.focusedYt {
-    outline: black 3px solid;
 
+
+.youtube:focus {
+    outline: black 3px solid;
+    background: red;
     color: white;
 
-    background: #F70F1B;
+}
+
+.focusedYt {
+    outline: black 3px solid;
+    background: red;
+    color: white;
+
+}
+
+.focusedCb {
+    outline: #6B21A8 2px solid;
+
+    background: rgb(226 232 240 / var(--tw-bg-opacity));
+}
+
+.focusedCp {
+    outline: #6B21A8 2px solid;
+
+    background: rgb(226 232 240 / var(--tw-bg-opacity));
+}
+
+.focusedCc {
+    outline: #6B21A8 2px solid;
+
+    background: rgb(226 232 240 / var(--tw-bg-opacity));
 }

@@ -88,6 +88,7 @@ const page = () => {
                 <Button
                   variant={"outline"}
                   className="outline-none border-none"
+                  disabled={platform ? false : true}
                   onClick={() => {
                     console.log("hellp");
 
@@ -102,6 +103,7 @@ const page = () => {
 
                 <ArrowRightCircle className="self-center" color="#6B21A8" />
                 <Button
+                  disabled={platform && campaignType ? false : true}
                   onClick={() => {
                     console.log("hellp");
 
@@ -129,8 +131,12 @@ const page = () => {
                       id="instagram"
                       className="p-10 py-16 mr-4 cursor-pointer focus:shadow-lg instagram"
                       onClick={() => {
-                        document.getElementById("youtube")?.classList.remove("focusedYt")
-                        document.getElementById("instagram")?.classList.add("focusedIn")
+                        document
+                          .getElementById("youtube")
+                          ?.classList.remove("focusedYt");
+                        document
+                          .getElementById("instagram")
+                          ?.classList.add("focusedIn");
                         setPlatform("instagram");
                       }}
                     >
@@ -140,10 +146,14 @@ const page = () => {
                       autoFocus={platform === "youtube"}
                       id="youtube"
                       variant={"outline"}
-                      className="p-10 py-16 cursor-pointer focus:shadow-lg focus:bg-[#F70F1B] youtube focus:text-white"
+                      className="p-10 py-16 mr-4 cursor-pointer  focus:shadow-lg youtube hover:bg-red-500"
                       onClick={() => {
-                        document.getElementById("instagram")?.classList.remove("focusedIn")
-                        document.getElementById("youtube")?.classList.add("focusedYt")
+                        document
+                          .getElementById("instagram")
+                          ?.classList.remove("focusedIn");
+                        document
+                          .getElementById("youtube")
+                          ?.classList.add("focusedYt");
                         setPlatform("youtube");
                       }}
                     >
@@ -156,12 +166,22 @@ const page = () => {
               )}
               {viewMode === "campaignType" ? (
                 <>
-                  <div className="flex gap-3 justify-center mt-4">
+                  <div className="flex  gap-3 justify-center mt-4">
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
+                      autoFocus={campaignType === "barterCampaign"}
+                      className="bg-slate-100 focus:border-[1px] focus:border-[#6B21A8]  w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg text-justify   focus:shadow-lg"
+                      id="Cb"
                       onClick={() => {
                         console.log("hello");
-
+                        document
+                          .getElementById("Cc")
+                          ?.classList.remove("focusedCc");
+                        document
+                          .getElementById("Cp")
+                          ?.classList.remove("focusedCp");
+                        document
+                          .getElementById("Cb")
+                          ?.classList.add("focusedCb");
                         setCampaignType("barterCampaign");
                       }}
                     >
@@ -191,8 +211,20 @@ const page = () => {
                       </div>
                     </button>
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
+                      className="bg-slate-100 focus:border-[1px] focus:border-[#6B21A8] w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg text-justify   focus:shadow-lg"
+                      autoFocus={campaignType === "payoutCampaign"}
+                      id="Cp"
                       onClick={() => {
+                        console.log("hello");
+                        document
+                          .getElementById("Cb")
+                          ?.classList.remove("focusedCb");
+                        document
+                          .getElementById("Cc")
+                          ?.classList.remove("focusedCc");
+                        document
+                          .getElementById("Cp")
+                          ?.classList.add("focusedCp");
                         setCampaignType("payoutCampaign");
                       }}
                     >
@@ -222,8 +254,21 @@ const page = () => {
                       </div>
                     </button>
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4  focus:bg-slate-200 cursor-pointer  rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
+                      className="bg-slate-100 w-[30%] focus:border-[1px] focus:border-[#6B21A8] h-[45vh] flex flex-col p-4  focus:bg-slate-200 cursor-pointer  rounded-lg text-justify   focus:shadow-lg"
+                      autoFocus={campaignType === "cashbackCampaign"}
+                      id="Cc"
                       onClick={() => {
+                        console.log("hello");
+                        document
+                          .getElementById("Cb")
+                          ?.classList.remove("focusedCb");
+                        document
+                          .getElementById("Cp")
+                          ?.classList.remove("focusedCp");
+                        document
+                          .getElementById("Cc")
+                          ?.classList.add("focusedCc");
+
                         setCampaignType("cashbackCampaign");
                       }}
                     >
