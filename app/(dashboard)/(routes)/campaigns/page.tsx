@@ -126,8 +126,11 @@ const page = () => {
                     <Button
                       autoFocus={platform === "instagram"}
                       variant={"outline"}
+                      id="instagram"
                       className="p-10 py-16 mr-4 cursor-pointer focus:shadow-lg instagram"
                       onClick={() => {
+                        document.getElementById("youtube")?.classList.remove("focusedYt")
+                        document.getElementById("instagram")?.classList.add("focusedIn")
                         setPlatform("instagram");
                       }}
                     >
@@ -135,9 +138,12 @@ const page = () => {
                     </Button>
                     <Button
                       autoFocus={platform === "youtube"}
+                      id="youtube"
                       variant={"outline"}
                       className="p-10 py-16 cursor-pointer focus:shadow-lg focus:bg-[#F70F1B] youtube focus:text-white"
                       onClick={() => {
+                        document.getElementById("instagram")?.classList.remove("focusedIn")
+                        document.getElementById("youtube")?.classList.add("focusedYt")
                         setPlatform("youtube");
                       }}
                     >
@@ -152,7 +158,7 @@ const page = () => {
                 <>
                   <div className="flex gap-3 justify-center mt-4">
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-black focus:border-2 text-justify   focus:shadow-lg"
+                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
                       onClick={() => {
                         console.log("hello");
 
@@ -185,7 +191,7 @@ const page = () => {
                       </div>
                     </button>
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-black focus:border-2 text-justify   focus:shadow-lg"
+                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4 focus:bg-slate-200 cursor-pointer   rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
                       onClick={() => {
                         setCampaignType("payoutCampaign");
                       }}
@@ -216,7 +222,7 @@ const page = () => {
                       </div>
                     </button>
                     <button
-                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4  focus:bg-slate-200 cursor-pointer  rounded-lg focus:border-black focus:border-2 text-justify   focus:shadow-lg"
+                      className="bg-slate-100 w-[30%] h-[45vh] flex flex-col p-4  focus:bg-slate-200 cursor-pointer  rounded-lg focus:border-[#6B21A8] focus:border-2 text-justify   focus:shadow-lg"
                       onClick={() => {
                         setCampaignType("cashbackCampaign");
                       }}

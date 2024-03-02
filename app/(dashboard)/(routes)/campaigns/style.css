@@ -18,7 +18,7 @@
 
 
 
-.instagram:focus {
+.focusedIn {
     outline: black 3px solid;
 
     color: white;
@@ -29,4 +29,11 @@
             var(--orange) 22%,
             var(--red) 35%,
             transparent 65%), linear-gradient(145deg, var(--blue) 10%, var(--purple) 70%);
+}
+.focusedYt {
+    outline: black 3px solid;
+
+    color: white;
+
+    background: #F70F1B;
 }
