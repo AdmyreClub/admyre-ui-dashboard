@@ -235,14 +235,14 @@ export default function StrategyUI() {
                 </DialogContent>
               </Dialog>
             </CardFooter>
-            <CardContent className="w-[512px] align-middle mt-[-30px]">
+            <CardContent className=" align-middle mt-[-30px]">
               <Card className="flex justify-end border-none shadow-none mb-5">
                 <Button onClick={() => setIsDialogOpen(true)} className="">
                   New Strategy
                 </Button>
               </Card>
               <GlobalFilter
-                placeholder={"Search Lists"}
+                placeholder={"Search Strategies"}
                 filter={globalFilter}
                 setFilter={setGlobalFilter}
               />
