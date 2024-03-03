@@ -1,58 +1,163 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model User {
-  id         String     @id @unique
-  email      String     @unique
-  count      Int        @default(0)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  survey     Survey?
-  strategies Strategy[]
+    id         String     @id @unique
+    email      String     @unique
+    count      Int        @default(0)
+    createdAt  DateTime   @default(now())
+    updatedAt  DateTime   @updatedAt
+    survey     Survey?
+    strategies Strategy[]
+    campaigns  Campaign[]
+}
+
+model Influencer {
+    id                    String   @id @default(uuid())
+    username              String   @unique
+    url                   String
+    followerCount         Int
+    followingCount        Int
+    totalLikesCount       Int
+    totalCommentsCount    Int
+    totalViewsCount       Int
+    avgCommentsCount      Decimal
+    avgLikesCount         Decimal
+    avgViewsCount         Decimal
+    engagementRate        Decimal
+    addedAt               DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    profilePictureUrl     String
+    email                 String?
+    phoneNumber           String?
+    whatsappNumber        String?
+    city                  String?
+    state                 String?
+    country               String?
+    gender                String?
+    platformName          String
+    followerCountHistory  Json?
+    followingCountHistory Json?
 }
 
 model Survey {
-  id            String        @id @unique
-  userId        String        @unique
-  brandOrAgency BrandOrAgency
-  teamSize      Int
-  discovery     String
-  productUse    String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  user          User          @relation(fields: [userId], references: [id])
+    id            String   @id @unique
+    userId        String   @unique
+    brandOrAgency String
+    teamSize      Int
+    discovery     String
+    productUse    String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    user          User     @relation(fields: [userId], references: [id])
 }
 
 model Strategy {
-  id          String   @id @unique @default(uuid())
-  name        String
-  pictureUrl  String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      String
-  lists       List[]
-  user        User     @relation(fields: [userId], references: [id])
+    id          String   @id @unique @default(uuid())
+    name        String
+    pictureUrl  String?
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    userId      String
+    lists       List[]
+    user        User     @relation(fields: [userId], references: [id])
 }
 
 model List {
-  id         String   @id @unique @default(uuid())
-  name       String
-  strategyId String
-  profiles   Json
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  strategy   Strategy @relation(fields: [strategyId], references: [id])
+    id         String   @id @unique @default(uuid())
+    name       String
+    strategyId String
+    profiles   Json
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    strategy   Strategy @relation(fields: [strategyId], references: [id])
+}
+
+// New models for campaign management
+model Campaign {
+    id              String         @id @default(uuid())
+    userId          String
+    platform        String
+    name            String
+    brandName       String
+    description     String?        @default("")
+    maxParticipants Int?
+    type            String
+    status          CampaignStatus
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    deliverables    Deliverable[]
+    incentive       Incentive?
+    user            User           @relation(fields: [userId], references: [id])
+}
+
+model Deliverable {
+    id                String    @id @default(uuid())
+    campaignId        String
+    platform          String
+    contentType       String
+    postingTime       String
+    startDate         DateTime?
+    endDate           DateTime?
+    contentGuidelines String?
+    campaign          Campaign  @relation(fields: [campaignId], references: [id])
+}
+
+model Incentive {
+    id                 String        @id @default(uuid())
+    campaignId         String
+    type               IncentiveType
+    payoutAmount       Float?        @default(0)
+    voucherWorth       Float?        @default(0)
+    voucherDescription String?
+    campaign           Campaign      @relation(fields: [campaignId], references: [id])
+
+    @@unique([campaignId])
+}
+
+enum ContentType {
+    POST
+    CAROUSEL
+    STORY
+    REEL
+}
+
+enum PostingTime {
+    AFTER_ACCEPTANCE
+    PARTICULAR_DATES
+}
+
+enum IncentiveType {
+    FIXED_PAYOUT
+    VOUCHER
+}
+
+enum CampaignStatus {
+    DRAFT
+    UNDER_REVIEW
+    DISCARDED
+    COMPLETED
 }
 
 enum BrandOrAgency {
-  BRAND
-  AGENCY
+    BRAND
+    AGENCY
 }
+
+enum CampaignType {
+    BARTER
+    PAYOUT
+    CASHBACK
+}
+
+// Placeholder for the custom ID generation function
+// Prisma does not support custom ID generation functions natively.
+// You need to implement autoGenerateShortId() in your application logic.

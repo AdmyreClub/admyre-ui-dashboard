@@ -6,28 +6,38 @@
 
 // and that data must be stored as json array inside the list
 
-import { List, Strategy } from "@prisma/client";
+import { Influencer, List, Strategy } from "@prisma/client";
 
 interface StrategyDetails {
-    name: string;
-    pictureUrl?: string;
-    description?: string;
-  }
+  name: string;
+  pictureUrl?: string;
+  description?: string;
+}
 
-  interface ListDetails {
-    name?: string;
-    profiles?: String[]
-  }
+interface ListDetails {
+  name?: string;
+  profiles?: String[];
+}
 
 interface IStrategyDao {
-    createStrategy(userId: string, strategyDetails: StrategyDetails): Promise<Strategy>;
-    createList(strategyId: string, listDetails: ListDetails): Promise<List>;
-    addProfilesToList(listId: string, profiles: any[]): Promise<List>;
-    removeProfilesFromList(listId: string, profilesToRemove: string[]): Promise<List>;
-    updateListName(listId: string, newName: string) : Promise<List>;
-    updateStrategyDetails(userId: string, strategyDetails: StrategyDetails): Promise<Strategy>;
-    getAllStrategies(userId: string): Promise<Strategy[]>;
-    getAllLists(strategyId: string): Promise<List[]>;
-  }
+  createStrategy(
+    userId: string,
+    strategyDetails: StrategyDetails,
+  ): Promise<Strategy>;
+  createList(strategyId: string, listDetails: ListDetails): Promise<List>;
+  addProfileToList(listId: string, profiles: any[]): Promise<Influencer[]>;
+  removeProfilesFromList(
+    listId: string,
+    username: string,
+  ): Promise<Influencer[]>;
+  updateListName(listId: string, newName: string): Promise<List>;
+  updateStrategyDetails(
+    userId: string,
+    strategyDetails: StrategyDetails,
+  ): Promise<Strategy>;
+  getAllStrategies(userId: string): Promise<Strategy[]>;
+  getAllLists(strategyId: string): Promise<List[]>;
+  viewAllProfilesInList(listId: string): Promise<Influencer[]>
+}
 
 export default IStrategyDao;

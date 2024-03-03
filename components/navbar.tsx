@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className='flex w-full justify-end'>
           <div className='flex items-center justify-between'>
             <ModeToggle/>
-            <Button className='bg-black mr-2 ml-2'>What's new?</Button>
+            <Button className='bg-black mr-2 ml-2'>Notifications</Button>
             <UserButton />
           </div>
         </div>
