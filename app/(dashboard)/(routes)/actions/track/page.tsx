@@ -62,13 +62,28 @@ const ActionTrackUI = () => {
     finalArr = [...new Set(finalArr)];
     for (let i = 0; i < finalArr.length; i++) {
       const element = finalArr[i];
-      const newRow = {
-        id: "#",
-        name: element,
-        fullName: "Donald Duck",
-        url: "surat",
-      };
-      setTableData((prevTableData) => [...prevTableData, newRow]);
+      
+      setTableData((prevTableData) => {
+        const newName = element;
+        const isNameUnique = prevTableData.every((row) => row.name !== newName);
+  
+        if (isNameUnique) {
+          // Create a new row with a unique ID
+          const newRow = {
+            id: "#",
+            name: element,
+            fullName: "Donald Duck",
+            url: "surat",
+          };
+  
+          // Return the updated state with the new row
+          return [...prevTableData, newRow];
+        } else {
+          // Return the existing state without any changes
+          console.log('Name already exists. Choose a different name.');
+          return prevTableData;
+        }
+      });;
     }
     setDuplicateArray(finalArr);
     console.log(finalArr);
