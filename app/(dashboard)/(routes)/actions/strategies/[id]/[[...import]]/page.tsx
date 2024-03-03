@@ -51,53 +51,45 @@ import { Textarea } from "@/components/ui/textarea";
 import { array } from "zod";
 import { useAuth } from "@/app/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
-let influencers = [
-  { name: "List 1", influencerCount: 13 },
-  { name: "List 2", influencerCount: 32 },
-  { name: "List 3", influencerCount: 33 },
-  { name: "List 4", influencerCount: 23 },
-  { name: "List 5", influencerCount: 16 },
-  { name: "List 6", influencerCount: 18 },
-  { name: "List 7", influencerCount: 20 },
-  { name: "List 8", influencerCount: 23 },
-  { name: "List 9", influencerCount: 81 },
-  { name: "List 10", influencerCount: 9 },
-];
+import axios from "axios";
+
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const page = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const listCount = influencers.length;
-  const [selectedList, setSelectedList] = React.useState(influencers[0].name);
-  const [countStatus, setCountStatus] = useState<boolean>(
-    listCount === 0 ? false : true
-  );
+  const [selectedList, setSelectedList] = React.useState("");
+  const [countStatus, setCountStatus] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { userId } = useAuth();
   const [inputValue, setInputValue] = useState<string>("");
   const [duplicateArray, setDuplicateArray] = useState<string[]>([]);
-  const [lists, setLists] = useState<any>([]);
+  const [lists, setLists] = useState<any>([""]);
   const [isLoading, setIsLoading] = useState(true);
   const pathSegments = window.location.pathname.split("/");
+  const [currentList, setCurrentList] = useState("");
   const strategyIndex = pathSegments.indexOf("strategies");
 
-  if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
-    var strategyValue = pathSegments[strategyIndex + 1];
-  }
   useEffect(() => {
     const fetchLists = async () => {
       if (userId) {
+        const pathSegments = window.location.pathname.split("/");
+        const strategyIndex = pathSegments.indexOf("strategies");
+        if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
+          var strategyValue = pathSegments[strategyIndex + 1];
+        } else {
+          var strategyValue = "not existent";
+        }
         setIsLoading(true);
         try {
-          const response = await fetch(
-            `/api/strategy/lists/create?q=[${strategyValue}]`
+          const response = await axios.get(
+            `/api/strategy/lists?q=${strategyValue}`
           );
           console.log("whats the response: ", response);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
+          var listCount = response.data.length;
+          if (listCount) {
+            setCountStatus(true);
           }
-          const fetchedLists = await response.json();
-          setLists(fetchedLists);
+          setLists(response.data);
         } catch (error) {
           console.error("Error fetching lists:", error);
         } finally {
@@ -109,6 +101,22 @@ const page = () => {
     fetchLists();
   }, []);
 
+  const handleAddInfluencer = async (username: string[]) => {
+    console.log(selectedList);
+
+    try {
+      const response = await axios.post(
+        `/api/strategy/lists/manage-profiles?q=${selectedList}`,
+        {
+          action: "add",
+          profiles: username,
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const [myArray, setMyArray] = useState<string[]>([]);
   let finalArr: string[] = [];
   // Function to add the current input value to the array
@@ -117,7 +125,7 @@ const page = () => {
     /^(?:@|(?:https?:\/\/)?(?:www\.)?instagr(?:\.am|am\.com)\/)?(\w+)\/?$/;
 
   // Function to add the current input value to the array
-  const addToArray = () => {
+  const addToArray = async () => {
     // Split the input value by newline characters
     const lines = inputValue.split(/\r?\n/);
 
@@ -145,6 +153,8 @@ const page = () => {
     finalArr = [...new Set(finalArr)];
     setDuplicateArray(finalArr);
     console.log(finalArr);
+
+    await handleAddInfluencer(finalArr);
   };
 
   const handleInfluencerDelete = (index) => {
@@ -167,6 +177,10 @@ const page = () => {
     return new Date(date).toLocaleDateString(undefined, options);
   }
 
+  if (isLoading) {
+    return <>Loading ...</>;
+  }
+
   return (
     <Card className="self-center shadow-none border-none outline-none flex flex-col mt-[10vh] w-[80vw] h-[70vh] ">
       {/* content */}
@@ -184,47 +198,53 @@ const page = () => {
           </Card>
         ) : (
           <>
-            <Card
-              onClick={() => {
-                setIsSheetOpen(true);
-              }}
-              className="cursor-pointer mt-3 text-[40px] ml-3 h-[150px] flex w-[170px] pl-3 pr-3  shadow-md align-middle justify-center"
-              style={{ border: "black solid 1px" }}
-            >
-              <p className="self-center">+</p>
-            </Card>
             {isLoading ? (
               <Skeleton className="w-[100px] h-[20px] rounded-full " />
             ) : (
-              lists.slice(0, 3).map((list) => (
-                <Card
-                  key={list.id}
-                  className="cursor-pointer mt-3 ml-4 h-[150px] w-[220px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top border-none shadow-md"
-                  onClick={() => router.push(`/strategies/${list.id}`)}
-                >
-                  <Card className="flex border-none shadow-none">
-                    <img
-                      className="w-[40px] h-[40px] rounded-[50%]"
-                      src={list.pictureUrl}
-                      alt=""
-                    />
-                    <p className="ml-2 text-[18px] self-center font-semibold">
-                      {list.name || `list ${list.id}`}
-                    </p>
+              <>
+                <div className="flex gap-4">
+                  <Card
+                    onClick={() => {
+                      setIsSheetOpen(true);
+                    }}
+                    className="cursor-pointer mt-3 text-[40px] ml-3 h-[150px] flex w-[170px] pl-3 pr-3  shadow-md align-middle justify-center"
+                    style={{ border: "black solid 1px" }}
+                  >
+                    <p className="self-center">+</p>
                   </Card>
-                  <Card className="flex border-none shadow-none justify-between">
-                    <Card className="flex border-none shadow-none">
-                      <i className="self-center fa-solid fa-list text-gray-400 text-[14px]"></i>
-                      <p className="ml-2 text-gray-400 text-[14px]">
-                        {list.profiles.length} lists
-                      </p>
+                  {lists.slice(0, 3).map((list) => (
+                    <Card
+                      key={list.id}
+                      className="cursor-pointer mt-3 ml-4 h-[150px] w-[220px] pl-3 pb-3 pt-3 pr-3 flex flex-col justify-between align-top border-none shadow-md"
+                      onClick={() => {
+                        setCurrentList(list.name);
+                      }}
+                    >
+                      <Card className="flex border-none shadow-none">
+                        <img
+                          className="w-[40px] h-[40px] rounded-[50%]"
+                          src={list.pictureUrl}
+                          alt=""
+                        />
+                        <p className="ml-2 text-[18px] self-center font-semibold">
+                          {list.name || `list ${list.id}`}
+                        </p>
+                      </Card>
+                      <Card className="flex border-none shadow-none justify-between">
+                        <Card className="flex border-none shadow-none">
+                          <i className="self-center fa-solid fa-list text-gray-400 text-[14px]"></i>
+                          <p className="ml-2 text-gray-400 text-[14px]">
+                            {list.profiles.length} lists
+                          </p>
+                        </Card>
+                        <Card className="flex border-none shadow-none text-[14px]">
+                          {formatDateToMDY(list.createdAt)}
+                        </Card>
+                      </Card>
                     </Card>
-                    <Card className="flex border-none shadow-none text-[14px]">
-                      {formatDateToMDY(list.createdAt)}
-                    </Card>
-                  </Card>
-                </Card>
-              ))
+                  ))}
+                </div>
+              </>
             )}
           </>
         )}
@@ -248,7 +268,7 @@ const page = () => {
                   value={selectedList}
                   onValueChange={setSelectedList}
                 >
-                  {influencers.map((list, index) => (
+                  {lists.map((list, index) => (
                     <div key={index}>
                       <DropdownMenuRadioItem value={list.name}>
                         {list.name}

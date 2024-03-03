@@ -98,8 +98,11 @@ const page = () => {
       const strategyIndex = pathSegments.indexOf("strategies");
       if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
         var strategyValue = pathSegments[strategyIndex + 1];
+       
+        
+
       } else {
-        var strategyValue = "undefineds";
+        var strategyValue = "not existent";
       }
       const strategyId = strategyValue;
       if (userId) {
