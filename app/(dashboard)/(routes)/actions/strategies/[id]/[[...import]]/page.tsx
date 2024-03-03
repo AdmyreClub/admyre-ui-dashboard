@@ -57,7 +57,7 @@ type Checked = DropdownMenuCheckboxItemProps["checked"];
 const page = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const [selectedList, setSelectedList] = React.useState("");
+  const [selectedList, setSelectedList] = React.useState("Select");
   const [countStatus, setCountStatus] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { userId } = useAuth();
@@ -68,7 +68,7 @@ const page = () => {
   const pathSegments = window.location.pathname.split("/");
   const [currentList, setCurrentList] = useState("");
   const strategyIndex = pathSegments.indexOf("strategies");
-
+  
   useEffect(() => {
     const fetchLists = async () => {
       if (userId) {
