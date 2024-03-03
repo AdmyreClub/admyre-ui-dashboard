@@ -1,46 +1,28 @@
-// /pages/api/strategy/lists/view.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import strategyDao from '@/dao/StrategyDao';
+// /pages/api/list/view-all-profiles.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
+import strategyDao from '@/dao/StrategyDao'; // Adjust the import path as necessary
 import { auth } from '@clerk/nextjs';
-import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
-    const userId = auth();
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
+    const userId = auth(); // Adjust based on your actual auth method
 
     if (!userId) {
-        return new NextResponse(JSON.stringify({ message: 'User not authenticated' }), {
-            status: 401,
-        });
+        return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const listId = req.nextUrl.searchParams.get('q');
+    // Extracting list ID from query parameters
+    const { listId } = req.query;
 
     if (!listId) {
-        return new NextResponse(JSON.stringify({ message: 'Invalid list ID' }), {
-            status: 400,
-        });
+        return res.status(400).json({ message: 'List ID is required' });
     }
 
     try {
-        const list = await strategyDao.getListById(listId);
-
-        // Check if 'profiles' is a string before parsing it.
-        if (list.profiles && typeof list.profiles === 'string') {
-            list.profiles = JSON.parse(list.profiles as string);
-        } else {
-            list.profiles = []; // Ensure it's an array if not already.
-        }
-
-        return new NextResponse(JSON.stringify(list), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const influencers = await strategyDao.viewAllProfilesInList(listId as string);
+        return res.status(200).json(influencers);
     } catch (error) {
-        console.error('Error retrieving list:', error);
-        return new NextResponse(JSON.stringify({ message: 'Internal server error' }), {
-            status: 500,
-        });
+        console.error(error);
+        return res.status(500).json({ message: 'Failed to retrieve influencers', error: error });
     }
 }
