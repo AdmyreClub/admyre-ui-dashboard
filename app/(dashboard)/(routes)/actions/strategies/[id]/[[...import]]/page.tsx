@@ -8,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import { useDownloadExcel } from "react-export-table-to-excel";
 import { Input } from "@/components/ui/input";
 import { Strategy } from "@prisma/client";
 import {
@@ -20,7 +22,7 @@ import {
   Plus,
   Trash,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GlobalFilter from "../../GlobalFilter";
 import { useGlobalFilter, usePagination, useTable } from "react-table";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -52,12 +54,13 @@ import { array } from "zod";
 import { useAuth } from "@/app/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
+import Link from "next/link";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const page = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const [selectedList, setSelectedList] = React.useState("");
+  const [selectedList, setSelectedList] = React.useState("Select");
   const [countStatus, setCountStatus] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { userId } = useAuth();
@@ -177,9 +180,52 @@ const page = () => {
     return new Date(date).toLocaleDateString(undefined, options);
   }
 
-  if (isLoading) {
-    return <>Loading ...</>;
-  }
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name",
+        // property name in your strategy object
+      },
+      {
+        Header: "Id",
+        accessor: "id",
+      },
+    ],
+    []
+  );
+
+  // Create an instance of the useTable hook
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setGlobalFilter,
+    page,
+    nextPage,
+    previousPage,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    state,
+    gotoPage,
+    pageCount,
+    setPageSize,
+  } = useTable(
+    { columns, data: lists, enableRowActions: true },
+    useGlobalFilter,
+    usePagination
+  );
+
+  const { globalFilter, pageIndex, pageSize } = state;
+  const tableRef = useRef(null);
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: "Web Users",
+    sheet: "Web users",
+  });
 
   return (
     <Card className="self-center shadow-none border-none outline-none flex flex-col mt-[10vh] w-[80vw] h-[70vh] ">
@@ -249,6 +295,119 @@ const page = () => {
           </>
         )}
       </Card>
+      <div className="self-center w-[700px] mt-6 mb-2 rounded-lg border-[1px] border-black p-6 shadow-lg">
+        <div className="self-center mb-6 flex justify-between">
+          <div className="self-center">
+            <GlobalFilter
+              placeholder="Search Influencers"
+              filter={globalFilter}
+              setFilter={setGlobalFilter}
+            />
+          </div>
+          <Button onClick={onDownload}>Export CSV</Button>
+        </div>
+        <table
+          {...getTableProps()}
+          style={{ borderCollapse: "collapse", width: "100%" }}
+          className=""
+          ref={tableRef}
+        >
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps()}
+                    className="border-b-2"
+                    key={column.id}
+                  >
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()} key={row.id}>
+                  {row.cells.map((cell) => (
+                    <>
+                      <td
+                        {...cell.getCellProps()}
+                        className="text-center border-b-2 p-2"
+                        key={cell.id}
+                      >
+                        {cell.render("Cell")}
+                      </td>
+                    </>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex justify-center p-3">
+        <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          <ArrowLeft />
+        </Button>{" "}
+        <Button
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+          className="ml-3"
+        >
+          Previous
+        </Button>{" "}
+        <Button
+          className="mx-3"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
+          Next
+        </Button>{" "}
+        <Button
+          onClick={() => gotoPage(pageCount - 1)}
+          disabled={!canNextPage}
+          className="mr-3"
+        >
+          <ArrowRight />
+        </Button>{" "}
+        <span className="self-center">
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{" "}
+        </span>
+        <span className="ml-3 mr-3">
+          | Go to page:{" "}
+          <Input
+            type="number"
+            defaultValue={pageIndex + 1}
+            min={1}
+            className="w-[300px] inline"
+            max={pageCount}
+            onChange={(e) => {
+              const pageNumber = e.target.value
+                ? Number(e.target.value) - 1
+                : 0;
+              gotoPage(pageNumber);
+            }}
+            style={{ width: "60px" }}
+          />
+        </span>{" "}
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          {[5, 10, 15].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent className="w-[640px] overflow-y-scroll overflow-x-hidden ">
           <h1 className="w-[640px] ml-[-30px] shadow-md pl-5 p-3 ">

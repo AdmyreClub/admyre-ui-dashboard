@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Delete,
   DeleteIcon,
+  Edit2,
   FileWarning,
   LucideDelete,
   Plus,
@@ -98,9 +99,6 @@ const page = () => {
       const strategyIndex = pathSegments.indexOf("strategies");
       if (strategyIndex !== -1 && strategyIndex + 1 < pathSegments.length) {
         var strategyValue = pathSegments[strategyIndex + 1];
-       
-        
-
       } else {
         var strategyValue = "not existent";
       }
@@ -170,10 +168,18 @@ const page = () => {
         Header: "Name",
         accessor: "name",
         Cell: ({ value, cell }) => {
-          console.log(cell.row.original.id);
-          const [inputs, setInputs] = useState(
-            [lists.map(() => { inputValue: "" })]
-          );
+          const [isEditable, setIsEditable] = useState(false);
+
+          const handleToggleEdit = () => {
+            setIsEditable(!isEditable);
+          };
+          const [inputs, setInputs] = useState([
+            lists.map(() => [
+              {
+                inputValue: "",
+              },
+            ]),
+          ]);
 
           const handleInputChange = (
             index: number,
@@ -181,9 +187,10 @@ const page = () => {
             value: string
           ) => {
             console.log(index, field, value);
+            console.log(inputs);
 
             const newInputs = [...inputs];
-            newInputs[index][`${field}`] = value;
+            newInputs[index][field] = value;
             setInputs(newInputs);
           };
 
@@ -205,25 +212,41 @@ const page = () => {
 
           return (
             <>
-              <Input
-                type="text"
-                value={inputs[cell.row.id]?.inputValue || value}
-                onChange={(e) =>
-                  handleInputChange(cell.row.id, "inputValue", e.target.value)
-                }
-                placeholder="Input Value"
-              />
-              <Button
-                onClick={() =>
-                  handleEditList(
-                    "khelan",
-                    cell.row.original.id
-                  )
-                }
-                className="mt-3"
-              >
-                Save
-              </Button>
+              {isEditable ? (
+                <div className="flex gap-3 justify-between w-[200px]">
+                  <Input
+                    type="text"
+                    value={inputs[cell.row.id]?.inputValue || value}
+                    onChange={(e) =>
+                      handleInputChange(
+                        cell.row.id,
+                        "inputValue",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Input Value"
+                  />
+                  <Button
+                    onClick={() => {
+                      handleEditList(
+                        inputs[cell.row.id]?.inputValue,
+                        cell.row.original.id
+                      );
+                      handleToggleEdit();
+                    }}
+                    className=" self-center"
+                  >
+                    Save
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-3 justify-between w-[200px]">
+                  <p>{inputs[cell.row.id]?.inputValue || value}</p>
+                  <Button onClick={handleToggleEdit}>
+                    <Edit2 />
+                  </Button>
+                </div>
+              )}
             </>
           );
         }, // property name in your strategy object

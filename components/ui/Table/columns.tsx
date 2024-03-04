@@ -128,7 +128,7 @@ export const columns: ColumnDef<Profile>[] = [
             setIsLoading(true);
             try {
               const response = await fetch("/api/strategy/get-all");
-              
+
               if (!response.ok) {
                 throw new Error("Network response was not ok");
               }
@@ -147,7 +147,6 @@ export const columns: ColumnDef<Profile>[] = [
 
       const fetchLists = async (strategyId: SetStateAction<string | null>) => {
         if (userId) {
-         
           setIsLoading(true);
           try {
             // Note the change in the URL structure here: we use a query parameter `q` instead of a dynamic segment in the path.
@@ -170,18 +169,38 @@ export const columns: ColumnDef<Profile>[] = [
           }
         }
       };
+      const getListIdByName = (listName: string) => {
+        const foundList = lists.find(
+          (list: { name: string }) => list.name === listName
+        );
 
-      const handleAddInfluencer = async (username: string) => {
-        console.log(selectedList);
+        // If the list is found, return its id; otherwise, return null or handle accordingly
+        return foundList ? foundList.id : null;
+      };
+      const handleAddInfluencer = async (influencer: object) => {
+        console.log(getListIdByName(selectedList));
+        console.log(influencer); 
+        
 
         try {
-          const response = await axios.post(
-            `/api/strategy/lists/manage-profiles?q=${selectedList}`,
-            {
-              action: "add",
-              profiles: [username],
-            }
-          );
+          const response = await axios
+            .post(
+              `/api/strategy/lists/manage-profiles/add/${getListIdByName(
+                selectedList
+              )}`,
+              influencer,
+              {
+                headers: {
+                  // Include any required headers here. For example, Authorization if needed.
+                },
+              }
+            )
+            .then((response) => {
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
         } catch (error) {
           console.log(error);
         }
@@ -280,13 +299,12 @@ export const columns: ColumnDef<Profile>[] = [
                 )}
                 <Button
                   onClick={() => {
-                    handleAddInfluencer(cell.row.original.socialHandles[0].handle);
+                    handleAddInfluencer(cell.row.original);
                   }}
                   className="mt-3 self-start"
                 >
                   Add influencer
                 </Button>
-
               </Card>
             </div>
           </DrawerContent>
