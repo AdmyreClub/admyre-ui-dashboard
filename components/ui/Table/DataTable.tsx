@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
     }
   };
 
-  /* 
+  /*
   const [
       followerCount,
       followingCount,
@@ -185,7 +185,7 @@ export function DataTable<TData, TValue>({
 
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
-    getMoreData(rowData.name);
+    //getMoreData(rowData.name);
     console.log(rowData);
   };
 

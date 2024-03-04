@@ -436,7 +436,7 @@ const RenderLists: React.FC<ListProps> = ({
     try {
       const response = await axios.post(
         `/api/strategy/lists/update?listId=${listId}&name=${listNewName}`
-      );
+      );  
       console.log("New List Response:", response.data);
 
       setIsNewListDialogOpen(false); // Close the dialog

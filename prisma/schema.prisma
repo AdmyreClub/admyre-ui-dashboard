@@ -45,6 +45,32 @@ model Influencer {
     platformName          String
     followerCountHistory  Json?
     followingCountHistory Json?
+    source                String?
+}
+
+model Content {
+    id                            String   @id @unique
+    userId                        String
+    url                           String
+    likesCount                    Int
+    historicalLikesCount          Json
+    commentsCount                 Int
+    historicalCommentsCount       Json
+    viewsCount                    Int
+    historicalViewsCount          Json
+    thumbnailUrl                  String
+    caption                       String
+    location                      Json
+    createdAt                     DateTime @default(now())
+    updatedAt                     DateTime @updatedAt
+    code                          String
+    user_tags                     Json
+    sponsor_tags                  Json
+    is_paid_partnership           Boolean
+    pk                            String
+    profile                       Json
+    comments_disabled             Boolean
+    like_and_view_counts_disabled Boolean
 }
 
 model Survey {
