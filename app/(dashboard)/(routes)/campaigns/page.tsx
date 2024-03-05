@@ -10,7 +10,7 @@ import {
   MoveLeftIcon,
   YoutubeIcon,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import campaignsLogo from "../../../../public/campaigns-logo.svg";
 import { Card } from "@/components/ui/card";
@@ -26,13 +26,45 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext";
+import axios from "axios";
 const page = () => {
   const handleAddCampaign = () => {
     console.log("hello");
   };
+  const [campaigns, setCampaigns] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { userId } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    const fetchcampaigns = async () => {
+      if (userId) {
+        setIsLoading(true);
+        try {
+          const response = await axios
+            .get(`/api/campaign/get-all`)
+            .then((response) => {
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+          console.log("whats the response: ", response);
 
-  
+          const fetchedCampaigns = await response.json();
+          setCampaigns(fetchedCampaigns);
+        } catch (error) {
+          console.error("Error fetching campaigns:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchcampaigns();
+  }, []);
+
   const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState("platform");
   const [parentViewMode, setparentViewMode] = useState("threeSteps");
@@ -53,7 +85,12 @@ const page = () => {
       {parentViewMode === "threeSteps" ? (
         <>
           <div className=" self-start ml-7  mt-[60px] ">
-            <Image priority width={1150} src={campaignsLogo} alt="Campaigns" />
+            <Image
+              priority
+              className="w-[1150px] min-w-[1150px]"
+              src={campaignsLogo}
+              alt="Campaigns"
+            />
             <h1 className="text-white absolute ml-4 text-[34px] font-bold top-[210px]">
               Create a Campaign
             </h1>
@@ -399,8 +436,8 @@ const page = () => {
                           brandName,
                         };
                         if (payload) {
-                          const router = useRouter();
-                          router.push('/new-page');
+                          
+                          router.push("/campaigns/[id]/create/1");
                           setparentViewMode("fiveSteps");
                         }
                       }
@@ -416,22 +453,7 @@ const page = () => {
       ) : (
         <></>
       )}
-      {parentViewMode === "fiveSteps" ? (
-        <>
-          <div className="flex">
-            <Button
-              onClick={() => {
-                setIsNewListDialogOpen(false);
-                setparentViewMode("threeSteps");
-              }}
-            >
-              <ArrowLeftIcon className="mr-2 self-start" /> Back
-            </Button>
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
+
       {/* <Image priority src={campaignsLogo} alt="Follow us on Twitter" /> */}
     </div>
   );
