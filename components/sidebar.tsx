@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
+import FreeCounter from "./freecounter";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
@@ -79,7 +80,11 @@ const routes = [
   }
 ];
 
-const Sidebar = () => {
+interface SidebarProps {
+  apiLimitCount: number;
+}
+
+const Sidebar = ({apiLimitCount = 0}: SidebarProps) => {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#000000] text-white">
@@ -159,31 +164,7 @@ const Sidebar = () => {
           ))}
           </div>
        </div>
-        <div className="flex flex-col space-y-4 border p-4 rounded-lg items-center">
-          <p className="font-medium">Tokens Tracker</p>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button className="bg-gray-600 font-bold">Upgrade slot</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-            <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Account Settings</h4>
-            <p className="text-sm text-muted-foreground">
-              Tokens are used in exchange of fetching data
-            </p>
-          </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Account Settings</Label>
-                  <SignOutButton />
-            </div>
-
-          </div>
-        </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+      <FreeCounter apiLimiCount={apiLimitCount}/>
       </div>
     </div>
   );

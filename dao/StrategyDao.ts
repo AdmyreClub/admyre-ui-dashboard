@@ -7,6 +7,7 @@ import {
 } from "@prisma/client";
 import IStrategyDao from "@/dao/interfaces/IStrategyDao";
 import prismadb from "@/lib/prismadb";
+import { THUMBNAIL } from "@/constants";
 
 interface StrategyDetails {
   name: string;
@@ -244,7 +245,7 @@ class StrategyDao implements IStrategyDao {
     // Provide a default picture URL if none is provided
     if (!pictureUrl || pictureUrl.trim() === "") {
       pictureUrl =
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925"; // Replace this with your actual default picture URL
+       THUMBNAIL; // Replace this with your actual default picture URL
     }
 
     // Update the strategy with the provided or default values

@@ -33,6 +33,7 @@ import { useTable, useGlobalFilter, usePagination } from "react-table";
 import classNames from "classnames";
 import GlobalFilter from "./GlobalFilter";
 import { Select } from "@radix-ui/react-select";
+import { THUMBNAIL } from "@/constants";
 const strategySchema = z.object({
   strategyName: z.string().min(1, "Please enter the strategy name"),
   addInfluencersBy: z.enum(["search", "manual"]),
@@ -101,7 +102,7 @@ export default function StrategyUI() {
     const strategyData = {
       name: data.strategyName,
       pictureUrl:
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+        THUMBNAIL,
       description: data.description,
     };
 
@@ -111,7 +112,7 @@ export default function StrategyUI() {
       const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
         pictureUrl:
-          "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+          THUMBNAIL,
         description: data.description,
       });
 

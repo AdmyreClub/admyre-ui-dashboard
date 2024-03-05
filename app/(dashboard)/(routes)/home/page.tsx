@@ -29,6 +29,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import * as z from "zod";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+import { THUMBNAIL } from "@/constants";
 const strategySchema = z.object({
   strategyName: z.string().min(1, "Please enter the strategy name"),
   addInfluencersBy: z.enum(["search", "manual"]),
@@ -85,7 +86,7 @@ export default function DashboardPage() {
     const strategyData = {
       name: data.strategyName,
       pictureUrl:
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+       THUMBNAIL,
       description: data.description,
     };
 
@@ -95,7 +96,7 @@ export default function DashboardPage() {
       const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
         pictureUrl:
-          "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+         THUMBNAIL,
         description: data.description,
       });
 

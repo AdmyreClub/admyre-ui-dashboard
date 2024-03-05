@@ -43,6 +43,7 @@ import NewStrategyUI from "./form.list.ui";
 import { SkeletonDemo } from "./SkeletonDemo";
 import NewListUI from "./new.list.ui";
 import { Input } from "./ui/input";
+import { THUMBNAIL } from "@/constants";
 
 // interface StrategyFormData {
 //   name: string;
@@ -198,7 +199,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
     const strategyData = {
       name: data.strategyName,
       pictureUrl:
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+        THUMBNAIL,
       description: data.description,
     };
 
@@ -208,7 +209,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
       const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
         pictureUrl:
-          "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+         THUMBNAIL,
         description: data.description,
       });
 
@@ -305,7 +306,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
         )}
 
         {viewMode === "lists" && (
-          <>
+          <div className="flex items-center justify-center gap-x-4">
             <Button
               variant={"outline"}
               className="mt-2 mb-2 w-[140px]"
@@ -346,7 +347,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                 </FormProvider>
               </DialogContent>
             </Dialog>
-          </>
+          </div>
         )}
       </aside>
 
@@ -436,7 +437,7 @@ const RenderLists: React.FC<ListProps> = ({
     try {
       const response = await axios.post(
         `/api/strategy/lists/update?listId=${listId}&name=${listNewName}`
-      );  
+      );
       console.log("New List Response:", response.data);
 
       setIsNewListDialogOpen(false); // Close the dialog

@@ -79,7 +79,7 @@ const strategySchema = z.object({
   description: z.string().optional(),
 });
 type StrategyFormData = z.infer<typeof strategySchema>;
-const page = () => {
+const Page = () => {
   const { userId } = useAuth();
   const [lists, setLists] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -465,4 +465,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

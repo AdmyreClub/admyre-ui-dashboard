@@ -26,13 +26,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { useRouter } from "next/router";
-const page = () => {
+import { useRouter } from "next/navigation";
+const Page = () => {
   const handleAddCampaign = () => {
     console.log("hello");
   };
 
-  
+
   const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState("platform");
   const [parentViewMode, setparentViewMode] = useState("threeSteps");
@@ -41,6 +41,8 @@ const page = () => {
   const [campaignType, setCampaignType] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [brandName, setBrandName] = useState("");
+  const router = useRouter();
+
   return (
     <div className="pt-[5rem] flex flex-col">
       <Heading
@@ -399,7 +401,6 @@ const page = () => {
                           brandName,
                         };
                         if (payload) {
-                          const router = useRouter();
                           router.push('/new-page');
                           setparentViewMode("fiveSteps");
                         }
@@ -437,4 +438,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
