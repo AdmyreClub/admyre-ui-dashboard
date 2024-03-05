@@ -27,43 +27,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/context/AuthContext";
-import axios from "axios";
-const page = () => {
+const Page = () => {
   const handleAddCampaign = () => {
     console.log("hello");
   };
-  const [campaigns, setCampaigns] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { userId } = useAuth();
-  const router = useRouter();
-  useEffect(() => {
-    const fetchcampaigns = async () => {
-      if (userId) {
-        setIsLoading(true);
-        try {
-          const response = await axios
-            .get(`/api/campaign/get-all`)
-            .then((response) => {
-              console.log(response.data);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-          console.log("whats the response: ", response);
 
-          const fetchedCampaigns = await response.json();
-          setCampaigns(fetchedCampaigns);
-        } catch (error) {
-          console.error("Error fetching campaigns:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchcampaigns();
-  }, []);
 
   const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState("platform");
@@ -73,6 +41,8 @@ const page = () => {
   const [campaignType, setCampaignType] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [brandName, setBrandName] = useState("");
+  const router = useRouter();
+
   return (
     <div className="pt-[5rem] flex flex-col">
       <Heading
@@ -436,8 +406,7 @@ const page = () => {
                           brandName,
                         };
                         if (payload) {
-                          
-                          router.push("/campaigns/[id]/create/1");
+                          router.push('/new-page');
                           setparentViewMode("fiveSteps");
                         }
                       }
@@ -459,4 +428,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

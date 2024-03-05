@@ -19,6 +19,14 @@ model User {
     campaigns  Campaign[]
 }
 
+model UserApiLimit {
+    id String @id @default(cuid())
+    userId String @unique
+    count Int @default(0)
+    createdAt  DateTime   @default(now())
+    updatedAt  DateTime   @updatedAt
+}
+
 model Influencer {
     id                    String   @id @default(uuid())
     username              String   @unique
@@ -45,6 +53,32 @@ model Influencer {
     platformName          String
     followerCountHistory  Json?
     followingCountHistory Json?
+    source                String?
+}
+
+model Content {
+    id                            String   @id @unique
+    userId                        String
+    url                           String
+    likesCount                    Int
+    historicalLikesCount          Json
+    commentsCount                 Int
+    historicalCommentsCount       Json
+    viewsCount                    Int
+    historicalViewsCount          Json
+    thumbnailUrl                  String
+    caption                       String
+    location                      Json
+    createdAt                     DateTime @default(now())
+    updatedAt                     DateTime @updatedAt
+    code                          String
+    user_tags                     Json
+    sponsor_tags                  Json
+    is_paid_partnership           Boolean
+    pk                            String
+    profile                       Json
+    comments_disabled             Boolean
+    like_and_view_counts_disabled Boolean
 }
 
 model Survey {
@@ -68,17 +102,20 @@ model Strategy {
     updatedAt   DateTime @updatedAt
     userId      String
     lists       List[]
+    trackId     String?
     user        User     @relation(fields: [userId], references: [id])
 }
 
 model List {
-    id         String   @id @unique @default(uuid())
-    name       String
-    strategyId String
-    profiles   Json
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
-    strategy   Strategy @relation(fields: [strategyId], references: [id])
+    id          String   @id @unique @default(uuid())
+    name        String
+    strategyId  String
+    profiles    Json
+    trackId     String?
+    description String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    strategy    Strategy @relation(fields: [strategyId], references: [id])
 }
 
 // New models for campaign management

@@ -1,6 +1,13 @@
-import { PrismaClient, Strategy, List, Influencer, Prisma } from "@prisma/client";
+import {
+  PrismaClient,
+  Strategy,
+  List,
+  Influencer,
+  Prisma,
+} from "@prisma/client";
 import IStrategyDao from "@/dao/interfaces/IStrategyDao";
 import prismadb from "@/lib/prismadb";
+import { THUMBNAIL } from "@/constants";
 
 interface StrategyDetails {
   name: string;
@@ -56,39 +63,45 @@ class StrategyDao implements IStrategyDao {
     });
   }
 
-  async addProfileToList(listId: string, influencerData: any): Promise<Influencer[]> {
+  async addProfileToList(
+    listId: string,
+    influencerData: any,
+  ): Promise<Influencer[]> {
     // Check if the influencer already exists in the database by Instagram handle
     let influencer = await prismadb.influencer.findUnique({
       where: { username: influencerData.socialHandles[0].handle },
     });
 
     if (!influencer) {
-        const instagramMetrics = influencerData.socialHandles.find((handle: any) => handle.platform === "INSTAGRAM")?.metrics;
+      const instagramMetrics = influencerData.socialHandles.find(
+        (handle: any) => handle.platform === "INSTAGRAM",
+      )?.metrics;
 
-        influencer = await prismadb.influencer.create({
-          data: {
-            username: influencerData.socialHandles[0].handle,
-            url: influencerData.socialHandles[0].url,
-            profilePictureUrl: influencerData.profileImage.url,
-            email: influencerData.email,
-            phoneNumber: influencerData.phone,
-            whatsappNumber: influencerData.whatsappNumber,
-            city: influencerData.city,
-            state: influencerData.state,
-            country: influencerData.country,
-            gender: influencerData.gender,
-            platformName: "INSTAGRAM",
-            followerCount: instagramMetrics?.followers || 0,
-            followingCount: instagramMetrics?.following || 0,
-            totalLikesCount: instagramMetrics?.avgLikes || 0,
-            totalCommentsCount: instagramMetrics?.avgComments || 0,
-            totalViewsCount: instagramMetrics?.avgVideoViews || 0,
-            avgCommentsCount: instagramMetrics?.avgComments || 0,
-            avgLikesCount: instagramMetrics?.avgLikes || 0,
-            avgViewsCount: instagramMetrics?.avgVideoViews || 0,
-            engagementRate: instagramMetrics?.avgEngagement || 0,
-          },
-        });
+      influencer = await prismadb.influencer.create({
+        data: {
+          username: influencerData.socialHandles[0].handle,
+          url: influencerData.socialHandles[0].url,
+          profilePictureUrl: influencerData.profileImage.url,
+          email: influencerData.email,
+          phoneNumber: influencerData.phone,
+          whatsappNumber: influencerData.whatsappNumber,
+          city: influencerData.city,
+          state: influencerData.state,
+          country: influencerData.country,
+          gender: influencerData.gender,
+          platformName: "INSTAGRAM",
+          followerCount: instagramMetrics?.followers || 0,
+          followingCount: instagramMetrics?.following || 0,
+          totalLikesCount: instagramMetrics?.avgLikes || 0,
+          totalCommentsCount: instagramMetrics?.avgComments || 0,
+          totalViewsCount: instagramMetrics?.avgVideoViews || 0,
+          avgCommentsCount: instagramMetrics?.avgComments || 0,
+          avgLikesCount: instagramMetrics?.avgLikes || 0,
+          avgViewsCount: instagramMetrics?.avgVideoViews || 0,
+          engagementRate: instagramMetrics?.avgEngagement || 0,
+          source: "search",
+        },
+      });
     }
 
     const list = await prismadb.list.findUnique({
@@ -97,11 +110,12 @@ class StrategyDao implements IStrategyDao {
     });
 
     if (!list || list.profiles === null) {
-      throw new Error('List not found');
+      throw new Error("List not found");
     }
 
     // Ensuring that profiles is a string before parsing
-    let existingProfiles = typeof list.profiles === 'string' ? JSON.parse(list.profiles) : [];
+    let existingProfiles =
+      typeof list.profiles === "string" ? JSON.parse(list.profiles) : [];
     if (!existingProfiles.includes(influencer.id)) {
       existingProfiles.push(influencer.id);
       await prismadb.list.update({
@@ -117,21 +131,26 @@ class StrategyDao implements IStrategyDao {
     });
 
     if (!updatedList || updatedList.profiles === null) {
-      throw new Error('Failed to update the list with new influencer');
+      throw new Error("Failed to update the list with new influencer");
     }
 
     // Ensuring that profiles is a string before parsing
-    const updatedInfluencerIds = typeof updatedList.profiles === 'string' ? JSON.parse(updatedList.profiles) : [];
+    const updatedInfluencerIds =
+      typeof updatedList.profiles === "string"
+        ? JSON.parse(updatedList.profiles)
+        : [];
 
     return prismadb.influencer.findMany({
       where: {
         id: { in: updatedInfluencerIds },
       },
     });
-}
+  }
 
-
-  async removeProfilesFromList(listId: string, username: string): Promise<Influencer[]> {
+  async removeProfilesFromList(
+    listId: string,
+    username: string,
+  ): Promise<Influencer[]> {
     const influencer = await this.prisma.influencer.findUnique({
       where: { username },
     });
@@ -140,10 +159,11 @@ class StrategyDao implements IStrategyDao {
     const list = await this.prisma.list.findUnique({
       where: { id: listId },
     });
-    if (!list || typeof list.profiles !== 'string') throw new Error("List not found or invalid profiles data");
+    if (!list || typeof list.profiles !== "string")
+      throw new Error("List not found or invalid profiles data");
 
     let profiles = JSON.parse(list.profiles) as string[];
-    profiles = profiles.filter(id => id !== influencer.id);
+    profiles = profiles.filter((id) => id !== influencer.id);
 
     await this.prisma.list.update({
       where: { id: listId },
@@ -156,33 +176,28 @@ class StrategyDao implements IStrategyDao {
         id: { in: profiles },
       },
     });
-}
+  }
 
+  async viewAllProfilesInList(listId: string): Promise<Influencer[]> {
+    const list = await this.prisma.list.findUnique({
+      where: { id: listId },
+    });
 
+    if (!list || !list.profiles)
+      throw new Error("List not found or has no profiles");
 
-async viewAllProfilesInList(listId: string): Promise<Influencer[]> {
-  const list = await this.prisma.list.findUnique({
-    where: { id: listId },
-  });
+    // Assuming profiles are stored as a JSON string of influencer IDs
+    const influencerIds = JSON.parse(list.profiles as string) as string[];
+    if (!Array.isArray(influencerIds)) throw new Error("Invalid profiles data");
 
-  if (!list || !list.profiles) throw new Error('List not found or has no profiles');
+    const influencers = await this.prisma.influencer.findMany({
+      where: {
+        id: { in: influencerIds },
+      },
+    });
 
-  // Assuming profiles are stored as a JSON string of influencer IDs
-  const influencerIds = JSON.parse(list.profiles as string) as string[];
-  if (!Array.isArray(influencerIds)) throw new Error('Invalid profiles data');
-
-  const influencers = await this.prisma.influencer.findMany({
-    where: {
-      id: { in: influencerIds },
-    },
-  });
-
-  return influencers;
-}
-
-
-
-
+    return influencers;
+  }
 
   async updateListName(listId: string, newName: string): Promise<List> {
     // Check if newName is provided and not just whitespace
@@ -230,7 +245,7 @@ async viewAllProfilesInList(listId: string): Promise<Influencer[]> {
     // Provide a default picture URL if none is provided
     if (!pictureUrl || pictureUrl.trim() === "") {
       pictureUrl =
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925"; // Replace this with your actual default picture URL
+       THUMBNAIL; // Replace this with your actual default picture URL
     }
 
     // Update the strategy with the provided or default values

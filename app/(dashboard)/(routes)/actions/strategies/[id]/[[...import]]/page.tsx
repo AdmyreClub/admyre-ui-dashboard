@@ -57,7 +57,7 @@ import axios from "axios";
 import Link from "next/link";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
-const page = () => {
+const Page = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const [selectedList, setSelectedList] = React.useState("Select");
@@ -475,4 +475,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

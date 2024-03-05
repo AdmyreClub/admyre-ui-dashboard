@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ClerkLoaded, ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/components/theme-provider"
+import { ModalProvider } from '@/components/modal-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -45,6 +46,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
                 <ClerkLoaded>
+                  <ModalProvider />
             {children}
             </ClerkLoaded>
         </ThemeProvider>

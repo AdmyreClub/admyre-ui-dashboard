@@ -41,6 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { Strategy } from "@prisma/client";
+import { THUMBNAIL } from "@/constants";
 
 type SocialHandleMetric = {
   followers: number;
@@ -237,7 +238,7 @@ const DiscoverPage = () => {
     const strategyData = {
       name: data.strategyName,
       pictureUrl:
-        "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+        THUMBNAIL,
       description: data.description,
     };
 
@@ -247,7 +248,7 @@ const DiscoverPage = () => {
       const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
         pictureUrl:
-          "https://cdn.hypeauditor.com/img/instagram/user/13460080.jpg?w=100&till=1708507419&sign=be5247df95066c982795505571047925",
+         THUMBNAIL,
         description: data.description,
       });
 

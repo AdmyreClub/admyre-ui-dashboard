@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
     }
   };
 
-  /* 
+  /*
   const [
       followerCount,
       followingCount,
