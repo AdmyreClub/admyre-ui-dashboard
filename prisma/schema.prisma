@@ -20,40 +20,37 @@ model User {
 }
 
 model UserApiLimit {
-    id String @id @default(cuid())
-    userId String @unique
-    count Int @default(0)
-    createdAt  DateTime   @default(now())
-    updatedAt  DateTime   @updatedAt
+    id        String   @id @default(cuid())
+    userId    String   @unique
+    count     Int      @default(0)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Influencer {
-    id                    String   @id @default(uuid())
-    username              String   @unique
-    url                   String
-    followerCount         Int
-    followingCount        Int
-    totalLikesCount       Int
-    totalCommentsCount    Int
-    totalViewsCount       Int
-    avgCommentsCount      Decimal
-    avgLikesCount         Decimal
-    avgViewsCount         Decimal
-    engagementRate        Decimal
-    addedAt               DateTime @default(now())
-    updatedAt             DateTime @updatedAt
-    profilePictureUrl     String
-    email                 String?
-    phoneNumber           String?
-    whatsappNumber        String?
-    city                  String?
-    state                 String?
-    country               String?
-    gender                String?
-    platformName          String
-    followerCountHistory  Json?
-    followingCountHistory Json?
-    source                String?
+    id                 String   @id @default(uuid())
+    username           String   @unique
+    url                String
+    followerCount      Int
+    followingCount     Int
+    totalLikesCount    Int
+    totalCommentsCount Int
+    avgCommentsCount   Decimal
+    avgLikesCount      Decimal
+    engagementRate     Decimal
+    addedAt            DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+    profilePictureUrl  String
+    email              String?
+    phoneNumber        String?
+    whatsappNumber     String?
+    city               String?
+    state              String?
+    country            String?
+    gender             String?
+    platformName       String
+    timeSeries         Json?
+    source             String?
 }
 
 model Content {

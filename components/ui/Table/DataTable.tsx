@@ -183,11 +183,10 @@ export function DataTable<TData, TValue>({
       profileLocationData,
     ]);*/
 
+    // main handle row click
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
-    
-    //getMoreData(rowData.name);
-    console.log(rowData);
+    console.log('clicked  : ', rowData);
   };
 
   function formatLargeNumber(number: number) {
@@ -214,7 +213,10 @@ export function DataTable<TData, TValue>({
         "/api/strategy/lists/manage-profiles?q=asdasd",
         {
           action: "add",
-          profiles: [username],
+          profiles: [
+
+
+          ],
         }
       );
 
@@ -252,7 +254,7 @@ export function DataTable<TData, TValue>({
               tableInstance.getRowModel().rows.map((row) => (
                 <ContextMenu key={row.id}>
                   <ContextMenuTrigger asChild>
-                    <TableRow onClick={() => handleRowClick(row.original)}>
+                    <TableRow >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
@@ -263,7 +265,17 @@ export function DataTable<TData, TValue>({
                       ))}
                     </TableRow>
                   </ContextMenuTrigger>
-                  
+                  <ContextMenuContent className="w-[160px]">
+                    {/* ... Context menu items ... */}
+                    <ContextMenuItem className="flex justify-center w-[150px]">
+                      <Button className="w-[140px]" onClick={() => {
+                        setIsSheetOpen(true)
+                        setSheetUserName(row.original)
+                      }}>More Info</Button>
+                    </ContextMenuItem>
+
+                    {/* ... Other context menu items ... */}
+                  </ContextMenuContent>
                 </ContextMenu>
               ))
             ) : (

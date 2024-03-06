@@ -304,7 +304,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
         )}
 
         {viewMode === "lists" && (
-          <div className="flex items-center justify-center gap-x-4">
+          <>
             <Button
               variant={"outline"}
               className="mt-2 mb-2 w-[140px]"
@@ -345,7 +345,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                 </FormProvider>
               </DialogContent>
             </Dialog>
-          </div>
+          </>
         )}
       </aside>
 

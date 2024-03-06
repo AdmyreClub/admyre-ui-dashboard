@@ -134,7 +134,7 @@ export const columns: ColumnDef<Profile>[] = [
       const [currentStrategyId, setCurrentStrategyId] = useState<string | null>(
         null
       );
-      console.log(cell.row.original.socialHandles[0].handle);
+      //console.log(cell.row.original.socialHandles[0].handle);
 
       const { userId } = useAuth();
       useEffect(() => {
@@ -192,9 +192,12 @@ export const columns: ColumnDef<Profile>[] = [
         // If the list is found, return its id; otherwise, return null or handle accordingly
         return foundList ? foundList.id : null;
       };
+
+      // rishabh problem here
       const handleAddInfluencer = async (influencer: object) => {
         console.log(getListIdByName(selectedList));
-        console.log(influencer);
+        console.log('first step is: ', influencer);
+
 
         try {
           const response = await axios
@@ -210,10 +213,10 @@ export const columns: ColumnDef<Profile>[] = [
               }
             )
             .then((response) => {
-              console.log(response.data);
+              console.log('add the data: ', response.data);
             })
             .catch((error) => {
-              console.error("Error:", error);
+              console.error("Errorzzzz:", error);
             });
         } catch (error) {
           console.log(error);

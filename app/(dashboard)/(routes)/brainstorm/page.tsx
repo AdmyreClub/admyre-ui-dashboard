@@ -38,7 +38,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       role: "user",
       content: values.prompt,
     };
-    const newMessages = [...messages, userMessage];
+    const newMessages = ["", ...messages, userMessage];
 
     const response = await axios.post("/api/brainstorm", {
       messages: newMessages,
