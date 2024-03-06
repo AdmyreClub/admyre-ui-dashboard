@@ -284,7 +284,6 @@ const Page = () => {
 
   return (
     <Card className="self-center shadow-none border-none outline-none flex flex-col mt-[10vh] w-[80vw] h-[70vh] ">
-      {/* content */}
       <Card className="self-center h-[70vh] align-center mt-2 border-none shadow-none">
         <>
           {influencers.length > 0 ? (
