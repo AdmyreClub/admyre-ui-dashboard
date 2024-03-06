@@ -1,5 +1,6 @@
 "use client";
-import Tiptap from "@/components/editor";
+
+import { PlateEditor } from "@/components/editor";
 import CampaignsNav from "@/components/ui/CampaignsNav";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -11,10 +12,26 @@ const page = () => {
   const handleSave = () => {
     //logic to save
   };
+  const [dataFromChild, setDataFromChild] = React.useState();
+  const [dataFromChild2, setDataFromChild2] = React.useState();
+
+  const handleChildInputChange = (newData) => {
+    setDataFromChild(newData);
+  };
+  const handleChildInputChange2 = (newData) => {
+    setDataFromChild2(newData);
+  };
+
+  const handleEditorDataSave = () => {
+    console.log(dataFromChild);
+  };
+  const handleEditorDataSave2 = () => {
+    console.log(dataFromChild2);
+  };
   return (
     <div className="flex flex-col">
       <CampaignsNav />
-      <div className="w-[1000px] flex flex-col gap-6 h-[60vh] bg-slate-100 self-center mt-10 rounded-md shadow-md">
+      <div className="w-[1000px] p-5 flex flex-col gap-6 h-[65vh] bg-slate-100 self-center mt-5  rounded-md shadow-md">
         <div className="flex justify-between gap-2">
           <div className="flex flex-col w-[500px] h-[23vh]">
             <p className="text-[16px] font-bold ml-3 mt-3 mb-3">
@@ -30,12 +47,13 @@ const page = () => {
               </p>
             </div>
           </div>
-          <div className="editor w-[400px] mt-3 h-[24vh] bg-white p-3 mr-3">
-            <Tiptap />
+          <div className="editor w-[500px] h-[27vh] p-3 bg-white pb-2 mr-3">
+            <PlateEditor sendDataToParent={handleChildInputChange} />
+            <Button className="mt-2" onClick={handleEditorDataSave}>Save</Button>
           </div>
         </div>
         <div className="flex justify-between gap-2">
-          <div className="flex flex-col w-[500px] h-[23vh]">
+          <div className="flex flex-col w-[500px] h-[26vh]">
             <p className="text-[16px] font-bold ml-3 mt-3 mb-3">
               Tell the influencer about your brand
             </p>
@@ -49,8 +67,9 @@ const page = () => {
               </p>
             </div>
           </div>
-          <div className="editor w-[400px] mt-3 h-[24vh] bg-white p-3 mr-3">
-            <Tiptap />
+          <div className="editor w-[500px] mt-3 h-[27vh] bg-white p-3 mr-3">
+            <PlateEditor sendDataToParent={handleChildInputChange2} />
+            <Button className="mt-2" onClick={handleEditorDataSave2}>Save</Button>
           </div>
         </div>
       </div>
@@ -87,3 +106,6 @@ const page = () => {
 };
 
 export default page;
+function useState(): [any, any] {
+  throw new Error("Function not implemented.");
+}
