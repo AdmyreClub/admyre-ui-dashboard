@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
+import { Influencer, PrismaClient } from '@prisma/client';
 import { auth } from '@clerk/nextjs';
 
 const prisma = new PrismaClient();
@@ -51,39 +51,16 @@ export const fetchProfileData = async (username: string) => {
   };
 
 
-// Function to ensure the "tracks" list exists for the user
-const ensureTracksListExists = async (userId: string) => {
-  let list = await prisma.list.findFirst({
-    where: {
-      userId,
-      name: 'tracks',
-    },
-  });
-
-  if (!list) {
-    list = await prisma.list.create({
-      data: {
-        userId,
-        name: 'tracks',
-        profiles: '[]', // Initializes with an empty list
-      },
-    });
-  }
-
-  return list;
-};
-
 // Main function to track profile
 export const trackProfile = async ( username: string) => {
 
     const userId = auth();
 
     if(!userId){
-        return;
+        return ;
     }
 
   const profileData = await fetchProfileData(username);
-  const tracksList = await ensureTracksListExists(userId);
 
   // Upsert influencer in the database
   const influencer = await prisma.influencer.upsert({
@@ -91,16 +68,6 @@ export const trackProfile = async ( username: string) => {
     update: profileData,
     create: profileData,
   });
-
-  // Add influencer to "tracks" list if not already present
-  let profiles = JSON.parse(tracksList.profiles);
-  if (!profiles.includes(influencer.id)) {
-    profiles.push(influencer.id);
-    await prisma.list.update({
-      where: { id: tracksList.id },
-      data: { profiles: JSON.stringify(profiles) },
-    });
-  }
 
   return influencer;
 };
