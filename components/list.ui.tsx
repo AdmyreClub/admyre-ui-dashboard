@@ -304,7 +304,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
         )}
 
         {viewMode === "lists" && (
-          <>
+          <div className="flex justify-center align-middle items-center gap-x-5">
             <Button
               variant={"outline"}
               className="mt-2 mb-2 w-[140px]"
@@ -345,7 +345,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
                 </FormProvider>
               </DialogContent>
             </Dialog>
-          </>
+          </div>
         )}
       </aside>
 
@@ -451,6 +451,7 @@ const RenderLists: React.FC<ListProps> = ({
     }
   };
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>All Lists</CardTitle>
@@ -505,13 +506,14 @@ const RenderLists: React.FC<ListProps> = ({
                 </div>
               ))}
             </ScrollArea>
-            <Button onClick={handleToggleEdit}>
-              <Edit2 />
+            <Button onClick={handleToggleEdit} className="gap-x-1 flex items-center align-middle justify-center">
+              <Edit2 /> Edit
             </Button>
           </>
         )}
       </CardContent>
     </Card>
+    </>
   );
 };
 

@@ -442,7 +442,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                     <>
                       <p className="font-semibold">Languages:</p>
                       {languagesData.languages.map((language) => {
-                        return <p className="ml-1 mr-1">{language + ","}</p>;
+                        return <p className="ml-1 mr-1" key>{language + ","}</p>;
                       })}
                     </>
                   )}

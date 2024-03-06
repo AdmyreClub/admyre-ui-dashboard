@@ -7,7 +7,7 @@ import { Hash } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [campaignName, setCampaignName] = useState("");
   const [brandName, setBrandName] = useState("");
   const router = useRouter();
@@ -17,7 +17,7 @@ const page = () => {
     //logic to save
   };
 
-  
+
   return (
     <div className="flex flex-col ">
       <CampaignsNav />
@@ -102,4 +102,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

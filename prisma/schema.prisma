@@ -1,195 +1,206 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-    id         String     @id @unique
-    email      String     @unique
-    count      Int        @default(0)
-    createdAt  DateTime   @default(now())
-    updatedAt  DateTime   @updatedAt
-    survey     Survey?
-    strategies Strategy[]
-    campaigns  Campaign[]
+  id         String     @id @unique
+  email      String     @unique
+  count      Int        @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  survey     Survey?
+  strategies Strategy[]
+  campaigns  Campaign[]
 }
 
 model UserApiLimit {
-    id        String   @id @default(cuid())
-    userId    String   @unique
-    count     Int      @default(0)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Influencer {
-    id                 String   @id @default(uuid())
-    username           String   @unique
-    url                String
-    followerCount      Int
-    followingCount     Int
-    totalLikesCount    Int
-    totalCommentsCount Int
-    avgCommentsCount   Decimal
-    avgLikesCount      Decimal
-    engagementRate     Decimal
-    addedAt            DateTime @default(now())
-    updatedAt          DateTime @updatedAt
-    profilePictureUrl  String
-    email              String?
-    phoneNumber        String?
-    whatsappNumber     String?
-    city               String?
-    state              String?
-    country            String?
-    gender             String?
-    platformName       String
-    timeSeries         Json?
-    source             String?
+  id                 String           @id @default(uuid())
+  username           String           @unique
+  url                String
+  followerCount      Int
+  followingCount     Int
+  totalLikesCount    Int
+  totalCommentsCount Int
+  avgCommentsCount   Decimal
+  avgLikesCount      Decimal
+  engagementRate     Decimal
+  addedAt            DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  profilePictureUrl  String
+  email              String?
+  phoneNumber        String?
+  whatsappNumber     String?
+  city               String?
+  state              String?
+  country            String?
+  gender             String?
+  platformName       String
+  timeSeries         Json?
+  source             String?
+  ListInfluencer     ListInfluencer[]
+}
+
+model ListInfluencer {
+  listId       String
+  influencerId String
+  list         List       @relation(fields: [listId], references: [id])
+  influencer   Influencer @relation(fields: [influencerId], references: [id])
+
+  @@id([listId, influencerId])
 }
 
 model Content {
-    id                            String   @id @unique
-    userId                        String
-    url                           String
-    likesCount                    Int
-    historicalLikesCount          Json
-    commentsCount                 Int
-    historicalCommentsCount       Json
-    viewsCount                    Int
-    historicalViewsCount          Json
-    thumbnailUrl                  String
-    caption                       String
-    location                      Json
-    createdAt                     DateTime @default(now())
-    updatedAt                     DateTime @updatedAt
-    code                          String
-    user_tags                     Json
-    sponsor_tags                  Json
-    is_paid_partnership           Boolean
-    pk                            String
-    profile                       Json
-    comments_disabled             Boolean
-    like_and_view_counts_disabled Boolean
+  id                            String   @id @unique
+  userId                        String
+  url                           String
+  likesCount                    Int
+  historicalLikesCount          Json
+  commentsCount                 Int
+  historicalCommentsCount       Json
+  viewsCount                    Int
+  historicalViewsCount          Json
+  thumbnailUrl                  String
+  caption                       String
+  location                      Json
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+  code                          String
+  user_tags                     Json
+  sponsor_tags                  Json
+  is_paid_partnership           Boolean
+  pk                            String
+  profile                       Json
+  comments_disabled             Boolean
+  like_and_view_counts_disabled Boolean
 }
 
 model Survey {
-    id            String   @id @unique
-    userId        String   @unique
-    brandOrAgency String
-    teamSize      Int
-    discovery     String
-    productUse    String
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    user          User     @relation(fields: [userId], references: [id])
+  id            String   @id @unique
+  userId        String   @unique
+  brandOrAgency String
+  teamSize      Int
+  discovery     String
+  productUse    String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Strategy {
-    id          String   @id @unique @default(uuid())
-    name        String
-    pictureUrl  String?
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    userId      String
-    lists       List[]
-    trackId     String?
-    user        User     @relation(fields: [userId], references: [id])
+  id          String   @id @unique @default(uuid())
+  name        String
+  pictureUrl  String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  lists       List[]
+  trackId     String?
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model List {
-    id          String   @id @unique @default(uuid())
-    name        String
-    strategyId  String
-    profiles    Json
-    trackId     String?
+  id         String  @id @unique @default(uuid())
+  name       String
+  strategyId String
+  profiles   Json
+  trackId    String?
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    strategy    Strategy @relation(fields: [strategyId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  strategy       Strategy         @relation(fields: [strategyId], references: [id])
+  ListInfluencer ListInfluencer[]
 }
 
 // New models for campaign management
 model Campaign {
-    id              String         @id @default(uuid())
-    userId          String
-    platform        String
-    name            String
-    brandName       String
-    description     String?        @default("")
-    maxParticipants Int?
-    type            String
-    status          CampaignStatus
-    createdAt       DateTime       @default(now())
-    updatedAt       DateTime       @updatedAt
-    deliverables    Deliverable[]
-    incentive       Incentive?
-    user            User           @relation(fields: [userId], references: [id])
+  id              String         @id @default(uuid())
+  userId          String
+  platform        String
+  name            String
+  brandName       String
+  description     String?        @default("")
+  maxParticipants Int?
+  type            String
+  status          CampaignStatus
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deliverables    Deliverable[]
+  incentive       Incentive?
+  user            User           @relation(fields: [userId], references: [id])
 }
 
 model Deliverable {
-    id                String    @id @default(uuid())
-    campaignId        String
-    platform          String
-    contentType       String
-    postingTime       String
-    startDate         DateTime?
-    endDate           DateTime?
-    contentGuidelines String?
-    campaign          Campaign  @relation(fields: [campaignId], references: [id])
+  id                String    @id @default(uuid())
+  campaignId        String
+  platform          String
+  contentType       String
+  postingTime       String
+  startDate         DateTime?
+  endDate           DateTime?
+  contentGuidelines String?
+  campaign          Campaign  @relation(fields: [campaignId], references: [id])
 }
 
 model Incentive {
-    id                 String        @id @default(uuid())
-    campaignId         String
-    type               IncentiveType
-    payoutAmount       Float?        @default(0)
-    voucherWorth       Float?        @default(0)
-    voucherDescription String?
-    campaign           Campaign      @relation(fields: [campaignId], references: [id])
+  id                 String        @id @default(uuid())
+  campaignId         String
+  type               IncentiveType
+  payoutAmount       Float?        @default(0)
+  voucherWorth       Float?        @default(0)
+  voucherDescription String?
+  campaign           Campaign      @relation(fields: [campaignId], references: [id])
 
-    @@unique([campaignId])
+  @@unique([campaignId])
 }
 
 enum ContentType {
-    POST
-    CAROUSEL
-    STORY
-    REEL
+  POST
+  CAROUSEL
+  STORY
+  REEL
 }
 
 enum PostingTime {
-    AFTER_ACCEPTANCE
-    PARTICULAR_DATES
+  AFTER_ACCEPTANCE
+  PARTICULAR_DATES
 }
 
 enum IncentiveType {
-    FIXED_PAYOUT
-    VOUCHER
+  FIXED_PAYOUT
+  VOUCHER
 }
 
 enum CampaignStatus {
-    DRAFT
-    UNDER_REVIEW
-    DISCARDED
-    COMPLETED
+  DRAFT
+  UNDER_REVIEW
+  DISCARDED
+  COMPLETED
 }
 
 enum BrandOrAgency {
-    BRAND
-    AGENCY
+  BRAND
+  AGENCY
 }
 
 enum CampaignType {
-    BARTER
-    PAYOUT
-    CASHBACK
+  BARTER
+  PAYOUT
+  CASHBACK
 }
 
 // Placeholder for the custom ID generation function
