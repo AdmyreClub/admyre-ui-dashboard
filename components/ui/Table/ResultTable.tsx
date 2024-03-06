@@ -12,6 +12,7 @@ interface TableProps {
 
 const Table: React.FC<TableProps> = ({ data, page, setPage, pageSize, setPageSize }) => {
   console.log('Data in Table component:', data);
+  
   return (
     <section className='py-24'>
       <div className='container'>

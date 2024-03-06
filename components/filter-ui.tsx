@@ -54,7 +54,7 @@ interface ChildProps {
 }
 
 const FilterUI = ({ onDataFromChild }: ChildProps) => {
-  const [filters, setFilters] = React.useState(initialFiltersState);
+  const [filters, setFilters] = React.useState(false);
   const [categoriesData, setCategoriesData] = React.useState<string[]>([]);
   const [followerData, setFollowerData] = React.useState([0, 100000000]);
   const [genderData, setGenderData] = React.useState("");
@@ -64,36 +64,42 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const [locationData, setLocationData] = React.useState<string[]>([]);
   const [keywords, setKeywords] = React.useState<string[]>([]);
 
-
   const handleFollowerData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setFollowerData(dataFromChild);
+    setFilters(true);
   };
   const handleEngagementRateData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setEngagementRateData(dataFromChild);
+    setFilters(true);
   };
   const handleGenderData = (dataFromChild: string) => {
     // Do something with the data received from the child component
     setGenderData(dataFromChild);
+    setFilters(true);
   };
   const handleFollowingData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setFollowingData(dataFromChild);
+    setFilters(true);
   };
 
   const handleCategoriesData = (dataFromChild: string[]) => {
     // Do something with the data received from the child component
     setCategoriesData(dataFromChild);
     console.log(dataFromChild);
+    setFilters(true);
   };
   const handleLanguagesData = (dataFromChild: string[]) => {
     // Do something with the data received from the child component
     setLanguagesData(dataFromChild);
+    setFilters(true);
   };
   const handleLocationData = (dataFromChild: string[]) => {
     // Do something with the data received from the child component
     setLocationData(dataFromChild);
+    setFilters(true);
   };
 
   const handleKeywordInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -389,39 +395,88 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                 setFollowingData([0, 100000000]);
                 setLanguagesData([]);
                 setLocationData([]);
-                setGenderData("");
+                setGenderData(null);
                 handleResetMain();
+                setKeywords([]);
+                setFilters(false);
               }}
             >
               Clear
             </Button>
-            <Card className="flex ml-6 text-[10px] text-gray-400 shadow-md border-none p-2 mb-3">
-              {followerData[0] === 0 && followerData[1] === 100000000 ? (
-                <></>
-              ) : (
-                <p className="mr-[10px] ">
-                  Followers {formatLargeNumber(followerData[0])}-
-                  {formatLargeNumber(followerData[1])}
-                </p>
-              )}
-              {followingData[0] === 0 && followingData[1] === 100000000 ? (
-                <></>
-              ) : (
-                <p className="mr-[10px] ">
-                  Following {formatLargeNumber(followingData[0])}-
-                  {formatLargeNumber(followingData[1])}
-                </p>
-              )}
-              {engagementRateData[0] === 0 && engagementRateData[1] === 100 ? (
-                <></>
-              ) : (
-                <p className="mr-[10px] ">
-                  Engagement Rate {formatLargeNumber(engagementRateData[0])}-
-                  {formatLargeNumber(engagementRateData[1])}
-                </p>
-              )}
-
-            </Card>
+            {filters === false ? (
+              <></>
+            ) : (
+              <>
+                <Card className="flex ml-2 mr-2 text-[10px] w-max-[700px] text-gray-400 shadow-md border-none p-2 mb-3">
+                  {followerData[0] === 0 && followerData[1] === 100000000 ? (
+                    <></>
+                  ) : (
+                    <p className="mr-[10px] ">
+                      <h1 className="font-semibold">Followers</h1>
+                      {formatLargeNumber(followerData[0])}-
+                      {formatLargeNumber(followerData[1])}
+                    </p>
+                  )}
+                  {followingData[0] === 0 && followingData[1] === 100000000 ? (
+                    <></>
+                  ) : (
+                    <p className="mr-[10px] ">
+                      <h1 className="font-semibold">Following</h1>{" "}
+                      {formatLargeNumber(followingData[0])}-
+                      {formatLargeNumber(followingData[1])}
+                    </p>
+                  )}
+                  {engagementRateData[0] === 0 &&
+                  engagementRateData[1] === 100 ? (
+                    <></>
+                  ) : (
+                    <p className="mr-[10px] ">
+                      <h1 className="font-semibold">Engagement Rate</h1>{" "}
+                      {formatLargeNumber(engagementRateData[0])}-
+                      {formatLargeNumber(engagementRateData[1])}
+                    </p>
+                  )}
+                  {languagesData.length === 0 ? (
+                    <></>
+                  ) : (
+                    <>
+                      <p className="font-semibold">Languages:</p>
+                      {languagesData.languages.map((language) => {
+                        return <p className="ml-1 mr-1">{language + ","}</p>;
+                      })}
+                    </>
+                  )}
+                  {locationData.length === 0 ? (
+                    <></>
+                  ) : (
+                    <>
+                      <p className="font-semibold">Locations:</p>
+                      {locationData.map((location) => {
+                        return <p className="ml-1 mr-1">{location + ","}</p>;
+                      })}
+                    </>
+                  )}
+                  {categoriesData.length === 0 ? (
+                    <></>
+                  ) : (
+                    <>
+                      <p className="font-semibold">Categories:</p>
+                      {categoriesData.categories.map((category: string) => {
+                        return <p className="ml-1 mr-1">{category + ","}</p>;
+                      })}
+                    </>
+                  )}
+                  {genderData === null ? (
+                    <></>
+                  ) : (
+                    <>
+                      <p className="font-semibold">Gender:</p>
+                      {genderData}
+                    </>
+                  )}
+                </Card>
+              </>
+            )}
             <Button type="submit" onClick={handleSubmitMain}>
               Apply
             </Button>
