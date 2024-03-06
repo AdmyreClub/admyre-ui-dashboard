@@ -80,7 +80,7 @@ const page = () => {
           </div>
         </div>
       </div>
-      <div className="self-center flex flex-col rounded-t-md border-[1px] border-black bg-slate-100 absolute bottom-0 w-[70vw] h-[4.5rem]">
+      <div className="self-center flex flex-col rounded-t-md border-[1px] border-black bg-slate-100 absolute bottom-0 w-[70vw] h-[4rem]">
         <div className="self-end mr-3 mt-3">
           <Button
             variant={"outline"}

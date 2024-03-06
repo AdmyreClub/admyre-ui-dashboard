@@ -14,7 +14,7 @@ const page = () => {
     <div className="flex flex-col">
       <CampaignsNav />
       Step 4
-      <div className="self-center flex justify-between rounded-t-md border-[1px] border-black bg-slate-100 absolute bottom-0 w-[70vw] h-[4.5rem]">
+      <div className="self-center flex justify-between rounded-t-md border-[1px] border-black bg-slate-100 absolute bottom-0 w-[70vw] h-[4rem]">
         <div className="self-start mt-3 ml-3">
           <Button
             onClick={() => {
