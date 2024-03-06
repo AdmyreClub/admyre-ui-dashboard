@@ -406,7 +406,7 @@ const Page = () => {
                           brandName,
                         };
                         if (payload) {
-                          router.push('/new-page');
+                          router.push('/campaigns/abc/create/1');
                           setparentViewMode("fiveSteps");
                         }
                       }
