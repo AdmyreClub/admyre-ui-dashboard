@@ -185,6 +185,7 @@ export function DataTable<TData, TValue>({
 
   const handleRowClick = (rowData: TData) => {
     setSelectedRowData(rowData);
+    
     //getMoreData(rowData.name);
     console.log(rowData);
   };
@@ -262,17 +263,7 @@ export function DataTable<TData, TValue>({
                       ))}
                     </TableRow>
                   </ContextMenuTrigger>
-                  <ContextMenuContent className="w-[160px]">
-                    {/* ... Context menu items ... */}
-                    <ContextMenuItem className="flex justify-center w-[150px]">
-                      <Button className="w-[140px]" onClick={() => {
-                        setIsSheetOpen(true)
-                        setSheetUserName(row.original)
-                      }}>More Info</Button>
-                    </ContextMenuItem>
-
-                    {/* ... Other context menu items ... */}
-                  </ContextMenuContent>
+                  
                 </ContextMenu>
               ))
             ) : (

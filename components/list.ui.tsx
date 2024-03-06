@@ -198,8 +198,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
     // Construct the strategy data object
     const strategyData = {
       name: data.strategyName,
-      pictureUrl:
-        THUMBNAIL,
+      pictureUrl: THUMBNAIL,
       description: data.description,
     };
 
@@ -208,8 +207,7 @@ const DiscoverListUI = ({ userId }: { userId: string }) => {
     try {
       const response = await axios.post("/api/strategy/new", {
         name: data.strategyName,
-        pictureUrl:
-         THUMBNAIL,
+        pictureUrl: THUMBNAIL,
         description: data.description,
       });
 
@@ -427,8 +425,15 @@ const RenderLists: React.FC<ListProps> = ({
   const [isNewListDialogOpen, setIsNewListDialogOpen] = useState(false);
   const [createListValue, setCreateListValue] = useState<string>("");
   const [inputs, setInputs] = useState(lists.map(() => ({ inputValue: "" })));
-
-  const handleInputChange = (index: number, field: keyof InputValues, value: string) => {
+  const [isEditable, setIsEditable] = useState(false);
+  const handleToggleEdit = () => {
+    setIsEditable(!isEditable);
+  };
+  const handleInputChange = (
+    index: number,
+    field: keyof InputValues,
+    value: string
+  ) => {
     const newInputs = [...inputs];
     newInputs[index][field] = value;
     setInputs(newInputs);
@@ -457,41 +462,53 @@ const RenderLists: React.FC<ListProps> = ({
         {isLoading ? (
           <SkeletonDemo />
         ) : (
-          <ScrollArea>
-            {lists.map((list, index) => (
-              <div
-                key={list.id}
-                className=" mt-2 flex flex-col justify-between mb-2 mr-1 ml-1 rounded-sm p-2 shadow-md"
-              >
-                {/* List details */}
+          <>
+            <ScrollArea>
+              {lists.map((list, index) => (
+                <div
+                  key={list.id}
+                  className=" mt-2 flex flex-col justify-between mb-2 mr-1 ml-1 rounded-sm p-2 shadow-md"
+                >
+                  {/* List details */}
 
-                <div className="">
-                  <Input
-                    type="text"
-                    defaultValue={inputs[index].inputValue || list.name}
-                    onChange={(e) =>
-                      handleInputChange(index, "inputValue", e.target.value)
-                    }
-                    placeholder="Input Value"
-                  />
-                  <div className="flex">
-                    <Button
-                      onClick={() =>
-                        handleEditList(inputs[index].inputValue, list.id)
-                      }
-                      className="mt-3"
-                    >
-                      Save
-                    </Button>
-                    <Button  className="self-center ml-1 mt-3">
-                      {" "}
-                      <ArrowRight className="" />
-                    </Button>
+                  <div className="">
+                    {isEditable ? (
+                      <div className="flex gap-3 justify-between w-[200px]">
+                        <Input
+                          type="text"
+                          value={inputs[index]?.inputValue || list.name}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "inputValue",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Input Value"
+                        />
+                        <Button
+                          onClick={() => {
+                            handleEditList(inputs[index]?.inputValue, list.id);
+                            handleToggleEdit();
+                          }}
+                          className=" self-center"
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-3 justify-between w-[200px]">
+                        <p>{inputs[index]?.inputValue || list.name}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </ScrollArea>
+              ))}
+            </ScrollArea>
+            <Button onClick={handleToggleEdit}>
+              <Edit2 />
+            </Button>
+          </>
         )}
       </CardContent>
     </Card>
