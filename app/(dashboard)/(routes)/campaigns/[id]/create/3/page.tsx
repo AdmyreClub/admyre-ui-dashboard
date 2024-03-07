@@ -42,22 +42,9 @@ import { DateRange } from "react-day-picker";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { InstagramLogoIcon } from "@radix-ui/react-icons";
+import { Deliverable } from "@prisma/client";
 
-<<<<<<< HEAD
 const Page = () => {
-=======
-const contentTypes = ["post", "carousel", "story", "reel"];
-const postingTimelines = ["After accepted collaboration", "Particular Dates"];
-
-type Deliverable = {
-  id: number;
-  contentGuidelines: string; // Adjust the type based on the actual type of contentGuidelines
-  date: string; // Adjust the type based on the actual type of date
-  selectedContentType: string; // Adjust the type based on the actual type of selectedContentType
-  selectedPostingTimeline: string; // Adjust the type based on the actual type of selectedPostingTimeline
-};
-const page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
->>>>>>> 2c9e3358439cef48fbf749d65c8c6eeff2501da9
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);

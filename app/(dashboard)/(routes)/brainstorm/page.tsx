@@ -18,7 +18,7 @@ import Loader from '@/components/loader';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
-
+import ReactMarkdown from "react-markdown";
 
 const Brainstorm = () => {
 const router = useRouter();
@@ -38,7 +38,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       role: "user",
       content: values.prompt,
     };
-    const newMessages = ["", ...messages, userMessage];
+    const newMessages = [...messages, userMessage];
 
     const response = await axios.post("/api/brainstorm", {
       messages: newMessages,
@@ -100,7 +100,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
             )}
             >
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-              <p className='text-sm'>{message.content}</p>
+              <ReactMarkdown className='text-sm bg-white/60 rounded-md p-5'>{message.content || ''}</ReactMarkdown>
             </div>;
           }
           else if (Array.isArray(message.content)) {
