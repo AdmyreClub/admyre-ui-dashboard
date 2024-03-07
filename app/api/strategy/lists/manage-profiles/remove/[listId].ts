@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs';
 import strategyDao from '@/dao/StrategyDao';
 
 // Define the POST method for the API endpoint
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request, res: NextApiResponse) {
     // Authenticate the user
     const userId = auth(); // Ensure to pass `req` to `auth()` if needed
     if (!userId) {

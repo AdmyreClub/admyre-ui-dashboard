@@ -441,8 +441,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Languages:</p>
-                      {languagesData.languages.map((language) => {
-                        return <p className="ml-1 mr-1" key>{language + ","}</p>;
+                      {languagesData.languages.map((language, index) => {
+                        return <p className="ml-1 mr-1" key={`language-${index}`}>{language},</p>;
                       })}
                     </>
                   )}
@@ -451,8 +451,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Locations:</p>
-                      {locationData.map((location) => {
-                        return <p className="ml-1 mr-1">{location + ","}</p>;
+                      {locationData.map((location, index) => {
+                        return <p className="ml-1 mr-1" key={`location-${index}`}>{location},</p>;
                       })}
                     </>
                   )}
@@ -461,8 +461,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Categories:</p>
-                      {categoriesData.categories.map((category: string) => {
-                        return <p className="ml-1 mr-1">{category + ","}</p>;
+                      {categoriesData.map((category, index) => {
+                        return <p className="ml-1 mr-1" key={`category-${index}`}>{category},</p>;
                       })}
                     </>
                   )}

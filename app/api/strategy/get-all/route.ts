@@ -4,7 +4,7 @@ import strategyDao from '@/dao/StrategyDao';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: Request) {
     const {userId} = auth();
 
     if (!userId) {

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import strategyDao from '@/dao/StrategyDao'; // Adjust the import path as necessary
 import { auth } from '@clerk/nextjs';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: Request, res: NextApiResponse) {
     // Assuming `auth` requires `req` to extract the user's session or token
     const userId = auth(); // Make sure this matches how you've implemented `auth`
 

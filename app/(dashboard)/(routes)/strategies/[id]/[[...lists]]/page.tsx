@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import GlobalFilter from "../../../actions/strategies/GlobalFilter";
-import { Column, useGlobalFilter, usePagination, useTable } from "react-table";
+import { Column, TableInstance, useGlobalFilter, usePagination, useTable } from "react-table";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   Dialog,
@@ -57,6 +57,12 @@ import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as z from "zod";
+
+interface TableInstanceWithGlobalFilter<D extends object = {}> extends TableInstance<D> {
+  setGlobalFilter: (filterValue: any) => void;
+}
+
+
 let influencers = [
   { name: "List 1", influencerCount: 13 },
   { name: "List 2", influencerCount: 32 },
@@ -279,7 +285,7 @@ const Page = () => {
     gotoPage,
     pageCount,
     setPageSize,
-  } = useTable({ columns, data: lists }, useGlobalFilter, usePagination);
+  } = useTable({ columns, data: lists }, useGlobalFilter, usePagination) as TableInstanceWithGlobalFilter;
 
   const { globalFilter, pageIndex, pageSize } = state;
 

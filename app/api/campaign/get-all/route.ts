@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import campaignDao from '@/dao/CampaignDao';
 import { auth } from '@clerk/nextjs';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: Request) {
     // Assuming auth() correctly retrieves the current user's ID
     const {userId} = auth();
 

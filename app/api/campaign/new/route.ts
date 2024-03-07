@@ -4,28 +4,32 @@ import { NextResponse } from 'next/server';
 import campaignDao from '@/dao/CampaignDao';
 import { auth } from '@clerk/nextjs';
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+// Make sure to use the correct type for `req`. It should be `NextApiRequest`.
+export async function POST(req: Request) {
     // Extracting the user ID using your authentication method
-    const {userId} = auth();
+    const { userId } = auth(); // Ensure that `auth` function is adapted to accept `req` if needed.
 
     if (!userId) {
-        return res.status(400).json({ message: 'Authentication required' });
+        return new NextResponse(JSON.stringify({ message: 'Authentication required' }), { status: 401 });
     }
 
-    // Parsing the request body to get campaign details
+    // Assuming `req.body` is directly accessible as an object. If not, you might need to parse it explicitly.
     const initCampaign = req.body;
 
-    // Validating the campaign details (you might want to add more robust validation depending on your requirements)
-    if (!initCampaign.platform || !initCampaign.name || !initCampaign.brandName) {
-        return res.status(400).json({ message: 'Missing required campaign details' });
+    // Validate that `initCampaign` is not null and has the required properties.
+    if (!initCampaign || !initCampaign.platform || !initCampaign.name || !initCampaign.brandName) {
+        return new NextResponse(JSON.stringify({ message: 'Missing required campaign details' }), { status: 400 });
     }
 
     try {
         // Adding the campaign using the DAO function
         const campaign = await campaignDao.addCampaign(userId, initCampaign);
-        return res.status(201).json(campaign);
+        return new NextResponse(JSON.stringify(campaign), { status: 201 });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Failed to add the campaign', error });
+        return new NextResponse(JSON.stringify({ message: 'Failed to add the campaign', error }), { status: 500 });
     }
 }
+
+// Note: This exports the function but does not make it a valid Next.js API route handler.
+// You might want to wrap this function in an API route handler or export it as `default`.
