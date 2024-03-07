@@ -48,12 +48,17 @@ const postingTimelines = ["After accepted collaboration", "Particular Dates"];
 
 type Deliverable = {
   id: number;
-  contentGuidelines: string; // Adjust the type based on the actual type of contentGuidelines
-  date: string; // Adjust the type based on the actual type of date
-  selectedContentType: string; // Adjust the type based on the actual type of selectedContentType
-  selectedPostingTimeline: string; // Adjust the type based on the actual type of selectedPostingTimeline
+  contentGuidelines: string;
+  date: {
+    from: string;
+    to: string;
+  }; // Adjusted to an object with from and to properties
+  selectedContentType: string;
+  selectedPostingTimeline: string;
 };
-const page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
+
+
+const Page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
@@ -77,12 +82,9 @@ const page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
     );
   };
   const handleSaveDeliverable = () => {
-    const formattedFromDate = date.from.toLocaleDateString("en-US", {
-      timeZone: "Asia/Kolkata",
-    });
-    const formattedToDate = date.to.toLocaleDateString("en-US", {
-      timeZone: "Asia/Kolkata",
-    });
+    const formattedFromDate = date.from ? date.from.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }) : '';
+    const formattedToDate = date.to ? date.to.toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }) : '';
+
     setDeliverables((prevDeliverables) => [
       ...prevDeliverables,
       {
@@ -97,6 +99,7 @@ const page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
       },
     ]);
   };
+
   return (
     <div className="flex flex-col">
       <CampaignsNav />
@@ -111,7 +114,7 @@ const page = ({ className }: React.HTMLAttributes<HTMLDivElement>) => {
           <>
             {deliverables.map((deliverable) => {
               return (
-                <div className="bg-white rounded-md p-3 mt-2 mb-2">
+                <div key={deliverable.id} className="bg-white rounded-md p-3 mt-2 mb-2">
                   <div className="flex justify-between">
                     <div className="flex">
                       <InstagramIcon />

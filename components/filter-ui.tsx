@@ -461,7 +461,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Categories:</p>
-                      {categoriesData.map((category, index) => {
+                      {categoriesData.categories.map((category, index) => {
                         return <p className="ml-1 mr-1" key={`category-${index}`}>{category},</p>;
                       })}
                     </>

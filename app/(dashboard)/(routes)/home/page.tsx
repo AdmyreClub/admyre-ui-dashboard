@@ -22,7 +22,7 @@ import { useUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { Strategy } from "@prisma/client";
+//import { Strategy } from "@prisma/client";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/app/context/AuthContext";
@@ -35,6 +35,20 @@ const strategySchema = z.object({
   addInfluencersBy: z.enum(["search", "manual"]),
   description: z.string().optional(),
 });
+
+interface Strategy {
+  id: string;
+  name: string;
+  pictureUrl: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  trackId: string;
+  listCount?: number; // Assuming listCount is optional
+}
+
+
 type StrategyFormData = z.infer<typeof strategySchema>;
 export default function DashboardPage() {
   const { userId } = useAuth();

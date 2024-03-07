@@ -40,7 +40,7 @@ import NewStrategyUI from "@/components/form.list.ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
-import { Strategy } from "@prisma/client";
+//import { Strategy } from "@prisma/client";
 import { THUMBNAIL } from "@/constants";
 
 type SocialHandleMetric = {
@@ -131,6 +131,19 @@ const strategySchema = z.object({
   addInfluencersBy: z.enum(["search", "manual"]),
   description: z.string().optional(),
 });
+
+interface Strategy {
+  id: string;
+  name: string;
+  pictureUrl: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  trackId: string;
+  listCount?: number; // Assuming listCount is optional
+}
+
 
 type StrategyFormData = z.infer<typeof strategySchema>;
 

@@ -23,7 +23,7 @@ const Page = () => {
     <div className="flex flex-col">
       <CampaignsNav />
       <div className="flex flex-col bg-slate-100 p-4 w-[1000px] self-center mt-3 rounded-md">
-        <p className="font-bold"> Influencer's additional incentive</p>
+        <p className="font-bold"> Influencer additional incentive</p>
         <p className="text-[12px]">
           Select the type of additional incentive for the participating
           influencers
@@ -65,7 +65,8 @@ const Page = () => {
                 value={payoutValue}
                 type="number"
                 onChange={(e) => {
-                  setPayoutValue(e.target.value);
+                  const value = Number(e.target.value); // Convert string to number
+                  setPayoutValue(value);
                 }}
                 className="w-[370px] mt-1 rounded-l-none"
                 placeholder="Your Campaign Name"
@@ -91,7 +92,8 @@ const Page = () => {
                 value={voucherValue}
                 type="number"
                 onChange={(e) => {
-                  setVoucherValue(e.target.value);
+                  const value = Number(e.target.value); // Convert string to number
+                  setVoucherValue(value);
                 }}
                 className="w-[370px] mt-1 rounded-l-none"
                 placeholder="Your Campaign Name"

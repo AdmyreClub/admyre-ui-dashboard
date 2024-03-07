@@ -1,63 +1,61 @@
-import * as z from "zod"
+import * as z from "zod";
+
+export const rangeSchema = z.object({
+  from: z.number().nullable().default(null),
+  to: z.number().nullable().default(null),
+});
+
+export const followersRangedSchema = rangeSchema;
+export const followingsRangedSchema = rangeSchema;
+export const engagementRateSchema = rangeSchema;
+
+export const locationSchema = z.object({
+  country: z.string().nullable().default(null),
+  state: z.string().nullable().default(null),
+  city: z.string().nullable().default(null),
+});
+
+export const ageSchema = z.object({
+  from: z.number().nullable().default(null),
+  to: z.number().nullable().default(null),
+});
+
+export const filtersSchema = z.object({
+  keywords: z.array(z.string()).default([]),
+  location: locationSchema,
+  age: ageSchema,
+  categories: z.array(z.string()).default([]),
+  followers: followersRangedSchema,
+  followings: followingsRangedSchema,
+  engagementRate: engagementRateSchema,
+  gender: z.string().nullable().default(null),
+  languages: z.array(z.string()).default([]),
+});
 
 export const initialFiltersState = {
-    keywords: [],
-    location: {
-      country: '',
-      state: '',
-      city: ''
-    },
-    age: {
-      from: null,
-      to: null
-    },
-    categories: [],
-    followers: {
-      from: null,
-      to: null
-    },
-    followings: {
-      from: null,
-      to: null
-    },
-    engagementRate: null,
-    gender: '',
-    languages: []
-  };
-
-  export const locationSchema = z.object({
-    country: z.string().nullable(),
-    state: z.string().nullable(),
-    city: z.string().nullable(),
-  });
-
-  export const ageSchema = z.object({
-    from: z.number().nonnegative().nullable(),
-    to: z.number().nonnegative().nullable(),
-  });
-
-  export const rangeSchema = z.object({
-    from: z.number().nonnegative().nullable(),
-    to: z.number().nonnegative().nullable(),
-  });
-
-  export const filtersSchema = z.object({
-    keywords: z.array(z.string()).nullable(), // Updated to be an array of strings
-    location: locationSchema,
-    age: ageSchema,
-    categories: z.array(z.string()).nullable(),
-    followers: rangeSchema,
-    followings: rangeSchema,
-    engagementRate: rangeSchema,
-    gender: z.string().nullable(),
-    languages: z.array(z.string()).nullable(),
-  });
-
-
-  export const followersRangedSchema = z.object({
-    followers: rangeSchema,
-  });
-
-  export const followingsRangedSchema = z.object({
-    followings: rangeSchema,
-  });
+  keywords: [],
+  location: {
+    country: null,
+    state: null,
+    city: null
+  },
+  age: {
+    from: null,
+    to: null
+  },
+  categories: [],
+  followers: {
+    from: null,
+    to: null
+  },
+  followings: {
+    from: null,
+    to: null
+  },
+  engagementRate: {
+    from: null,
+    to: null
+  },
+  gender: null,
+  languages: []
+};

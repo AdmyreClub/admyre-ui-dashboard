@@ -5,7 +5,7 @@ import strategyDao from '@/dao/StrategyDao';
 import { auth } from '@clerk/nextjs';
 
 async function POST(req: NextRequest) {
-  const { userId } = auth(req);
+  const { userId } = auth();
 
   if (!userId) {
     return new NextResponse(JSON.stringify({ message: 'User ID not provided' }), { status: 400 });
