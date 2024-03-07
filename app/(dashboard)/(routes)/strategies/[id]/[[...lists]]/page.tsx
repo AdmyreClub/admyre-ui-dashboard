@@ -23,7 +23,13 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import GlobalFilter from "../../../actions/strategies/GlobalFilter";
-import { Column, TableInstance, useGlobalFilter, usePagination, useTable } from "react-table";
+import {
+  Column,
+  Row,
+  useGlobalFilter,
+  usePagination,
+  useTable,
+} from "react-table";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   Dialog,
@@ -58,23 +64,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as z from "zod";
 
-interface TableInstanceWithGlobalFilter<D extends object = {}> extends TableInstance<D> {
-  setGlobalFilter: (filterValue: any) => void;
-}
-
-
-let influencers = [
-  { name: "List 1", influencerCount: 13 },
-  { name: "List 2", influencerCount: 32 },
-  { name: "List 3", influencerCount: 33 },
-  { name: "List 4", influencerCount: 23 },
-  { name: "List 5", influencerCount: 16 },
-  { name: "List 6", influencerCount: 18 },
-  { name: "List 7", influencerCount: 20 },
-  { name: "List 8", influencerCount: 23 },
-  { name: "List 9", influencerCount: 81 },
-  { name: "List 10", influencerCount: 9 },
-];
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 interface InputValues {
   inputValue: string;
@@ -162,18 +151,12 @@ const Page = () => {
     }
   };
 
-  const listCount = influencers.length;
-
-  const [countStatus, setCountStatus] = useState<boolean>(
-    listCount === 0 ? false : true
-  );
-
   const columns = React.useMemo(
     () => [
       {
         Header: "Name",
         accessor: "name",
-        Cell: ({ value, cell }) => {
+        Cell: ({ value, cell }: any) => {
           const [isEditable, setIsEditable] = useState(false);
 
           const handleToggleEdit = () => {
@@ -260,7 +243,7 @@ const Page = () => {
       {
         Header: "No. of influencers",
         accessor: "profiles",
-        Cell: ({ value }) => {
+        Cell: ({ value }: any) => {
           return <>{value.length}</>;
         },
       },
@@ -289,7 +272,7 @@ const Page = () => {
 
   const { globalFilter, pageIndex, pageSize } = state;
 
-  function getIdByName(id) {
+  function getIdByName(id: any) {
     for (const itemName in lists) {
       if (lists[itemName].id === id) {
         return lists[itemName].profiles.length;
@@ -301,59 +284,67 @@ const Page = () => {
 
   return (
     <Card className="self-center shadow-none border-none outline-none flex flex-col mt-[10vh] w-[80vw] h-[70vh] ">
-      {/* content */}
       <Card className="self-center h-[70vh] align-center mt-2 border-none shadow-none">
-        {!countStatus ? (
-          <Card
-            className="flex  flex-col p-3 text-center border-none justify-center"
-            style={{ borderStyle: "none" }}
-          >
-            <FileWarning size={36} className="self-center" />
-            <p className="mt-2 ">No list exists, create one</p>
-            <Button className="mt-2">
-              Create List <Plus className="ml-1" />
-            </Button>
-          </Card>
-        ) : (
-          <>
-            {influencers.length > 0 ? (
-              <div className=" w-[80%] self-center justify-center">
-                <div className=" self-center mt-4 ">
-                  <div className="mb-4">
-                    <GlobalFilter
-                      placeholder={"Search Lists"}
-                      filter={globalFilter}
-                      setFilter={setGlobalFilter}
-                    />
-                  </div>
-                  <table
-                    {...getTableProps()}
-                    style={{ borderCollapse: "collapse", width: "100%" }}
-                  >
-                    <thead>
-                      {headerGroups.map((headerGroup) => (
-                        <tr
-                          {...headerGroup.getHeaderGroupProps()}
-                          key={headerGroup.id}
-                        >
-                          {headerGroup.headers.map((column) => (
-                            <th
-                              {...column.getHeaderProps()}
-                              className="border-b-2"
-                              key={column.id}
-                            >
-                              {column.render("Header")}
-                            </th>
-                          ))}
-                        </tr>
-                      ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                      {page.map((row) => {
-                        prepareRow(row);
-                        return (
-                          <tr {...row.getRowProps()} key={row.id}>
-                            {row.cells.map((cell) => (
+        <>
+          {influencers.length > 0 ? (
+            <div className="  self-center justify-center">
+              <div className=" self-center mt-4 ">
+                <div className="mb-4">
+                  <GlobalFilter
+                    placeholder={"Search Lists"}
+                    filter={globalFilter}
+                    setFilter={setGlobalFilter}
+                  />
+                </div>
+                <table
+                  {...getTableProps()}
+                  style={{ borderCollapse: "collapse", width: "100%" }}
+                >
+                  <thead>
+                    {headerGroups.map((headerGroup) => (
+                      <tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key={headerGroup.id}
+                      >
+                        {headerGroup.headers.map((column) => (
+                          <th
+                            {...column.getHeaderProps()}
+                            className="border-b-2"
+                            key={column.id}
+                          >
+                            {column.render("Header")}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                    {page.map((row: Row<object>) => {
+                      prepareRow(row);
+                      return (
+                        <tr {...row.getRowProps()} key={row.id}>
+                          {row.cells.map(
+                            (cell: {
+                              getCellProps: () => React.JSX.IntrinsicAttributes &
+                                React.ClassAttributes<HTMLTableDataCellElement> &
+                                React.TdHTMLAttributes<HTMLTableDataCellElement>;
+                              id: React.Key | null | undefined;
+                              render: (
+                                arg0: string
+                              ) =>
+                                | string
+                                | number
+                                | boolean
+                                | React.ReactElement<
+                                    any,
+                                    string | React.JSXElementConstructor<any>
+                                  >
+                                | Iterable<React.ReactNode>
+                                | React.ReactPortal
+                                | React.PromiseLikeOfReactNode
+                                | null
+                                | undefined;
+                            }) => (
                               <td
                                 {...cell.getCellProps()}
                                 className="text-center border-b-2 p-2"
@@ -361,111 +352,111 @@ const Page = () => {
                               >
                                 {cell.render("Cell")}
                               </td>
-                            ))}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <div className="flex justify-center p-3">
-                    <Button
-                      onClick={() => gotoPage(0)}
-                      disabled={!canPreviousPage}
-                    >
-                      <ArrowLeft />
-                    </Button>{" "}
-                    <Button
-                      onClick={() => previousPage()}
-                      disabled={!canPreviousPage}
-                      className="ml-3"
-                    >
-                      Previous
-                    </Button>{" "}
-                    <Button
-                      className="mx-3"
-                      onClick={() => nextPage()}
-                      disabled={!canNextPage}
-                    >
-                      Next
-                    </Button>{" "}
-                    <Button
-                      onClick={() => gotoPage(pageCount - 1)}
-                      disabled={!canNextPage}
-                      className="mr-3"
-                    >
-                      <ArrowRight />
-                    </Button>{" "}
-                    <span className="self-center">
-                      Page{" "}
-                      <strong>
-                        {pageIndex + 1} of {pageOptions.length}
-                      </strong>{" "}
-                    </span>
-                    <span className="ml-3 mr-3">
-                      | Go to page:{" "}
-                      <Input
-                        type="number"
-                        defaultValue={pageIndex + 1}
-                        min={1}
-                        className="w-[300px] inline"
-                        max={pageCount}
-                        onChange={(e) => {
-                          const pageNumber = e.target.value
-                            ? Number(e.target.value) - 1
-                            : 0;
-                          gotoPage(pageNumber);
-                        }}
-                        style={{ width: "60px" }}
-                      />
-                    </span>{" "}
-                    <select
-                      value={pageSize}
-                      onChange={(e) => setPageSize(Number(e.target.value))}
-                    >
-                      {[5, 10, 15].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                          Show {pageSize}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                            )
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div className="flex justify-center p-3">
+                  <Button
+                    onClick={() => gotoPage(0)}
+                    disabled={!canPreviousPage}
+                  >
+                    <ArrowLeft />
+                  </Button>{" "}
+                  <Button
+                    onClick={() => previousPage()}
+                    disabled={!canPreviousPage}
+                    className="ml-3"
+                  >
+                    Previous
+                  </Button>{" "}
+                  <Button
+                    className="mx-3"
+                    onClick={() => nextPage()}
+                    disabled={!canNextPage}
+                  >
+                    Next
+                  </Button>{" "}
+                  <Button
+                    onClick={() => gotoPage(pageCount - 1)}
+                    disabled={!canNextPage}
+                    className="mr-3"
+                  >
+                    <ArrowRight />
+                  </Button>{" "}
+                  <span className="self-center">
+                    Page{" "}
+                    <strong>
+                      {pageIndex + 1} of {pageOptions.length}
+                    </strong>{" "}
+                  </span>
+                  <span className="ml-3 mr-3">
+                    | Go to page:{" "}
+                    <Input
+                      type="number"
+                      defaultValue={pageIndex + 1}
+                      min={1}
+                      className="w-[300px] inline"
+                      max={pageCount}
+                      onChange={(e) => {
+                        const pageNumber = e.target.value
+                          ? Number(e.target.value) - 1
+                          : 0;
+                        gotoPage(pageNumber);
+                      }}
+                      style={{ width: "60px" }}
+                    />
+                  </span>{" "}
+                  <select
+                    value={pageSize}
+                    onChange={(e) => setPageSize(Number(e.target.value))}
+                  >
+                    {[5, 10, 15].map((pageSize) => (
+                      <option key={pageSize} value={pageSize}>
+                        Show {pageSize}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-            ) : (
-              <></>
-            )}
-            <Dialog
-              open={isNewListDialogOpen}
-              onOpenChange={setIsNewListDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button onClick={() => setIsNewListDialogOpen(true)}>
-                  Create New List
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[512px]">
-                <DialogHeader>
-                  <DialogTitle>Create New List</DialogTitle>
-                </DialogHeader>
-                <FormProvider {...methods}>
-                  {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
-                  <Card className="flex flex-col">
-                    <Input
-                      onChange={(e) => setCreateListValue(e.target.value)}
-                      value={createListValue}
-                    />
-                    <Button
-                      onClick={() => handleCreateListSubmit(createListValue)}
-                      className="self-start mt-3"
-                    >
-                      Add
-                    </Button>
-                  </Card>
-                </FormProvider>
-              </DialogContent>
-            </Dialog>
-          </>
-        )}
+            </div>
+          ) : (
+            <></>
+          )}
+          <Dialog
+            open={isNewListDialogOpen}
+            onOpenChange={setIsNewListDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button onClick={() => setIsNewListDialogOpen(true)}>
+                Create New List
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[512px]">
+              <DialogHeader>
+                <DialogTitle>Create New List</DialogTitle>
+              </DialogHeader>
+              <FormProvider {...methods}>
+                {/* Assume NewListUI is a component similar to NewStrategyUI for list creation */}
+                <Card className="flex flex-col">
+                  <Input
+                    onChange={(e) => setCreateListValue(e.target.value)}
+                    value={createListValue}
+                  />
+                  <Button
+                    onClick={() => handleCreateListSubmit(createListValue)}
+                    className="self-start mt-3"
+                  >
+                    Add
+                  </Button>
+                </Card>
+              </FormProvider>
+            </DialogContent>
+          </Dialog>
+        </>
       </Card>
     </Card>
   );
