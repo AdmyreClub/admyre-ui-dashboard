@@ -39,7 +39,7 @@ const FormSchema = z.object({
 });
 
 interface ChildProps {
-  onDataFromChild: (data: string[]) => void;
+  onDataFromChild: (data: { languages?: string[] }) => void;
   defaultVal: string[];
 }
 
@@ -53,7 +53,7 @@ export function LanguagesForm({ onDataFromChild, defaultVal }: ChildProps) {
     },
   });
 
-  var defaultCheckedValues = defaultVal.languages;
+  var defaultCheckedValues = defaultVal;
 
   const values = form.watch();
 
@@ -77,7 +77,7 @@ export function LanguagesForm({ onDataFromChild, defaultVal }: ChildProps) {
               <div className="mb-4">
                 <FormLabel className="text-base">Languages</FormLabel>
                 <FormDescription>
-                  Select the Languages 
+                  Select the Languages
                 </FormDescription>
               </div>
               <ScrollArea className="h-[400px] rounded-md border p-5">
@@ -122,7 +122,7 @@ export function LanguagesForm({ onDataFromChild, defaultVal }: ChildProps) {
         <div className="flex justify-between mt-5">
           <Button
             variant="outline"
-            
+
             onClick={() => {
               onDataFromChild({languages: [""]})
               form.reset()

@@ -8,11 +8,12 @@ interface TableProps {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   pageSize: number;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  totalDocuments: number;
 }
 
-const Table: React.FC<TableProps> = ({ data, page, setPage, pageSize, setPageSize }) => {
+const Table: React.FC<TableProps> = ({ data, page, setPage, pageSize, setPageSize, totalDocuments }) => {
   console.log('Data in Table component:', data);
-  
+
   return (
     <section className='py-24'>
       <div className='container'>
@@ -24,6 +25,7 @@ const Table: React.FC<TableProps> = ({ data, page, setPage, pageSize, setPageSiz
           setPage={setPage}
           pageSize={pageSize}
           setPageSize={setPageSize}
+          totalDocuments={totalDocuments}
         />
       </div>
     </section>

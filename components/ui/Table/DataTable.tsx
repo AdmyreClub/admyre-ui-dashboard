@@ -92,6 +92,35 @@ const strategySchema = z.object({
   description: z.string().optional(),
 });
 
+interface SocialHandleMetrics {
+  followers?: number;
+  following?: number;
+  avgEngagement?: number;
+  avgLikes?: number;
+  numOfPosts?: number;
+  avgComments?: number;
+  avgVideoViews?: number;
+}
+
+interface SocialHandle {
+  url: string;
+  handle?: string;
+  metrics: SocialHandleMetrics;
+}
+
+interface RowData {
+  name: string;
+  email?: string;
+  whatsappNumber?: string;
+  city?: string;
+  profileImage: {
+    url: string;
+  };
+  socialHandles: SocialHandle[];
+  bio?: string;
+}
+
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -121,8 +150,8 @@ export function DataTable<TData, TValue>({
   });
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [selectedRowData, setSelectedRowData] = useState<TData | null>(null);
-  const [sheetUserName, setSheetUserName] = useState<string>("");
+  const [selectedRowData, setSelectedRowData] = useState<RowData | null>(null);
+  const [sheetUserName, setSheetUserName] = useState<RowData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const getMoreData = async (username: string) => {
     const moreDataDao = new MoreDataDao(username);
@@ -184,7 +213,7 @@ export function DataTable<TData, TValue>({
     ]);*/
 
     // main handle row click
-  const handleRowClick = (rowData: TData) => {
+  const handleRowClick = (rowData: RowData) => {
     setSelectedRowData(rowData);
     console.log('clicked  : ', rowData);
   };
@@ -270,7 +299,7 @@ export function DataTable<TData, TValue>({
                     <ContextMenuItem className="flex justify-center w-[150px]">
                       <Button className="w-[140px]" onClick={() => {
                         setIsSheetOpen(true)
-                        setSheetUserName(row.original)
+                        setSheetUserName(row.original as RowData)
                       }}>More Info</Button>
                     </ContextMenuItem>
 
@@ -312,7 +341,7 @@ export function DataTable<TData, TValue>({
               <SheetTitle className="text-right ">
                 <Card className="border-none shadow-none mt-4 font-light text-gray-400 font-semibold text-[14px]">
                   <Link href={sheetUserName.socialHandles[0].url} target="#">
-                    <i class="fa-solid fa-arrow-up-right-from-square mr-3"></i>
+                    <i className="fa-solid fa-arrow-up-right-from-square mr-3"></i>
                   </Link>
                   {sheetUserName.city ? `@ ${sheetUserName.city}` : ``}
                 </Card>
@@ -529,10 +558,10 @@ export function DataTable<TData, TValue>({
                   </Card>
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
-                  <Chart label={"Follower"} />
+                  <Chart />
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
-                  <Chart label={"Following"} />
+                  <Chart />
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5 pr-6">
                   <Dashboard />

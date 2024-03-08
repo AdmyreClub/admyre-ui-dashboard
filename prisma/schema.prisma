@@ -30,7 +30,6 @@ model UserApiLimit {
 model Influencer {
     id                 String           @id @default(uuid())
     username           String           @unique
-    userId             String
     url                String
     followerCount      Int
     followingCount     Int

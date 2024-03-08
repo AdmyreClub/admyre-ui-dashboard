@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { Link2, MoreHorizontal } from "lucide-react";
 import Chart from "./charts/followingChart";
 import Dashboard from "./charts/chartColumn";
 import AudienceLocations from "./charts/locationChart";
@@ -67,17 +67,28 @@ export type User = {
 export type Profile = {
   id: string;
   name: string;
+  email?: string; // Assuming email might not be present for all profiles
+  whatsappNumber?: string; // Assuming WhatsApp number might not be present for all profiles
+  bio?: string; // Assuming bio might not be present for all profiles
+  city?: string; // Assuming city might not be present for all profiles
   profileImage: {
     url: string;
   };
   socialHandles: Array<{
     handle: string;
+    url?: string; // URL to the social profile, if applicable
     metrics: {
       followers: number;
+      following?: number; // Assuming following might not be present for all social handles
       avgEngagement: number;
+      avgLikes?: number; // Assuming avgLikes might not be present for all social handles
+      avgComments?: number; // Assuming avgComments might not be present for all social handles
+      avgVideoViews?: number; // Assuming avgVideoViews might not be present for all social handles
+      numOfPosts?: number; // Assuming numOfPosts might not be present for all social handles
     };
   }>;
 };
+
 
 const AddComponent = ({ row, cell }) => {
   const user = row.original;
@@ -252,9 +263,9 @@ const AddComponent = ({ row, cell }) => {
                         ) => (
                           <div key={index}>
                             <DropdownMenuRadioItem
-                              value={list.name}
+                              value={list.name.toString()}
                               onClick={() => {
-                                setSelectedList(list.name);
+                                setSelectedList(list.name.toString());
                               }}
                             >
                               {list.name}
@@ -287,10 +298,8 @@ const AddComponent = ({ row, cell }) => {
 const ActionComponent = ({ row }) => {
   const user = row.original;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [sheetUserName, setSheetUserName] = useState<string>("");
-  const [selectedRowData, setSelectedRowData] = useState<TData | null>(
-    null
-  );
+  const [sheetUserName, setSheetUserName] = useState<Profile | null>(null);
+  const [selectedRowData, setSelectedRowData] = useState<Profile | null>(null);
   const handleMoreInfo = (name) => {
     setIsSheetOpen(true);
     setSelectedRowData(name);
@@ -353,7 +362,7 @@ const ActionComponent = ({ row }) => {
                     href={sheetUserName.socialHandles[0].url}
                     target="#"
                   >
-                    <i class="fa-solid fa-arrow-up-right-from-square mr-3"></i>
+                    <Link2 />
                   </Link>
                   {sheetUserName.city ? `@ ${sheetUserName.city}` : ``}
                 </Card>
@@ -592,10 +601,10 @@ const ActionComponent = ({ row }) => {
                   </Card>
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
-                  <Chart label={"Follower"} />
+                  <Chart/>
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5">
-                  <Chart label={"Following"} />
+                  <Chart />
                 </Card>
                 <Card className="w-[515px] flex justify-center align-middle pr-20 ml-[-10px] rounded-[3px] shadow-md border-black p-5 mt-5 pr-6">
                   <Dashboard />

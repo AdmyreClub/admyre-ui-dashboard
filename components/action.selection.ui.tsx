@@ -48,7 +48,7 @@ const ActionSelectionUI = () => {
           {/* Content can be added here if needed */}
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={navigateToImport}>Import Profiles</Button>
+          <Button onClick={navigateToImport} disabled={true}>Import Profiles</Button>
         </CardFooter>
       </Card>
 

@@ -11,12 +11,12 @@ const schema = z.object({
   gender: z.enum(["male", "female", "others"]),
 });
 
-interface ChildProps {
+interface GenderFormProps {
   onDataFromChild: (data: string) => void;
   defaultVal: string;
 }
 
-const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
+const GenderForm: React.FC<GenderFormProps> = ({ onDataFromChild, defaultVal }: GenderFormProps) => {
   const {
     register,
     handleSubmit,
@@ -59,7 +59,7 @@ const GenderForm: React.FC = ({ onDataFromChild, defaultVal }: ChildProps) => {
         <div>
           <RadioGroup
             className="mt-3 text-slate-700 font-light flex"
-            value={selectedGender ?? register("gender").value}
+            value={selectedGender ?? register("gender")}
             onValueChange={(value) => {
               setValue("gender", value);
               setSelectedGender(value);

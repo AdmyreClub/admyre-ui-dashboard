@@ -112,7 +112,7 @@ const FollowingChart: React.FC = ( {label }: ChildProps) => {
         margin={{ top: 20, right: 40, bottom: 10 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" tick={{ fontSize: 12, angle: -25 }} />
+        <XAxis dataKey="date" tick={{ fontSize: 12 }} />
         <YAxis />
         <Tooltip />
         <defs>

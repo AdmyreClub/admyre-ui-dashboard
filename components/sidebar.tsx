@@ -30,13 +30,6 @@ const routes = [
     external: false,
   },
   {
-    label: "Strategies",
-    icon: LayoutDashboard,
-    href: "/strategies",
-    color: "text-white",
-    external: false,
-  },
-  {
     label: "Track & Enrich",
     icon: Microscope,
     href: "/actions",
@@ -81,7 +74,7 @@ const routes = [
 ];
 
 interface SidebarProps {
-  apiLimitCount: number;
+  apiLimitCount?: number;
 }
 
 const Sidebar = ({apiLimitCount = 0}: SidebarProps) => {

@@ -22,7 +22,7 @@ export const ageSchema = z.object({
 
 export const filtersSchema = z.object({
   keywords: z.array(z.string()).default([]),
-  location: locationSchema,
+  location: z.array(z.string()).default([]),
   age: ageSchema,
   categories: z.array(z.string()).default([]),
   followers: followersRangedSchema,
@@ -34,11 +34,7 @@ export const filtersSchema = z.object({
 
 export const initialFiltersState = {
   keywords: [],
-  location: {
-    country: null,
-    state: null,
-    city: null
-  },
+  location: [],
   age: {
     from: null,
     to: null

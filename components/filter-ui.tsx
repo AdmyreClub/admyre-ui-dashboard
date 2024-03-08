@@ -64,6 +64,8 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
   const [locationData, setLocationData] = React.useState<string[]>([]);
   const [keywords, setKeywords] = React.useState<string[]>([]);
 
+  console.log("RAAAHH: ", categoriesData)
+
   const handleFollowerData = (dataFromChild: [number, number]) => {
     // Do something with the data received from the child component
     setFollowerData(dataFromChild);
@@ -85,15 +87,16 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     setFilters(true);
   };
 
-  const handleCategoriesData = (dataFromChild: string[]) => {
+  const handleCategoriesData = (dataFromChild: { categories: string[] }) => {
     // Do something with the data received from the child component
-    setCategoriesData(dataFromChild);
-    console.log(dataFromChild);
+    setCategoriesData(dataFromChild.categories);
+    console.log('raw categories: ', dataFromChild);
     setFilters(true);
   };
-  const handleLanguagesData = (dataFromChild: string[]) => {
+  const handleLanguagesData = (dataFromChild: { languages: string[] }) => {
     // Do something with the data received from the child component
-    setLanguagesData(dataFromChild);
+    setLanguagesData(dataFromChild.languages);
+    console.log('raw languages: ', dataFromChild)
     setFilters(true);
   };
   const handleLocationData = (dataFromChild: string[]) => {
@@ -131,14 +134,15 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
     defaultValues: initialFiltersState,
   });
 
+
   const onSubmitMain = async (data: FiltersType) => {
     data.followers.from = followerData[0];
     data.followers.to = followerData[1];
-    data.categories = categoriesData.categories;
+    data.categories = categoriesData;
     data.followings.from = followingData[0];
     data.followings.to = followingData[1];
     data.location = locationData;
-    data.languages = languagesData.languages;
+    data.languages = languagesData;
     data.engagementRate.from = engagementRateData[0];
     data.engagementRate.to = engagementRateData[1];
     data.gender = genderData;
@@ -264,7 +268,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                       <PopoverContent className="w-80">
                         <FollowerFilter
                           onDataFromChild={handleFollowerData}
-                          defaultVal={followerData}
+                          defaultVal={[followerData[0], followerData[1]]}
                         />
                       </PopoverContent>
                     </Popover>
@@ -279,7 +283,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                       <PopoverContent className="w-80">
                         <FollowingsFilterUI
                           onDataFromChild={handleFollowingData}
-                          defaultVal={followingData}
+                          defaultVal={[followingData[0], followingData[1]]}
                         />
                       </PopoverContent>
                     </Popover>
@@ -339,7 +343,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                       <PopoverContent className="w-80">
                         <EngagementFilterUI
                           onDataFromChild={handleEngagementRateData}
-                          defaultVal={engagementRateData}
+                          defaultVal={[engagementRateData[0], engagementRateData[1]]}
                         />
                       </PopoverContent>
                     </Popover>
@@ -441,7 +445,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Languages:</p>
-                      {languagesData.languages.map((language, index) => {
+                      {languagesData.map((language, index) => {
                         return <p className="ml-1 mr-1" key={`language-${index}`}>{language},</p>;
                       })}
                     </>
@@ -461,7 +465,7 @@ const FilterUI = ({ onDataFromChild }: ChildProps) => {
                   ) : (
                     <>
                       <p className="font-semibold">Categories:</p>
-                      {categoriesData.categories.map((category, index) => {
+                      {categoriesData.map((category, index) => {
                         return <p className="ml-1 mr-1" key={`category-${index}`}>{category},</p>;
                       })}
                     </>

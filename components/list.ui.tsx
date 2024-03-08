@@ -56,6 +56,10 @@ const strategySchema = z.object({
   description: z.string().optional(),
 });
 
+type ExtendedStrategy = Strategy & {
+  listCount?: number; // The '?' denotes that this property is optional
+};
+
 type LisType = {
   id: string;
   listName: string;
@@ -67,7 +71,7 @@ type Influencer = {
 };
 
 interface RenderStrategiesProps {
-  strategies: Strategy[];
+  strategies: ExtendedStrategy[];
   onStrategyClick: (strategyId: string) => void;
   isLoading: boolean;
 }

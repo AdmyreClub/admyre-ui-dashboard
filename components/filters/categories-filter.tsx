@@ -52,7 +52,7 @@ const FormSchema = z.object({
 });
 
 interface ChildProps {
-  onDataFromChild: (data: string[]) => void;
+  onDataFromChild: (data: { categories?: string[] }) => void;
   defaultVal: string[];
 }
 
@@ -62,11 +62,11 @@ export function CategoriesForm({ onDataFromChild, defaultVal }: ChildProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      categories: ["any"],
+      categories: [""],
     },
   });
 
-  var defaultCheckedValues = defaultVal.categories;
+  var defaultCheckedValues = defaultVal;
 
   const values = form.watch();
 
