@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { Influencer, PrismaClient } from '@prisma/client';
+import { Influencer,Content, PrismaClient } from '@prisma/client';
 import { auth } from '@clerk/nextjs';
+import { use } from 'react';
 
 const prisma = new PrismaClient();
 
@@ -19,11 +20,16 @@ export const fetchProfileData = async (username: string) => {
 
     // Second API call to instagrapi.com
     const api2Response = await axios.get(`https://api.instagrapi.com/v1/user/by/username?username=${username}`, {
-      headers: {
-        'accept': 'application/json',
-        'x-access-key': process.env.SCRAPER_API_KEY,
-      },
-    });
+    headers: {
+      'accept': 'application/json',
+      'x-access-key': process.env.SCRAPER_API_KEY,
+    },
+  });
+
+  // Check if the username does not exist based on api2Response
+  if (api2Response.data.message === "Account not found on Instagram!" && api2Response.data.code === 110) {
+    throw new Error('Account not found on Instagram!');
+  }
 
     // Combining data from both API responses to match the Prisma Influencer schema
     const combinedData = {
@@ -70,4 +76,75 @@ export const trackProfile = async ( username: string) => {
   });
 
   return influencer;
+};
+
+export const fetchPostData = async (url: string) => {
+
+  const userId = auth();
+
+  try {
+    const response = await axios.get(`https://api.instagrapi.com/v1/media/by/url?url=${url}`, {
+      headers: {
+        'accept': 'application/json',
+        'x-access-key': process.env.SCRAPER_API_KEY,
+      },
+    });
+
+    const data = response.data;
+
+    // Map the API response to your Prisma schema for Content
+    // Map the API response to your Prisma schema for Content
+    const postData = {
+      id: data.id,
+      userId: userId, // Replace this with the actual logic to obtain the user ID
+      url: url,
+      likesCount: data.like_count,
+      commentsCount: data.comment_count,
+      viewsCount: data.view_count || 0, // Use 0 or a similar default value for non-video posts
+      thumbnailUrl: data.thumbnail_url,
+      caption: data.caption_text,
+      location: data.location ? JSON.stringify(data.location) : null, // Check if location exists before stringifying
+      createdAt: new Date(data.taken_at),
+      updatedAt: new Date(), // Assuming you want to set this to the current time
+      code: data.code,
+      user_tags: data.usertags ? JSON.stringify(data.usertags) : null, // Check if user_tags exists before stringifying
+      sponsor_tags: data.sponsor_tags ? JSON.stringify(data.sponsor_tags) : null, // Check if sponsor_tags exists before stringifying
+      is_paid_partnership: data.is_paid_partnership,
+      pk: data.pk,
+      profile: data.user ? JSON.stringify(data.user) : null, // Check if user profile exists before stringifying
+      comments_disabled: data.comments_disabled,
+      like_and_view_counts_disabled: data.like_and_view_counts_disabled,
+    };
+
+
+    return postData;
+  } catch (error) {
+    if (error.response && error.response.data.message === "Account not found on Instagram!") {
+      throw new Error('Post not found on Instagram!');
+    } else {
+      // Handle other errors (e.g., network issues, wrong configuration)
+      throw new Error('Failed to fetch post data.');
+    }
+  }
+};
+
+export const trackPost = async (url: string) => {
+  // You would also need to authenticate the user as in trackProfile
+  // const userId = auth();
+  // if (!userId) { return; }
+
+  try {
+    const postData = await fetchPostData(url);
+
+    // Persist post data to the database
+    const post = await prisma.content.create({
+      data: postData,
+    });
+
+    return post;
+
+} catch (error) {
+console.error('Error tracking post:', error);
+throw new Error('Failed to track post');
+}
 };

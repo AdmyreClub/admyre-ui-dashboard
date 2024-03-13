@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import strategyDao from '@/dao/StrategyDao';
 import { auth } from '@clerk/nextjs';
 
-async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const { userId } = auth();
 
   if (!userId) {
@@ -28,4 +28,4 @@ async function POST(req: NextRequest) {
   }
 }
 
-export { POST };
+

@@ -115,7 +115,7 @@ const ActionTrackUI = () => {
               <Card className="w-[1000px]">
                   <div className="p-3 flex gap-2 border-none outline-none p-1 justify-center align-middle items-center">
                     <Input
-                      placeholder="example, https://www.instagram.com/p/5RW32"
+                      placeholder="example, https://www.instagram.com/p/C4QIywVCgfN/"
                       style={{ resize: "none" }}
                       value={inputValue}
                       className="border-2 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
