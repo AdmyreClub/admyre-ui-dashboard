@@ -38,9 +38,10 @@ interface InfluencerJSON {
 
 export async function POST(req: NextRequest, res: NextApiResponse) {
     const userId = auth(); // Make sure to pass `req` to `auth()` if it's required to extract the userID
-    const listId = typeof req.query.q === 'string' ? req.query.q : null;
-
-
+    console.log('add profile to list api request structure: ', req)
+    const listId = req.nextUrl.searchParams.get('q');
+    console.log("q:- ", listId)
+    console
     if (!userId) {
         return new NextResponse("Authentication required", {status: 401});
     }
@@ -48,17 +49,27 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
     if (!listId) {
         return new NextResponse("'List ID is required", {status: 400});
     }
-    const influencerData: InfluencerJSON = req.body;
-
-    if (!influencerData.socialHandles || influencerData.socialHandles.length === 0 || !listId) {
-        return new NextResponse('Missing required details (influencer details or list ID)', {status: 400});
-    }
+    const body = await req.json();
+    console.log("the body sent to the backend: ", body)
+    // if (!influencerData.socialHandles || influencerData.socialHandles.length === 0 || !listId) {
+    //     return new NextResponse('Missing required details (influencer details or list ID)', {status: 400});
+    // }
 
     try {
-        const updatedProfiles = await strategyDao.addProfileToList(listId, influencerData);
-        return res.status(201).json(updatedProfiles);
+        const updatedProfiles = await strategyDao.addProfileToList(listId, body);
+        return new NextResponse(JSON.stringify(updatedProfiles), {
+          status: 201,
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Failed to add the profile to the list', error });
+        return new NextResponse(JSON.stringify({ message: 'Failed to add the profile to the list', error: error.message }), {
+          status: 500,
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
     }
 }

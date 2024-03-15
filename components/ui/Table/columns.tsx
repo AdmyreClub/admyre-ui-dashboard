@@ -157,13 +157,13 @@ const AddComponent = ({ row, cell }) => {
     try {
       const response = await axios
         .post(
-          `/api/strategy/lists/manage-profiles/add/${getListIdByName(
+          `/api/strategy/lists/manage-profiles/add?q=${getListIdByName(
             selectedList
           )}`,
           influencer,
           {
             headers: {
-              // Include any required headers here. For example, Authorization if needed.
+              'Content-Type': 'application/json'
             },
           }
         )
