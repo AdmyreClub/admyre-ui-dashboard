@@ -51,6 +51,9 @@ export const fetchProfileData = async (username: string) => {
       phoneNumber: api2Response.data.public_phone_number,
       whatsappNumber: api2Response.data.public_phone_number,
       timeSeries: api1Response.data.profile_history_points,
+      historicalLikesCount: JSON.stringify({}), // Assuming this should be an empty object or some default value
+    historicalCommentsCount: JSON.stringify({}), // Assuming this should be an empty object or some default value
+    historicalViewsCount: JSON.stringify({}),
     };
 
     return combinedData;
@@ -96,25 +99,30 @@ export const fetchPostData = async (url: string) => {
     // Map the API response to your Prisma schema for Content
     const postData = {
       id: data.id,
-      userId: userId, // Replace this with the actual logic to obtain the user ID
+      userId: String(userId), // This should be a string. Ensure that 'userId' variable is correctly defined.
       url: url,
       likesCount: data.like_count,
       commentsCount: data.comment_count,
-      viewsCount: data.view_count || 0, // Use 0 or a similar default value for non-video posts
+      viewsCount: data.view_count || 0,
       thumbnailUrl: data.thumbnail_url,
       caption: data.caption_text,
-      location: data.location ? JSON.stringify(data.location) : null, // Check if location exists before stringifying
-      createdAt: new Date(data.taken_at),
-      updatedAt: new Date(), // Assuming you want to set this to the current time
+      location: data.location ? JSON.stringify(data.location) : JSON.stringify({}),
+      createdAt: new Date(data.taken_at).toISOString(),
+      updatedAt: new Date().toISOString(),
       code: data.code,
-      user_tags: data.usertags ? JSON.stringify(data.usertags) : null, // Check if user_tags exists before stringifying
-      sponsor_tags: data.sponsor_tags ? JSON.stringify(data.sponsor_tags) : null, // Check if sponsor_tags exists before stringifying
+      user_tags: data.usertags ? JSON.stringify(data.usertags) : JSON.stringify([]),
+      sponsor_tags: data.sponsor_tags ? JSON.stringify(data.sponsor_tags) : JSON.stringify([]),
       is_paid_partnership: data.is_paid_partnership,
       pk: data.pk,
-      profile: data.user ? JSON.stringify(data.user) : null, // Check if user profile exists before stringifying
+      profile: data.user ? JSON.stringify(data.user) : JSON.stringify({}),
       comments_disabled: data.comments_disabled,
       like_and_view_counts_disabled: data.like_and_view_counts_disabled,
+      historicalLikesCount: JSON.stringify({}),
+      historicalCommentsCount: JSON.stringify({}),
+      historicalViewsCount: JSON.stringify({}),
     };
+
+
 
 
     return postData;
