@@ -155,7 +155,7 @@ export default function DashboardPage() {
       <div>
         <div className="mb-8 space-y-4 pt-[4.5rem] ">
           <h1 className="text-center mt-6 text-[28px] mb-0 font-bold">
-          Search influencers from a database of more than 2 million creators
+          Search influencers from a database of more than 2 million creators!
           </h1>
           <p
             className="text-center text-[18px] font-normal "
